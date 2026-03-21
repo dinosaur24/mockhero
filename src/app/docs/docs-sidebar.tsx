@@ -19,6 +19,7 @@ const sidebarSections = [
     links: [
       { href: "/docs", label: "Overview" },
       { href: "/docs/authentication", label: "Authentication" },
+      { href: "/docs/mcp", label: "MCP Server" },
     ],
   },
   {

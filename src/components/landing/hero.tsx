@@ -38,9 +38,12 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left */}
           <div>
-            <Badge variant="secondary" className="mb-6 text-sm px-3 py-1">
-              Now with MCP support for AI agents
-            </Badge>
+            <Link href="/docs/mcp">
+              <Badge variant="secondary" className="mb-6 text-sm px-3 py-1 cursor-pointer hover:bg-secondary/80 transition-colors">
+                Now with MCP support for AI agents
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Badge>
+            </Link>
 
             <h1 className="text-5xl font-bold tracking-tight sm:text-6xl leading-[1.1]">
               Realistic test data{" "}
