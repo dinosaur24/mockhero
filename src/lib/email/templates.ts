@@ -109,17 +109,3 @@ export function paymentFailedEmail(tier: string): string {
   `)
 }
 
-// ─── 8. Early Adopter ───────────────────────────────────────
-export function earlyAdopterEmail(name: string, signupNumber: number): string {
-  return emailLayout(`
-    ${heading("You're Early Adopter #" + signupNumber)}
-    ${paragraph(`Hey${name ? ` ${name}` : ""}, you're one of the first ${signupNumber <= 100 ? 100 : signupNumber} people to join MockHero. That means something to us.`)}
-    ${paragraph("As a thank you, your Free plan gets <strong>10x the daily record limit</strong> — forever. No upgrade required.")}
-    ${infoRow("Your number", `#${signupNumber}`)}
-    ${infoRow("Daily records (Free)", "10,000 (normally 1,000)")}
-    ${infoRow("Status", "Early Adopter")}
-    ${divider()}
-    ${paragraph("We're building MockHero for developers like you. If you have ideas, feedback, or just want to say hi — reply to this email.")}
-    ${ctaButton("Start Building", `${APP_URL}/dashboard`)}
-  `)
-}

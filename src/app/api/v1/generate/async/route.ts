@@ -102,8 +102,7 @@ export async function POST(request: Request) {
     const rateCheck = await checkRateLimit(
       user.user_id,
       user.tier,
-      totalRecords,
-      user.is_early_adopter
+      totalRecords
     );
 
     if (!rateCheck.allowed) {

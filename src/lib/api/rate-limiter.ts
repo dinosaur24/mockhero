@@ -7,7 +7,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { TIER_LIMITS, EARLY_ADOPTER_DAILY_RECORDS, type Tier } from "@/lib/utils/constants";
+import { TIER_LIMITS, type Tier } from "@/lib/utils/constants";
 
 // In-memory fixed window for per-minute rate limiting
 // Resets on cold start (acceptable for serverless)
@@ -44,16 +44,13 @@ export interface RateLimitDenied {
 export async function checkRateLimit(
   userId: string,
   tier: Tier,
-  requestedRecords: number,
-  isEarlyAdopter: boolean
+  requestedRecords: number
 ): Promise<RateLimitResult | RateLimitDenied> {
   // Lazy cleanup of expired minute windows
   cleanupMinuteWindows();
 
   const limits = TIER_LIMITS[tier];
-  const dailyRecordLimit = isEarlyAdopter && tier === "free"
-    ? EARLY_ADOPTER_DAILY_RECORDS
-    : limits.dailyRecords;
+  const dailyRecordLimit = limits.dailyRecords;
 
   // 1. Check per-request record limit
   if (requestedRecords > limits.perRequest) {

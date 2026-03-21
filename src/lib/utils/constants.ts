@@ -20,10 +20,6 @@ export const TIER_LIMITS = {
   },
 } as const;
 
-/** Early adopters get 10x free tier (first 100 signups) */
-export const EARLY_ADOPTER_LIMIT = 100;
-export const EARLY_ADOPTER_DAILY_RECORDS = 10_000;
-
 /** API key prefix — all MockHero keys start with this */
 export const API_KEY_PREFIX = "mh_";
 

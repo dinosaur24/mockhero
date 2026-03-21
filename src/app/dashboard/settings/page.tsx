@@ -16,7 +16,6 @@ export default async function SettingsPage() {
     <SettingsClient
       email={email}
       tier={profile.tier}
-      isEarlyAdopter={profile.isEarlyAdopter}
     />
   )
 }

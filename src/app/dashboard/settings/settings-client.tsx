@@ -4,7 +4,6 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import {
   Select,
@@ -19,7 +18,6 @@ import type { Tier } from "@/lib/utils/constants"
 interface Props {
   email: string
   tier: Tier
-  isEarlyAdopter: boolean
 }
 
 const tierLabel: Record<Tier, string> = {
@@ -28,7 +26,7 @@ const tierLabel: Record<Tier, string> = {
   scale: "Scale",
 }
 
-export default function SettingsClient({ email, tier, isEarlyAdopter }: Props) {
+export default function SettingsClient({ email, tier }: Props) {
   const [format, setFormat] = useState("json")
   const [locale, setLocale] = useState("en")
 
@@ -72,14 +70,7 @@ export default function SettingsClient({ email, tier, isEarlyAdopter }: Props) {
           <div className="flex items-center justify-between py-3">
             <span className="text-xs text-muted-foreground">Plan</span>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium">{tierLabel[tier]}</span>
-                {isEarlyAdopter && (
-                  <Badge variant="secondary" className="text-[10px]">
-                    Early Adopter
-                  </Badge>
-                )}
-              </div>
+              <span className="text-xs font-medium">{tierLabel[tier]}</span>
               {tier === "free" && (
                 <Button variant="link" size="sm" asChild className="h-auto p-0">
                   <Link href="/dashboard/billing">Upgrade</Link>

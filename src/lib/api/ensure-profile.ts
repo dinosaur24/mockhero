@@ -5,7 +5,6 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { EARLY_ADOPTER_LIMIT } from "@/lib/utils/constants";
 
 export async function ensureProfile(clerkUserId: string): Promise<void> {
   const supabase = createAdminClient();
@@ -19,17 +18,9 @@ export async function ensureProfile(clerkUserId: string): Promise<void> {
 
   if (existing) return; // already exists
 
-  // Check if this user qualifies as early adopter
-  const { count } = await supabase
-    .from("profiles")
-    .select("id", { count: "exact", head: true });
-
-  const isEarlyAdopter = (count ?? 0) < EARLY_ADOPTER_LIMIT;
-
   // Create profile
   await supabase.from("profiles").insert({
     id: clerkUserId,
     tier: "free",
-    is_early_adopter: isEarlyAdopter,
   });
 }

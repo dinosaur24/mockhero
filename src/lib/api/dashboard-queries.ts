@@ -4,11 +4,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin"
-import { TIER_LIMITS, EARLY_ADOPTER_DAILY_RECORDS, type Tier } from "@/lib/utils/constants"
-
-function getDailyLimit(tier: Tier, isEarlyAdopter: boolean): number {
-  return isEarlyAdopter ? EARLY_ADOPTER_DAILY_RECORDS : TIER_LIMITS[tier].dailyRecords
-}
+import { TIER_LIMITS, type Tier } from "@/lib/utils/constants"
 
 // ─── Overview ────────────────────────────────────────
 
@@ -24,17 +20,16 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
   const today = new Date().toISOString().slice(0, 10)
 
   const [profileRes, usageRes, keysRes] = await Promise.all([
-    supabase.from("profiles").select("tier, is_early_adopter").eq("id", userId).single(),
+    supabase.from("profiles").select("tier").eq("id", userId).single(),
     supabase.from("daily_usage").select("records_used, requests_count").eq("user_id", userId).eq("date", today).maybeSingle(),
     supabase.from("api_keys").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("is_active", true),
   ])
 
   const tier = (profileRes.data?.tier ?? "free") as Tier
-  const isEarlyAdopter = profileRes.data?.is_early_adopter ?? false
 
   return {
     recordsToday: usageRes.data?.records_used ?? 0,
-    recordsLimit: getDailyLimit(tier, isEarlyAdopter),
+    recordsLimit: TIER_LIMITS[tier].dailyRecords,
     requestsToday: usageRes.data?.requests_count ?? 0,
     activeKeys: keysRes.count ?? 0,
   }
@@ -93,7 +88,7 @@ export async function getUsageData(userId: string): Promise<UsageData> {
   const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10)
 
   const [profileRes, dailyRes, todayRes, logsRes, totalReqRes, totalRecRes] = await Promise.all([
-    supabase.from("profiles").select("tier, is_early_adopter").eq("id", userId).single(),
+    supabase.from("profiles").select("tier").eq("id", userId).single(),
     supabase
       .from("daily_usage")
       .select("date, records_used")
@@ -117,7 +112,6 @@ export async function getUsageData(userId: string): Promise<UsageData> {
   ])
 
   const tier = (profileRes.data?.tier ?? "free") as Tier
-  const isEarlyAdopter = profileRes.data?.is_early_adopter ?? false
 
   return {
     daily: (dailyRes.data ?? []) as DailyUsageRow[],
@@ -125,7 +119,7 @@ export async function getUsageData(userId: string): Promise<UsageData> {
     totalRequests: totalReqRes.count ?? 0,
     totalRecords: (totalRecRes.data ?? []).reduce((sum, r) => sum + (r.records_used ?? 0), 0),
     recordsToday: todayRes.data?.records_used ?? 0,
-    recordsLimit: getDailyLimit(tier, isEarlyAdopter),
+    recordsLimit: TIER_LIMITS[tier].dailyRecords,
   }
 }
 
@@ -157,18 +151,16 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
 
 export interface UserProfile {
   tier: Tier
-  isEarlyAdopter: boolean
 }
 
 export async function getUserProfile(userId: string): Promise<UserProfile> {
   const supabase = createAdminClient()
   const { data } = await supabase
     .from("profiles")
-    .select("tier, is_early_adopter")
+    .select("tier")
     .eq("id", userId)
     .single()
   return {
     tier: (data?.tier ?? "free") as Tier,
-    isEarlyAdopter: data?.is_early_adopter ?? false,
   }
 }

@@ -6,7 +6,6 @@ import Link from "next/link";
 
 interface TierInfoProps {
   tier: Tier;
-  isEarlyAdopter: boolean;
 }
 
 const tierBadgeVariant: Record<Tier, "default" | "secondary" | "outline"> = {
@@ -15,7 +14,7 @@ const tierBadgeVariant: Record<Tier, "default" | "secondary" | "outline"> = {
   scale: "outline",
 };
 
-export function TierInfo({ tier, isEarlyAdopter }: TierInfoProps) {
+export function TierInfo({ tier }: TierInfoProps) {
   const limits = TIER_LIMITS[tier];
 
   return (
@@ -28,18 +27,13 @@ export function TierInfo({ tier, isEarlyAdopter }: TierInfoProps) {
         <Badge variant={tierBadgeVariant[tier]}>
           {tier.charAt(0).toUpperCase() + tier.slice(1)}
         </Badge>
-        {isEarlyAdopter && (
-          <Badge variant="secondary">Early Adopter — 10x Free</Badge>
-        )}
       </div>
 
       <div className="space-y-2 text-sm text-muted-foreground">
         <div className="flex justify-between">
           <span>Daily records</span>
           <span className="font-medium text-foreground">
-            {isEarlyAdopter && tier === "free"
-              ? "10,000"
-              : limits.dailyRecords.toLocaleString()}
+            {limits.dailyRecords.toLocaleString()}
           </span>
         </div>
         <div className="flex justify-between">

@@ -15,7 +15,6 @@ export default async function BillingPage() {
   return (
     <BillingClient
       tier={profile.tier}
-      isEarlyAdopter={profile.isEarlyAdopter}
       subscription={subscription}
     />
   )

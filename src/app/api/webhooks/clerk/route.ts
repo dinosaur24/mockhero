@@ -2,8 +2,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { EARLY_ADOPTER_LIMIT } from "@/lib/utils/constants";
-import { sendEmail, welcomeEmail, earlyAdopterEmail } from "@/lib/email";
+import { sendEmail, welcomeEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   // 1. Verify webhook signature using Svix
@@ -44,13 +43,6 @@ export async function POST(req: Request) {
 
     const supabase = createAdminClient();
 
-    // Check if this user qualifies as early adopter
-    const { count } = await supabase
-      .from("profiles")
-      .select("*", { count: "exact", head: true });
-
-    const isEarlyAdopter = (count ?? 0) < EARLY_ADOPTER_LIMIT;
-
     // Create profile
     const { error } = await supabase.from("profiles").insert({
       id: id,
@@ -58,7 +50,6 @@ export async function POST(req: Request) {
         [first_name, last_name].filter(Boolean).join(" ") || null,
       avatar_url: image_url ?? null,
       tier: "free",
-      is_early_adopter: isEarlyAdopter,
     });
 
     if (error) {
@@ -66,16 +57,10 @@ export async function POST(req: Request) {
       return new Response("Failed to create profile", { status: 500 });
     }
 
-    // Send emails (fire-and-forget — don't block webhook response)
+    // Send welcome email (fire-and-forget — don't block webhook response)
     if (primaryEmail) {
       const displayName = [first_name, last_name].filter(Boolean).join(" ");
-      const signupNumber = (count ?? 0) + 1;
-
       sendEmail({ to: primaryEmail, subject: "Welcome to MockHero", html: welcomeEmail(displayName) }).catch(() => {});
-
-      if (isEarlyAdopter) {
-        sendEmail({ to: primaryEmail, subject: `You're Early Adopter #${signupNumber}`, html: earlyAdopterEmail(displayName, signupNumber) }).catch(() => {});
-      }
     }
   }
 

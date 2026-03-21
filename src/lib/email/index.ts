@@ -7,5 +7,4 @@ export {
   upgradeConfirmationEmail,
   downgradeConfirmationEmail,
   paymentFailedEmail,
-  earlyAdopterEmail,
 } from "./templates"

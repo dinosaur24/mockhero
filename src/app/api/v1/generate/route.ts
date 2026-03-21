@@ -24,7 +24,7 @@ import {
 } from "@/lib/api/errors";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deliverWebhook } from "@/lib/api/webhooks";
-import { TIER_LIMITS, EARLY_ADOPTER_DAILY_RECORDS } from "@/lib/utils/constants";
+import { TIER_LIMITS } from "@/lib/utils/constants";
 import { checkUsageAlerts } from "@/lib/email/usage-alerts";
 
 // Allow up to 30s for large generation requests
@@ -130,8 +130,7 @@ export async function POST(request: Request) {
     const rateCheck = await checkRateLimit(
       user.user_id,
       user.tier,
-      totalRecords,
-      user.is_early_adopter
+      totalRecords
     );
 
     if (!rateCheck.allowed) {
@@ -142,9 +141,7 @@ export async function POST(request: Request) {
       // Include rate limit headers on 429 so developers can programmatically
       // check their limits without needing a separate API call
       response.headers.set("X-RateLimit-Limit", String(
-        user.is_early_adopter && user.tier === "free"
-          ? EARLY_ADOPTER_DAILY_RECORDS
-          : TIER_LIMITS[user.tier].dailyRecords
+        TIER_LIMITS[user.tier].dailyRecords
       ));
       return response;
     }

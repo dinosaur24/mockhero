@@ -11,7 +11,6 @@ export interface ApiKeyUser {
   user_id: string;
   api_key_id: string;
   tier: Tier;
-  is_early_adopter: boolean;
 }
 
 /**
@@ -72,7 +71,7 @@ export async function validateApiKey(
   // Get user profile for tier
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("tier, is_early_adopter")
+    .select("tier")
     .eq("id", keyData.user_id)
     .single();
 
@@ -100,6 +99,5 @@ export async function validateApiKey(
     user_id: keyData.user_id,
     api_key_id: keyData.id,
     tier,
-    is_early_adopter: profile.is_early_adopter ?? false,
   };
 }
