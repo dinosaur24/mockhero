@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "createdAt": "2026-03-18T14:15:00Z",
+    "updatedAt": "2026-03-18T14:15:00Z",
+    "version": "1.0",
+    "plaidVersion": "1.0"
+  },
+  "creator": {
+    "name": "Dino",
+    "expertise": "Performance marketer and vibe coder — builds software with AI coding agents while running marketing campaigns",
+    "background": "I've been vibe-coding apps with AI agents and kept hitting the same wall — every time I needed test data, the options were garbage. Faker gives you 'John Doe at 123 Main St', copying production data is a compliance nightmare, and writing seed scripts wastes hours. My performance marketing background means I think about distribution first. When I saw the explosion of AI coding agents — Cursor, Claude Code, Lovable, Bolt — I realized there's a massive infrastructure gap. Every one of those agents needs to populate databases to test generated code, and there's nothing built for them. I'm building the plumbing layer underneath every dev tool."
+  },
+  "purpose": {
+    "whoYouHelp": "Developers and AI coding agents that need realistic test data to populate databases and test generated code. Every developer building anything needs test data. Every AI coding agent needs to verify generated code works against real-looking data.",
+    "problemYouSolve": "Current test data solutions are broken. Faker libraries generate obviously fake data ('John Doe, 123 Main St'). Mockaroo has a dated UI with no API-first design, no relational data, and no AI agent integration. Manual seed scripts waste hours per project. Copying production data is a GDPR violation waiting to happen. Nobody has built a clean, fast API that generates realistic, relational data in one request.",
+    "desiredTransformation": "Developers and AI agents get production-quality test data — proper names by nationality, valid-format emails, realistic addresses, coherent dates, and records that reference each other correctly — in one API call, in milliseconds instead of hours. An entire database seed with correct foreign key relationships, generated in a single request.",
+    "whyYou": "As a performance marketer, I think distribution-first and spotted the infrastructure gap as AI coding agents explode. As a vibe coder, I experience the test data problem firsthand every time I build with AI. I've lived the frustration of getting a perfectly generated app only to waste 30 minutes manually seeding garbage data. The marketing instinct tells me the timing is perfect — the growth of AI-generated code means 'I need test data' moments are growing exponentially."
+  },
+  "product": {
+    "name": "MockHero",
+    "oneLiner": "Send a schema, get back realistic, relational fake data that looks real.",
+    "howItWorks": "A developer or AI agent sends a POST request to /api/v1/generate with either a structured JSON schema defining tables, field types, and relationships — or a plain English description. MockHero generates realistic, locale-aware data with correct foreign key relationships between tables (orders reference real user IDs, reviews reference real product IDs), and returns it as JSON, CSV, or ready-to-run SQL INSERT statements. Same seed always produces the same output for deterministic testing.",
+    "keyCapabilities": [
+      "Locale-aware data generation — German names for German users, Japanese for Japanese, Croatian for Croatian, not just 'John Smith' for everything",
+      "Relational data with correct foreign key references across multiple tables — generate an entire database seed in one API call with no orphan records",
+      "Multiple output formats — JSON, CSV, or SQL INSERT statements for Postgres, MySQL, and SQLite with correct dialect differences",
+      "Schema detection — paste CREATE TABLE SQL or sample JSON, get back the API schema format with zero manual mapping",
+      "MCP server for native AI agent integration — Cursor, Claude Code, and other agents can generate test data without the developer lifting a finger"
+    ],
+    "platform": "web",
+    "marketDifferentiation": "Unlike Faker libraries that generate obviously fake data, Mockaroo with its dated UI and no relational data support, or copying production data which is a compliance nightmare — MockHero is an API-first service that generates production-quality, relational test data in one request. The killer feature is foreign key relationships: generate users, orders, order items, products, and reviews — all correctly linked — in a single API call. Plus an MCP server so AI coding agents can call it natively.",
+    "magicMoment": "A developer sends a multi-table schema with foreign key references and gets back 500 records across 4 related tables — all with realistic German names, valid email formats, proper phone numbers, and every order correctly referencing a real user ID. What used to take 2 hours of seed script writing happened in 200ms with one API call."
+  },
+  "audience": {
+    "primaryUser": "A fullstack developer building a SaaS app who just created their database schema and needs hundreds of records of realistic test data to verify their UI, test their queries, and demo to stakeholders. They're tired of seeing 'John Doe' and '123 Main St' in every screenshot and every test run.",
+    "secondaryUsers": [
+      "AI coding agents (Cursor, Claude Code, Copilot, Lovable, Bolt) that need to populate databases to test generated code — they call the MockHero API via MCP without the developer lifting a finger",
+      "QA engineers who need large, realistic datasets to test edge cases, performance, and data integrity across related tables",
+      "DevOps and platform engineers who need to seed staging environments with production-quality data without copying actual customer data"
+    ],
+    "currentAlternatives": "Faker libraries (npm/Python) that generate obviously fake data, Mockaroo (dated web UI, no API-first design, no relational data, no AI agent integration), manually writing seed scripts that take hours per project, or copying production data which is a GDPR/privacy violation waiting to happen",
+    "frustrations": "Faker data looks obviously fake — no locale awareness, no relationships between tables, useless for demos or realistic testing. Mockaroo is a website from another era with no proper API or agent integration. Manual seed scripts take hours and produce hardcoded, brittle data for one specific schema. Copying production data risks compliance violations and security breaches. The real frustration: AI agents can generate entire apps in minutes but then need 30 minutes of manual work to get test data that doesn't look like garbage."
+  },
+  "business": {
+    "revenueModel": "freemium",
+    "initialGoal": "500 registered developers, 50 making repeat API calls weekly, 15 paying customers across Pro ($19/mo) and Scale ($49/mo) tiers, approximately $400 MRR. MockHero MCP server installed by 100+ Cursor and Claude Code users. Clear signal that developers are generating relational data (multi-table schemas = power users who will convert to paid).",
+    "sixMonthVision": "$10,000 MRR with strong growth trajectory. Established as the default test data API in the AI coding agent ecosystem. SDK packages published for npm and Python. Schema templates for common patterns (e-commerce, blog, SaaS, social). Integration with database providers (Supabase, Neon, PlanetScale) for one-click seeding. Recognized in the developer tools community through Hacker News, dev newsletters, and word of mouth. Expansion into hosted mock API servers — not just data, but full fake REST endpoints.",
+    "constraints": "Weekend MVP build timeline — Saturday and Sunday to ship a working product. $0 infrastructure cost until paying customers (Vercel free tier, Supabase free tier). Solo founder splitting time between performance marketing work and building. Strong marketing and distribution instincts, growing technical skills through AI-assisted development.",
+    "goToMarket": "Launch on Hacker News ('Show HN: Synthetic test data API with relational data support'), Reddit (r/webdev, r/node, r/nextjs, r/programming), Indie Hackers, and Twitter/X dev community. Offer 10,000 free records/day to first 100 signups (10x normal free tier) as an early adopter hook. Write 'Why Faker is broken and what I built instead' blog post. Publish MCP server to npm for AI agent adoption — the agent recommends MockHero, not the developer choosing it. Build in public to attract the developer audience."
+  },
+  "feeling": {
+    "brandPersonality": "Friendly-technical — like Supabase or Resend. Modern, polished, and approachable. Confident without being arrogant. Speaks developer fluently but doesn't gatekeep. The smart friend who built exactly what you needed and made it delightfully easy to use.",
+    "visualMood": "Modern and polished but approachable, inspired by Supabase's design language. Light mode default with optional dark mode. Clean sans-serif typography (Inter or similar). Vibrant brand accent color on white/light gray backgrounds. Rounded corners, generous whitespace, clear visual hierarchy. Code blocks are prominent and beautifully styled — this is an API product, so code is the hero element. Data previews feel alive and real, not static.",
+    "toneOfVoice": "Direct, confident, and slightly witty. Speaks like a developer who was frustrated with the status quo and built something better. Uses concrete comparisons to make the point ('Not John Doe — Maximilian Bergmann'). Error messages are helpful and specific, not apologetic. Success states are satisfying without being over-the-top. CTAs are action-oriented ('Get Free API Key', not 'Learn More'). Documentation reads like a conversation with a knowledgeable friend.",
+    "antiPatterns": "Never feel corporate or enterprise-y — no 'contact sales', no jargon-heavy marketing speak, no stock photos of people pointing at screens. Never feel like a toy or weekend side project — the quality of generated data must speak for itself in every interaction. Never feel slow or bloated — this is an API, it should feel fast and lean everywhere. Never use obviously AI-generated marketing copy — the landing page should feel like a developer wrote it because they were annoyed enough to build something better."
+  },
+  "techStack": {
+    "appType": "web",
+    "frontend": {
+      "choice": "Next.js",
+      "rationale": "React for landing page, docs, and dashboard. API routes for all backend endpoints. Deploys to Vercel with zero config. Largest ecosystem and best AI coding tool support. TypeScript end-to-end."
+    },
+    "backend": {
+      "choice": "Next.js API Routes",
+      "rationale": "All API endpoints (generate, schema/detect, types, health) are Next.js route handlers. The data generation engine is pure TypeScript running in serverless functions. Supabase handles auth and usage tracking as a service dependency, not a traditional backend."
+    },
+    "database": {
+      "choice": "Supabase PostgreSQL",
+      "rationale": "Manages API keys, usage logs, daily usage tracking, and user accounts. The data generation itself is stateless and in-memory — Supabase handles the persistent state around authentication, billing, and rate limiting."
+    },
+    "auth": {
+      "choice": "Supabase Auth",
+      "rationale": "Email/password and GitHub OAuth for developer signups. Integrated with the same Supabase instance used for usage tracking. API key generation and validation for programmatic API access."
+    },
+    "payments": {
+      "choice": "Polar",
+      "rationale": "Built for developer tools and SaaS subscriptions. Handles Pro ($19/mo) and Scale ($49/mo) tiers with annual discount options. Developer-friendly API, handles billing portal. No Stripe complexity needed."
+    }
+  },
+  "tooling": {
+    "codingAgent": "claude-code"
+  }
+}

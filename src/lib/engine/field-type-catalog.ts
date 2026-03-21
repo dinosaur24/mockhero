@@ -1,0 +1,90 @@
+/**
+ * Complete field types catalog for MockHero.
+ * Used by the /api/v1/types endpoint and available for agent discovery.
+ *
+ * Pure data — no Next.js or I/O dependencies.
+ */
+
+export const FIELD_TYPE_CATALOG = {
+  identity: {
+    first_name: { description: "Locale-aware first name", params: { locale: "string (en, de, fr, es, hr)" }, example: "Maximilian" },
+    last_name: { description: "Locale-aware last name", params: { locale: "string" }, example: "Bergmann" },
+    full_name: { description: "First + last name combined", params: {}, example: "Maximilian Bergmann" },
+    email: { description: "Realistic email derived from name", params: { domain: "string (optional, e.g. 'company.de')" }, example: "maximilian.bergmann@outlook.de" },
+    username: { description: "Username derived from name", params: {}, example: "mbergmann42" },
+    phone: { description: "Country-formatted phone number", params: { locale: "string" }, example: "+49 151 2345 6789" },
+    avatar_url: { description: "URL to DiceBear avatar", params: {}, example: "https://api.dicebear.com/7.x/avataaars/svg?seed=42" },
+    gender: { description: "Gender with configurable values and weights", params: { values: "string[] (default: male, female, non-binary, prefer_not_to_say)", weights: "number[]" }, example: "female" },
+    date_of_birth: { description: "Realistic date of birth with age range constraints", params: { min_age: "number (default 18)", max_age: "number (default 80)" }, example: "1994-07-12" },
+  },
+  location: {
+    city: { description: "Real city name from locale", params: {}, example: "Berlin" },
+    country: { description: "Country name or code", params: { code: "boolean (return ISO code if true)" }, example: "Germany" },
+    postal_code: { description: "Valid postal code format for locale", params: {}, example: "10115" },
+    state_province: { description: "State or province", params: {}, example: "California" },
+    address: { description: "Full street address with city and postal", params: {}, example: "Friedrichstraße 42, 10117 Berlin" },
+    latitude: { description: "Latitude coordinate", params: { min: "number", max: "number" }, example: 52.520008 },
+    longitude: { description: "Longitude coordinate", params: { min: "number", max: "number" }, example: 13.404954 },
+    timezone: { description: "IANA timezone string, region-aware", params: {}, example: "Europe/Berlin" },
+  },
+  business: {
+    company_name: { description: "Realistic company name", params: {}, example: "Digital Solutions" },
+    job_title: { description: "Realistic job title", params: {}, example: "Senior Software Engineer" },
+    department: { description: "Standard department name", params: {}, example: "Engineering" },
+    product_name: { description: "Realistic product name", params: { category: "string (electronics, clothing, food, home, software)" }, example: "Wireless Bluetooth Headphones" },
+    price: { description: "Price with min/max range", params: { min: "number", max: "number", precision: "number" }, example: 79.95 },
+    amount: { description: "Alias for price", params: { min: "number", max: "number", precision: "number" }, example: 249.99 },
+    decimal: { description: "Decimal number in range", params: { min: "number", max: "number", precision: "number" }, example: 42.5 },
+    currency: { description: "ISO currency code", params: {}, example: "EUR" },
+    rating: { description: "Rating (skewed toward 4-5)", params: { min: "number", max: "number", precision: "number" }, example: 4.5 },
+    sku: { description: "Product SKU code", params: { prefix: "string (optional)" }, example: "BLK-SHOE-42-001" },
+    credit_card_number: { description: "Luhn-valid fake credit card number", params: { network: "string (visa, mastercard, amex)" }, example: "4532015112830366" },
+    tracking_number: { description: "Carrier-specific shipping tracking number", params: { carrier: "string (ups, fedex, usps, dhl)" }, example: "1Z999AA10123456784" },
+  },
+  temporal: {
+    datetime: { description: "ISO 8601 datetime", params: { min: "string (ISO date)", max: "string (ISO date)" }, example: "2024-07-14T09:23:41.000Z" },
+    date: { description: "ISO date (no time)", params: { min: "string", max: "string" }, example: "2024-07-14" },
+    time: { description: "Time string HH:MM:SS", params: {}, example: "14:30:22" },
+    timestamp: { description: "Unix timestamp (seconds)", params: { min: "string", max: "string" }, example: 1720947821 },
+    age: { description: "Integer age", params: { min: "number (default 18)", max: "number (default 80)" }, example: 34 },
+    date_range: { description: "Two correlated dates (start < end) for bookings, reservations, projects", params: { min_gap_days: "number (default 1)", max_gap_days: "number (default 30)", min_date: "string", max_date: "string" }, example: { start: "2026-01-10", end: "2026-01-17" } },
+  },
+  technical: {
+    uuid: { description: "v4 UUID", params: {}, example: "a1b2c3d4-e5f6-4890-abcd-ef1234567890" },
+    id: { description: "Auto-incrementing integer", params: { start: "number (default 1)", step: "number (default 1)" }, example: 1 },
+    ip_address: { description: "IPv4 or IPv6 address", params: { version: "string (v4 or v6)" }, example: "192.168.1.42" },
+    mac_address: { description: "MAC address", params: {}, example: "3A:F5:C2:9B:1D:E8" },
+    url: { description: "Realistic URL", params: {}, example: "https://example.com/blog" },
+    domain: { description: "Domain name", params: {}, example: "techapp.io" },
+    user_agent: { description: "Real browser user agent", params: {}, example: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2)..." },
+    color_hex: { description: "Hex color code", params: {}, example: "#6C5CE7" },
+    embedding_vector: { description: "Float vector for pgvector/Pinecone/Weaviate testing", params: { dimensions: "number (default 1536)" }, example: [0.0234, -0.1847, 0.5612, "..."] },
+  },
+  content: {
+    sentence: { description: "Realistic sentence (not lorem ipsum)", params: { min_words: "number", max_words: "number" }, example: "The team improved API reliability." },
+    paragraph: { description: "Multiple realistic sentences", params: { min: "number (sentences)", max: "number (sentences)" }, example: "The team improved..." },
+    title: { description: "Article/blog-style title", params: {}, example: "Complete Guide to API Design" },
+    slug: { description: "URL-friendly slug from title", params: {}, example: "complete-guide-to-api-design" },
+    tag: { description: "Realistic tag/category", params: {}, example: "typescript" },
+    review: { description: "Short product review", params: {}, example: "Great product, exactly what I needed." },
+    image_url: { description: "Placeholder image URL", params: { width: "number", height: "number" }, example: "https://picsum.photos/seed/42/640/480" },
+    file_path: { description: "Realistic file path", params: {}, example: "/documents/report-q4-2024.pdf" },
+    markdown: { description: "Realistic Markdown content with headers, lists, code blocks", params: { length: "string (short, medium, long)" }, example: "## Getting Started\n\nThis guide walks you through..." },
+  },
+  logic: {
+    boolean: { description: "True/false with configurable probability", params: { probability: "number (0-1, probability of true)" }, example: true },
+    enum: { description: "Pick from values with optional weights", params: { values: "array (required)", weights: "array (optional, same length as values)" }, example: "active" },
+    integer: { description: "Integer in range", params: { min: "number", max: "number" }, example: 42 },
+    ref: { description: "Foreign key to another table (THE KILLER FEATURE)", params: { table: "string (required)", field: "string (required)", distribution: "string (uniform or power_law)" }, example: "a1b2c3d4-e5f6-4890-abcd-ef1234567890" },
+    sequence: { description: "Auto-incrementing with prefix/suffix", params: { start: "number", step: "number", prefix: "string", suffix: "string" }, example: "ORD-1001" },
+    constant: { description: "Fixed value", params: { value: "any" }, example: "active" },
+  },
+  security_testing: {
+    password_hash: { description: "Bcrypt or Argon2 format hash for direct DB seeding — no hashing needed", params: { rounds: "number (default 10)", algorithm: "string (bcrypt, argon2)" }, example: "$2b$10$EixZaYVK1fsbw1ZfbX3OXe..." },
+    xss_string: { description: "XSS payloads for security testing your input sanitization", params: {}, example: '<script>alert("xss")</script>' },
+    sql_injection_string: { description: "SQL injection payloads for testing parameterized queries", params: {}, example: "'; DROP TABLE users; --" },
+  },
+  locales: ["en", "de", "fr", "es", "ru", "zh", "ar", "it", "ja", "hi", "pt", "nl", "sv", "da", "nb", "th", "id", "ko", "tr", "fa", "pl", "hr"],
+  formats: ["json", "csv", "sql"],
+  sql_dialects: ["postgres", "mysql", "sqlite"],
+} as const;

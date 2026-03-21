@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "plaid": {
+      "source": "BuildGreatProducts/plaid",
+      "sourceType": "github",
+      "computedHash": "3d9a6e16186736fb05aec6c45d6373f7462d21b1a21239ff8cd437369d8b1b13"
+    }
+  }
+}

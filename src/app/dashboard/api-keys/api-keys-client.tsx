@@ -1,0 +1,226 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Copy, Check, Plus, Key, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import type { ApiKeyRow } from "@/lib/api/dashboard-queries"
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+function formatLastUsed(iso: string | null) {
+  if (!iso) return "Never"
+  const diff = Date.now() - new Date(iso).getTime()
+  const mins = Math.floor(diff / 60_000)
+  if (mins < 1) return "Just now"
+  if (mins < 60) return `${mins}m ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
+}
+
+interface Props {
+  initialKeys: ApiKeyRow[]
+}
+
+export default function ApiKeysClient({ initialKeys }: Props) {
+  const router = useRouter()
+  const [keys, setKeys] = useState(initialKeys)
+  const [creating, setCreating] = useState(false)
+  const [newRawKey, setNewRawKey] = useState<string | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [copiedNew, setCopiedNew] = useState(false)
+
+  const handleCreate = async () => {
+    setCreating(true)
+    try {
+      const res = await fetch("/api/dashboard/create-key", { method: "POST" })
+      if (!res.ok) throw new Error("Failed to create key")
+      const { rawKey } = await res.json()
+      setNewRawKey(rawKey)
+      router.refresh() // re-fetch server data to update key list
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const handleRevoke = async (id: string) => {
+    const key = keys.find((k) => k.id === id)
+    if (!key) return
+    const confirmed = window.confirm(
+      `Revoke API key "${key.key_prefix}..."?\n\nAll integrations using this key will immediately stop working.`
+    )
+    if (!confirmed) return
+
+    try {
+      const res = await fetch("/api/dashboard/revoke-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyId: id }),
+      })
+      if (!res.ok) throw new Error("Failed to revoke key")
+      // Optimistic update
+      setKeys(keys.map((k) => (k.id === id ? { ...k, is_active: false } : k)))
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const handleCopy = async (id: string, prefix: string) => {
+    try {
+      await navigator.clipboard.writeText(`${prefix}...`)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch {
+      // Clipboard API may fail on HTTP or without user gesture
+    }
+  }
+
+  const handleCopyNew = async () => {
+    if (!newRawKey) return
+    try {
+      await navigator.clipboard.writeText(newRawKey)
+      setCopiedNew(true)
+      setTimeout(() => setCopiedNew(false), 2000)
+    } catch {
+      // ignore
+    }
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-heading text-lg font-semibold">API Keys</h1>
+          <p className="text-xs text-muted-foreground mt-1">Manage your API keys</p>
+        </div>
+        <Button onClick={handleCreate} disabled={creating}>
+          {creating ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Plus className="size-3.5" />
+          )}
+          Create Key
+        </Button>
+      </div>
+
+      {/* New key banner — shown once after creation */}
+      {newRawKey && (
+        <div className="rounded-md bg-green-500/10 border border-green-500/20 px-4 py-3">
+          <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
+            Your new API key — copy it now, it won&apos;t be shown again.
+          </p>
+          <div className="flex items-center gap-2">
+            <code className="flex-1 rounded bg-muted px-3 py-2 text-xs font-mono break-all">
+              {newRawKey}
+            </code>
+            <Button variant="outline" size="sm" onClick={handleCopyNew}>
+              {copiedNew ? <Check className="size-3" /> : <Copy className="size-3" />}
+              {copiedNew ? "Copied" : "Copy"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {keys.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Key className="size-8 text-muted-foreground/40 mb-4" />
+            <p className="text-sm font-medium mb-1">No API keys yet</p>
+            <p className="text-xs text-muted-foreground mb-6">
+              Create your first key to start generating test data.
+            </p>
+            <Button onClick={handleCreate} disabled={creating}>
+              <Plus className="size-3.5" />
+              Create Key
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Key</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Last Used</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {keys.map((key) => (
+                  <TableRow
+                    key={key.id}
+                    className={!key.is_active ? "opacity-50" : ""}
+                  >
+                    <TableCell className="font-mono text-muted-foreground">
+                      {key.key_prefix}...
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {formatDate(key.created_at)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground" suppressHydrationWarning>
+                      {formatLastUsed(key.last_used_at)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={key.is_active ? "secondary" : "destructive"}>
+                        {key.is_active ? "Active" : "Revoked"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {key.is_active && (
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopy(key.id, key.key_prefix)}
+                          >
+                            {copiedId === key.id ? (
+                              <Check className="size-3" />
+                            ) : (
+                              <Copy className="size-3" />
+                            )}
+                            {copiedId === key.id ? "Copied" : "Copy"}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-muted-foreground hover:text-destructive"
+                            onClick={() => handleRevoke(key.id)}
+                          >
+                            Revoke
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
+}

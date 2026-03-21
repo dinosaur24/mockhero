@@ -1,0 +1,3 @@
+unhandledRejection [Error: Invalid package config /Users/dinosakoman/Documents/mockhero/node_modules/next/dist/compiled/text-table/package.json.] {
+  code: 'ERR_INVALID_PACKAGE_CONFIG'
+}

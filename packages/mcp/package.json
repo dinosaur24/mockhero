@@ -1,0 +1,24 @@
+{
+  "name": "@mockhero/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for MockHero — generate realistic test data from Claude, Cursor, or any MCP-compatible AI agent",
+  "type": "module",
+  "bin": {
+    "mockhero-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": ["mcp", "test-data", "mock-data", "synthetic-data", "faker"],
+  "license": "MIT"
+}
