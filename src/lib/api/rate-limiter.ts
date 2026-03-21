@@ -106,7 +106,7 @@ export async function checkRateLimit(
       .select("records_used")
       .eq("user_id", userId)
       .eq("date", today)
-      .single();
+      .maybeSingle();
 
     const dailyUsed = dailyUsage?.records_used ?? 0;
 

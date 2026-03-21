@@ -86,7 +86,7 @@ export async function validateApiKey(
     .select("product_name, status")
     .eq("user_id", keyData.user_id)
     .eq("status", "active")
-    .single();
+    .maybeSingle();
 
   if (subscription) {
     const validTiers = ["free", "pro", "scale"] as const;

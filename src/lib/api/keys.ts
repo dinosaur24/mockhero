@@ -84,7 +84,7 @@ export async function getActiveKeyPrefix(
     .select("key_prefix")
     .eq("user_id", userId)
     .eq("is_active", true)
-    .single();
+    .maybeSingle();
 
   return data?.key_prefix ?? null;
 }
