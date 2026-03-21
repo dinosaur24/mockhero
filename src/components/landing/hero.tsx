@@ -39,7 +39,7 @@ export function Hero() {
           {/* Left */}
           <div>
             <Link href="/docs/mcp">
-              <Badge variant="secondary" className="mb-6 text-sm px-3 py-1 cursor-pointer hover:bg-secondary/80 transition-colors">
+              <Badge variant="secondary" className="mb-6 text-base px-4 py-1.5 cursor-pointer hover:bg-secondary/80 transition-colors">
                 Now with MCP support for AI agents
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Badge>

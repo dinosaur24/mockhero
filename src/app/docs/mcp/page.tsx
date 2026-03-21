@@ -59,8 +59,18 @@ export default function McpDocsPage() {
       {/* Supported agents */}
       <section>
         <h2 className="text-xl font-semibold mb-3">Supported Agents</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {["Claude Desktop", "Claude Code", "Cursor"].map((agent) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {[
+            "Claude Desktop",
+            "Claude Code",
+            "Cursor",
+            "Windsurf",
+            "Cline",
+            "Codex CLI",
+            "VS Code Copilot",
+            "Zed",
+            "Continue",
+          ].map((agent) => (
             <Card key={agent}>
               <CardContent className="pt-6">
                 <p className="font-medium">{agent}</p>
@@ -69,7 +79,9 @@ export default function McpDocsPage() {
           ))}
         </div>
         <p className="text-sm text-muted-foreground mt-3">
-          Any MCP-compatible agent will work — these are the ones we&apos;ve tested.
+          Any MCP-compatible agent will work. The setup is the same — point it
+          at <code className="text-xs bg-muted px-1.5 py-0.5 rounded">@mockherodev/mcp-server</code> with
+          your API key.
         </p>
       </section>
 
