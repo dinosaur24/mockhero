@@ -3,10 +3,11 @@
  *
  * Required env vars:
  *   POLAR_ACCESS_TOKEN       — Polar API access token
- *   POLAR_PRO_PRICE_ID       — Price ID for Pro plan ($29/mo)
- *   POLAR_SCALE_PRICE_ID     — Price ID for Scale plan ($79/mo)
+ *   POLAR_PRO_PRODUCT_ID     — Product ID for Pro plan ($29/mo)
+ *   POLAR_SCALE_PRODUCT_ID   — Product ID for Scale plan ($79/mo)
  *   POLAR_WEBHOOK_SECRET     — Webhook signing secret (Svix)
  *   NEXT_PUBLIC_APP_URL      — Base URL for redirects (e.g. https://mockhero.dev)
+ *   POLAR_SANDBOX            — Set to "true" to use sandbox API
  */
 
 import type { Tier } from "@/lib/utils/constants"
@@ -25,14 +26,14 @@ function getAppUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
 }
 
-/** Map tier → Polar price ID */
-export function getPriceId(tier: Tier): string {
+/** Map tier → Polar product ID */
+export function getProductId(tier: Tier): string {
   const map: Partial<Record<Tier, string | undefined>> = {
-    pro: process.env.POLAR_PRO_PRICE_ID,
-    scale: process.env.POLAR_SCALE_PRICE_ID,
+    pro: process.env.POLAR_PRO_PRODUCT_ID ?? process.env.POLAR_PRO_PRICE_ID,
+    scale: process.env.POLAR_SCALE_PRODUCT_ID ?? process.env.POLAR_SCALE_PRICE_ID,
   }
   const id = map[tier]
-  if (!id) throw new Error(`No Polar price ID configured for tier: ${tier}`)
+  if (!id) throw new Error(`No Polar product ID configured for tier: ${tier}`)
   return id
 }
 
@@ -45,17 +46,17 @@ export async function createCheckoutSession(params: {
   customerEmail: string
   userId: string
 }): Promise<{ id: string; url: string }> {
-  const priceId = getPriceId(params.tier)
+  const productId = getProductId(params.tier)
   const appUrl = getAppUrl()
 
-  const res = await fetch(`${POLAR_API}/checkouts/custom`, {
+  const res = await fetch(`${POLAR_API}/checkouts/`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${getToken()}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      product_price_id: priceId,
+      products: [productId],
       success_url: `${appUrl}/dashboard/billing?success=true`,
       customer_email: params.customerEmail,
       metadata: {
