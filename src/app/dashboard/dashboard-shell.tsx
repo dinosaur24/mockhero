@@ -35,6 +35,7 @@ function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2 px-2 py-1">
+          <img src="/logo.png" alt="" className="h-7 w-7" />
           <span className="font-heading text-sm font-bold tracking-tight">MockHero</span>
         </Link>
       </SidebarHeader>
