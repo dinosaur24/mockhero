@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { EARLY_ADOPTER_LIMIT } from "@/lib/utils/constants";
+import { sendEmail, welcomeEmail, earlyAdopterEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   // 1. Verify webhook signature using Svix
@@ -38,7 +39,8 @@ export async function POST(req: Request) {
 
   // 2. Handle user.created event
   if (evt.type === "user.created") {
-    const { id, first_name, last_name, image_url } = evt.data;
+    const { id, first_name, last_name, image_url, email_addresses } = evt.data;
+    const primaryEmail = email_addresses?.find((e) => e.id === evt.data.primary_email_address_id)?.email_address;
 
     const supabase = createAdminClient();
 
@@ -62,6 +64,18 @@ export async function POST(req: Request) {
     if (error) {
       console.error("Failed to create profile:", error);
       return new Response("Failed to create profile", { status: 500 });
+    }
+
+    // Send emails (fire-and-forget — don't block webhook response)
+    if (primaryEmail) {
+      const displayName = [first_name, last_name].filter(Boolean).join(" ");
+      const signupNumber = (count ?? 0) + 1;
+
+      sendEmail({ to: primaryEmail, subject: "Welcome to MockHero", html: welcomeEmail(displayName) }).catch(() => {});
+
+      if (isEarlyAdopter) {
+        sendEmail({ to: primaryEmail, subject: `You're Early Adopter #${signupNumber}`, html: earlyAdopterEmail(displayName, signupNumber) }).catch(() => {});
+      }
     }
   }
 

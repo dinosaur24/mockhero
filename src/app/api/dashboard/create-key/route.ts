@@ -5,9 +5,10 @@
  */
 
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { generateApiKey } from "@/lib/api/keys"
 import { unauthorizedError, internalError } from "@/lib/api/errors"
+import { sendEmail, apiKeyCreatedEmail } from "@/lib/email"
 
 export async function POST() {
   const { userId } = await auth()
@@ -15,6 +16,16 @@ export async function POST() {
 
   try {
     const { rawKey, keyPrefix } = await generateApiKey(userId)
+
+    // Send notification email (fire-and-forget)
+    clerkClient().then(async (clerk) => {
+      const user = await clerk.users.getUser(userId)
+      const email = user.emailAddresses?.[0]?.emailAddress
+      if (email) {
+        sendEmail({ to: email, subject: "New API Key Created", html: apiKeyCreatedEmail(keyPrefix) }).catch(() => {})
+      }
+    }).catch(() => {})
+
     return NextResponse.json({ rawKey, keyPrefix })
   } catch (err) {
     console.error("Key creation error:", err)

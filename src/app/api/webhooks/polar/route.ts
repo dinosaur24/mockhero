@@ -12,8 +12,21 @@
 
 import { Webhook } from "svix"
 import { headers } from "next/headers"
+import { clerkClient } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { TIER_LIMITS } from "@/lib/utils/constants"
 import type { Tier } from "@/lib/utils/constants"
+import { sendEmail, upgradeConfirmationEmail, downgradeConfirmationEmail } from "@/lib/email"
+
+async function getUserEmail(userId: string): Promise<string | null> {
+  try {
+    const clerk = await clerkClient()
+    const user = await clerk.users.getUser(userId)
+    return user.emailAddresses?.[0]?.emailAddress ?? null
+  } catch {
+    return null
+  }
+}
 
 interface PolarSubscription {
   id: string
@@ -127,6 +140,16 @@ export async function POST(req: Request) {
         .update({ tier })
         .eq("id", userId)
 
+      // Send upgrade email (fire-and-forget)
+      if (tier !== "free") {
+        getUserEmail(userId).then((email) => {
+          if (email) {
+            const dailyLimit = TIER_LIMITS[tier].dailyRecords
+            sendEmail({ to: email, subject: `Upgraded to MockHero ${tier.charAt(0).toUpperCase() + tier.slice(1)}`, html: upgradeConfirmationEmail(tier, dailyLimit) }).catch(() => {})
+          }
+        }).catch(() => {})
+      }
+
       break
     }
 
@@ -144,6 +167,14 @@ export async function POST(req: Request) {
     }
 
     case "subscription.revoked": {
+      // Get previous tier before downgrading
+      const { data: prevProfile } = await supabase
+        .from("profiles")
+        .select("tier")
+        .eq("id", userId)
+        .maybeSingle()
+      const previousTier = prevProfile?.tier ?? "pro"
+
       // Subscription fully ended — revert to free
       await supabase
         .from("subscriptions")
@@ -154,6 +185,13 @@ export async function POST(req: Request) {
         .from("profiles")
         .update({ tier: "free" })
         .eq("id", userId)
+
+      // Send downgrade email (fire-and-forget)
+      getUserEmail(userId).then((email) => {
+        if (email) {
+          sendEmail({ to: email, subject: "Your MockHero plan has changed", html: downgradeConfirmationEmail(previousTier) }).catch(() => {})
+        }
+      }).catch(() => {})
 
       break
     }

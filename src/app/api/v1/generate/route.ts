@@ -25,6 +25,7 @@ import {
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deliverWebhook } from "@/lib/api/webhooks";
 import { TIER_LIMITS, EARLY_ADOPTER_DAILY_RECORDS } from "@/lib/utils/constants";
+import { checkUsageAlerts } from "@/lib/email/usage-alerts";
 
 // Allow up to 30s for large generation requests
 export const maxDuration = 30;
@@ -201,7 +202,10 @@ export async function POST(request: Request) {
       console.error("Usage logging failed:", err);
     });
 
-    // 10. Return response with rate limit headers
+    // 10. Check usage alerts (fire-and-forget — sends warning/limit emails)
+    checkUsageAlerts(user.user_id, rateCheck.dailyUsed, rateCheck.dailyLimit, user.tier).catch(() => {});
+
+    // 11. Return response with rate limit headers
     // Note: All formats (JSON, CSV, SQL) return JSON envelopes, so
     // NextResponse.json() is correct for all cases. The Content-Type
     // is always application/json — CSV/SQL strings are wrapped in the
