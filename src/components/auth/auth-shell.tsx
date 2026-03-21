@@ -46,8 +46,9 @@ export function AuthShell({ children, mode }: AuthShellProps) {
           {/* Logo */}
           <Link
             href="/"
-            className="font-heading text-xl font-bold tracking-tight text-white"
+            className="flex items-center gap-2 font-heading text-xl font-bold tracking-tight text-white"
           >
+            <img src="/logo.png" alt="" className="h-8 w-8" />
             MockHero
           </Link>
 
@@ -134,8 +135,9 @@ export function AuthShell({ children, mode }: AuthShellProps) {
             <div className="lg:hidden text-center mb-10">
               <Link
                 href="/"
-                className="font-heading text-2xl font-bold tracking-tight"
+                className="inline-flex items-center gap-2 font-heading text-2xl font-bold tracking-tight"
               >
+                <img src="/logo.png" alt="" className="h-9 w-9" />
                 MockHero
               </Link>
               <p className="mt-2 text-sm text-muted-foreground">
