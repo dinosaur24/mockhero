@@ -204,7 +204,6 @@ Content-Type: application/json
             <li>Schema detection endpoint (<code className="rounded bg-muted px-1.5 py-0.5 font-mono">POST /schema/detect</code>)</li>
             <li>CSV and SQL output formats</li>
             <li>Seed parameter for reproducibility</li>
-            <li>Priority support (Scale only)</li>
           </ul>
         </div>
       </section>

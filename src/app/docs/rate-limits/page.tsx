@@ -1,5 +1,3 @@
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import {
   Table,
@@ -79,12 +77,6 @@ export default function RateLimitsPage() {
               <TableCell className="font-medium">Schema detection</TableCell>
               <TableCell><span className="text-muted-foreground">No</span></TableCell>
               <TableCell>Yes</TableCell>
-              <TableCell>Yes</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Priority support</TableCell>
-              <TableCell><span className="text-muted-foreground">No</span></TableCell>
-              <TableCell><span className="text-muted-foreground">No</span></TableCell>
               <TableCell>Yes</TableCell>
             </TableRow>
             <TableRow>
@@ -244,52 +236,6 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
         </p>
       </section>
 
-      <Separator />
-
-      {/* Early Adopter */}
-      <section>
-        <h2 id="early-adopter" className="text-2xl font-bold">
-          Early Adopter Program <Badge variant="secondary">Limited</Badge>
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          As part of our launch, the first 100 users who sign up on the Free tier receive
-          10x the standard daily record limit for the first 6 months. This applies
-          automatically and requires no promo code.
-        </p>
-
-        <Table className="mt-4">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Plan</TableHead>
-              <TableHead>Standard Daily</TableHead>
-              <TableHead>Early Adopter Daily</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Free</TableCell>
-              <TableCell>1,000</TableCell>
-              <TableCell>10,000</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        <p className="mt-4 text-sm text-muted-foreground">
-          After the 6-month period, your limits automatically revert to the standard amounts
-          for your plan. You can check your current limits at any time in your dashboard
-          or via the <code className="rounded bg-muted px-1.5 py-0.5 font-mono">X-RateLimit-Limit</code>{" "}
-          response header.
-        </p>
-
-        <div className="mt-6">
-          <Link
-            href="/sign-up"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
-          >
-            Claim your early adopter bonus
-          </Link>
-        </div>
-      </section>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Loader2, ExternalLink, Sparkles } from "lucide-react"
+import { Check, Loader2, ExternalLink } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,7 +22,6 @@ import type { UserSubscription } from "@/lib/api/dashboard-queries"
 
 interface Props {
   tier: Tier
-  isEarlyAdopter: boolean
   subscription: UserSubscription | null
 }
 
@@ -57,7 +56,7 @@ const plans: {
       "100,000 records/day",
       "10,000 records/request",
       "60 requests/min",
-      "Priority support",
+
       "All field types & formats",
     ],
   },
@@ -70,7 +69,7 @@ const plans: {
       "1,000,000 records/day",
       "50,000 records/request",
       "120 requests/min",
-      "Priority support",
+
       "All field types & formats",
     ],
   },
@@ -78,7 +77,7 @@ const plans: {
 
 const tierRank: Record<Tier, number> = { free: 0, pro: 1, scale: 2 }
 
-export default function BillingClient({ tier, isEarlyAdopter, subscription }: Props) {
+export default function BillingClient({ tier, subscription }: Props) {
   const [loadingTier, setLoadingTier] = useState<Tier | null>(null)
   const [canceling, setCanceling] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -146,15 +145,7 @@ export default function BillingClient({ tier, isEarlyAdopter, subscription }: Pr
       {/* Current Plan */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            Current Plan
-            {isEarlyAdopter && (
-              <Badge variant="secondary" className="text-[10px] gap-1">
-                <Sparkles className="h-3 w-3" />
-                Early Adopter · 10x limits
-              </Badge>
-            )}
-          </CardTitle>
+          <CardTitle>Current Plan</CardTitle>
           <CardDescription>
             {tier === "free"
               ? "You're on the free plan. Upgrade to unlock higher limits."
