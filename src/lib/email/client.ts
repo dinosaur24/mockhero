@@ -1,6 +1,6 @@
 const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY!
 const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || "mg.mockhero.dev"
-const MAILGUN_URL = `https://api.eu.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`
+const MAILGUN_URL = `https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`
 
 const FROM = "MockHero <noreply@mg.mockhero.dev>"
 
