@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
@@ -46,8 +46,60 @@ const sidebarSections = [
   },
 ]
 
+/** Collect all hash-based section IDs from the sidebar config */
+function getHashIds(): string[] {
+  return sidebarSections
+    .flatMap((s) => s.links)
+    .filter((l) => l.href.includes("#"))
+    .map((l) => l.href.split("#")[1])
+}
+
+function useActiveSection() {
+  const pathname = usePathname()
+  const [activeHash, setActiveHash] = useState("")
+
+  useEffect(() => {
+    const ids = getHashIds()
+    // Only observe if we're on a page that has hash links (e.g. /docs/api-reference)
+    const hasHashLinks = sidebarSections
+      .flatMap((s) => s.links)
+      .some((l) => l.href.includes("#") && l.href.split("#")[0] === pathname)
+
+    if (!hasHashLinks) {
+      setActiveHash("")
+      return
+    }
+
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[]
+
+    if (elements.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the topmost visible section
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+
+        if (visible.length > 0) {
+          setActiveHash(visible[0].target.id)
+        }
+      },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 }
+    )
+
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [pathname])
+
+  return activeHash
+}
+
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
+  const activeHash = useActiveSection()
 
   return (
     <nav className="flex flex-col gap-6" aria-label="Documentation">
@@ -58,9 +110,18 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           </h4>
           <ul className="flex flex-col gap-0.5">
             {section.links.map((link) => {
-              // Match path without hash for sub-links
               const linkPath = link.href.split("#")[0]
-              const isActive = pathname === linkPath && !link.href.includes("#")
+              const linkHash = link.href.split("#")[1] ?? ""
+
+              let isActive = false
+              if (linkHash) {
+                // Hash link: active when this section is in view
+                isActive = pathname === linkPath && activeHash === linkHash
+              } else {
+                // Page link: active when on that page (and no hash section is active)
+                isActive = pathname === linkPath && !activeHash
+              }
+
               return (
                 <li key={link.href}>
                   <Link
