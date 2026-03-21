@@ -11,7 +11,9 @@
 
 import type { Tier } from "@/lib/utils/constants"
 
-const POLAR_API = "https://api.polar.sh/v1"
+const POLAR_API = process.env.POLAR_SANDBOX === "true"
+  ? "https://sandbox-api.polar.sh/v1"
+  : "https://api.polar.sh/v1"
 
 function getToken(): string {
   const token = process.env.POLAR_ACCESS_TOKEN

@@ -96,7 +96,7 @@ export default function BillingClient({ tier, isEarlyAdopter, subscription }: Pr
         body: JSON.stringify({ tier: targetTier }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? "Checkout failed")
+      if (!res.ok) throw new Error(data.error?.message ?? data.error ?? "Checkout failed")
       window.location.href = data.url
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
@@ -114,7 +114,7 @@ export default function BillingClient({ tier, isEarlyAdopter, subscription }: Pr
         body: JSON.stringify({ action: "cancel" }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? "Cancel failed")
+      if (!res.ok) throw new Error(data.error?.message ?? data.error ?? "Cancel failed")
       window.location.reload()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
