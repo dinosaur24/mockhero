@@ -1,5 +1,8 @@
+"use client"
+
 import Link from "next/link"
 import { Check } from "lucide-react"
+import { useAuth } from "@clerk/nextjs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,7 +24,9 @@ const plans = [
       "All 22 locales",
     ],
     cta: "Start Free",
+    ctaLoggedIn: "Current plan",
     href: "/sign-up",
+    hrefLoggedIn: "/dashboard",
     popular: false,
   },
   {
@@ -39,7 +44,9 @@ const plans = [
       "60 requests/minute",
     ],
     cta: "Get Pro",
+    ctaLoggedIn: "Upgrade to Pro",
     href: "/sign-up",
+    hrefLoggedIn: "/dashboard/billing",
     popular: true,
   },
   {
@@ -57,12 +64,16 @@ const plans = [
       "120 requests/minute",
     ],
     cta: "Get Scale",
+    ctaLoggedIn: "Upgrade to Scale",
     href: "/sign-up",
+    hrefLoggedIn: "/dashboard/billing",
     popular: false,
   },
 ]
 
 export function Pricing() {
+  const { isSignedIn } = useAuth()
+
   return (
     <section id="pricing" className="px-4 md:px-6 py-16 lg:py-24">
       <div className="mx-auto max-w-screen-xl">
@@ -71,7 +82,7 @@ export function Pricing() {
             Simple, transparent pricing
           </h2>
           <p className="mt-4 text-muted-foreground text-lg">
-            Start free, scale as you grow. No hidden fees. Annual plans get 2 months free.
+            Start free, scale as you grow. No hidden fees.
           </p>
         </div>
 
@@ -114,7 +125,9 @@ export function Pricing() {
                   variant={plan.popular ? "default" : "outline"}
                   asChild
                 >
-                  <Link href={plan.href}>{plan.cta}</Link>
+                  <Link href={isSignedIn ? plan.hrefLoggedIn : plan.href}>
+                    {isSignedIn ? plan.ctaLoggedIn : plan.cta}
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
