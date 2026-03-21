@@ -38,3 +38,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# build logs
+build_errors.txt
+build_output.txt
+
+# supabase cli temp
+supabase/.temp/
+
+# lockfile — using npm only
+pnpm-lock.yaml
