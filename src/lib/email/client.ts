@@ -1,8 +1,8 @@
-const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY!
-const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || "mg.mockhero.dev"
-const MAILGUN_URL = `https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`
+const BREVO_API_KEY = process.env.BREVO_API_KEY!
+const BREVO_URL = "https://api.brevo.com/v3/smtp/email"
 
-const FROM = "MockHero <noreply@mg.mockhero.dev>"
+const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || "noreply@mockhero.dev"
+const FROM_NAME = "MockHero"
 
 interface SendEmailOptions {
   to: string
@@ -11,29 +11,29 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
-  if (!MAILGUN_API_KEY) {
-    console.warn("[email] MAILGUN_API_KEY not set, skipping email:", subject)
+  if (!BREVO_API_KEY) {
+    console.warn("[email] BREVO_API_KEY not set, skipping email:", subject)
     return
   }
 
-  const form = new FormData()
-  form.append("from", FROM)
-  form.append("to", to)
-  form.append("subject", subject)
-  form.append("html", html)
-
-  const response = await fetch(MAILGUN_URL, {
+  const response = await fetch(BREVO_URL, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${Buffer.from(`api:${MAILGUN_API_KEY}`).toString("base64")}`,
+      "api-key": BREVO_API_KEY,
+      "Content-Type": "application/json",
     },
-    body: form,
+    body: JSON.stringify({
+      sender: { name: FROM_NAME, email: FROM_EMAIL },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    }),
   })
 
   if (!response.ok) {
     const body = await response.text()
-    console.error("[email] Mailgun error:", response.status, body)
-    throw new Error(`Mailgun error: ${response.status}`)
+    console.error("[email] Brevo error:", response.status, body)
+    throw new Error(`Brevo error: ${response.status}`)
   }
 
   return response.json()
