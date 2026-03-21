@@ -5,12 +5,12 @@ import type { NextConfig } from "next";
 const cspDirectives = [
   "default-src 'self'",
   // unsafe-inline needed for Next.js inline scripts & Clerk; unsafe-eval for dev HMR
-  `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://*.clerk.accounts.dev https://*.mockhero.dev`,
+  `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://*.clerk.accounts.dev https://*.mockhero.dev https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://img.clerk.com",
   "font-src 'self'",
-  "connect-src 'self' https://*.clerk.accounts.dev https://*.mockhero.dev https://*.supabase.co",
-  "frame-src 'self' https://*.clerk.accounts.dev https://*.mockhero.dev",
+  "connect-src 'self' https://*.clerk.accounts.dev https://*.mockhero.dev https://*.supabase.co https://challenges.cloudflare.com",
+  "frame-src 'self' https://*.clerk.accounts.dev https://*.mockhero.dev https://challenges.cloudflare.com",
   "worker-src 'self' blob:",
 ].join("; ");
 
