@@ -57,12 +57,16 @@ export async function POST(req: Request) {
     }
 
     const headerPayload = await headers()
-    const svixId = headerPayload.get("svix-id")
-    const svixTimestamp = headerPayload.get("svix-timestamp")
-    const svixSignature = headerPayload.get("svix-signature")
+    // Polar/Svix may use either "svix-*" or "webhook-*" header prefixes
+    const svixId = headerPayload.get("svix-id") ?? headerPayload.get("webhook-id")
+    const svixTimestamp = headerPayload.get("svix-timestamp") ?? headerPayload.get("webhook-timestamp")
+    const svixSignature = headerPayload.get("svix-signature") ?? headerPayload.get("webhook-signature")
 
     if (!svixId || !svixTimestamp || !svixSignature) {
-      console.error("[Polar webhook] Missing svix headers")
+      // Log all headers for debugging
+      const allHeaders: Record<string, string> = {}
+      headerPayload.forEach((value, key) => { allHeaders[key] = value })
+      console.error("[Polar webhook] Missing headers. Available:", JSON.stringify(allHeaders))
       return ok("missing headers")
     }
 
