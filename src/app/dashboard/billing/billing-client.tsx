@@ -84,17 +84,50 @@ export default function BillingClient({ tier, subscription, justUpgraded }: Prop
   const [loadingTier, setLoadingTier] = useState<Tier | null>(null)
   const [canceling, setCanceling] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false)
+  const [polling, setPolling] = useState(justUpgraded && tier === "free")
 
-  // After returning from checkout, the webhook may not have processed yet.
-  // Auto-refresh every 2s until the tier updates from "free" to paid.
+  // After returning from checkout, poll until tier updates, then show success
   useEffect(() => {
-    if (justUpgraded && tier === "free") {
-      const interval = setInterval(() => {
-        router.refresh()
-      }, 2000)
-      return () => clearInterval(interval)
+    if (!justUpgraded) return
+
+    // Clean the URL immediately so refreshing doesn't re-trigger
+    window.history.replaceState({}, "", "/dashboard/billing")
+
+    if (tier !== "free") {
+      // Webhook already processed — show success briefly
+      setShowUpgradeSuccess(true)
+      setPolling(false)
+      const timeout = setTimeout(() => setShowUpgradeSuccess(false), 5000)
+      return () => clearTimeout(timeout)
+    }
+
+    // Tier is still free — poll for webhook to process
+    setPolling(true)
+    const interval = setInterval(() => {
+      router.refresh()
+    }, 2000)
+
+    // Stop polling after 30s
+    const timeout = setTimeout(() => {
+      clearInterval(interval)
+      setPolling(false)
+    }, 30000)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
     }
   }, [justUpgraded, tier, router])
+
+  // Detect when tier changes from free to paid during polling
+  useEffect(() => {
+    if (polling && tier !== "free") {
+      setPolling(false)
+      setShowUpgradeSuccess(true)
+      setTimeout(() => setShowUpgradeSuccess(false), 5000)
+    }
+  }, [polling, tier])
 
   const currentPlan = plans.find((p) => p.tier === tier)!
   const isCanceling = subscription?.cancel_at_period_end ?? false
@@ -151,14 +184,14 @@ export default function BillingClient({ tier, subscription, justUpgraded }: Prop
         </p>
       </div>
 
-      {justUpgraded && tier === "free" && (
+      {polling && (
         <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
           <Loader2 className="h-4 w-4 animate-spin text-primary" />
           <span>Processing your upgrade... This page will update automatically.</span>
         </div>
       )}
 
-      {justUpgraded && tier !== "free" && (
+      {showUpgradeSuccess && (
         <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/5 px-4 py-3 text-sm text-green-700">
           <CheckCircle2 className="h-4 w-4" />
           <span>You&apos;ve been upgraded to {tier.charAt(0).toUpperCase() + tier.slice(1)}!</span>
