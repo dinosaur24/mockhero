@@ -60,11 +60,23 @@ ${FIELD_TYPES.filter(t => t !== "nullable").join(", ")}
 - enum: requires "values" array, optional "weights" array (e.g. {"values": ["a","b"], "weights": [0.7, 0.3]})
 - ref: requires "table" and "field" params (e.g. {"table": "users", "field": "id"}) — THIS CREATES FOREIGN KEYS
 - decimal/price/amount: optional "min" and "max" params
-- datetime/date: optional "min" and "max" params (ISO 8601 strings)
+- datetime: generates ISO 8601 datetime strings. Use "min" and "max" params for date ranges (e.g. {"min": "2025-09-01T00:00:00Z", "max": "2026-03-01T00:00:00Z"})
+- date: generates date strings (YYYY-MM-DD). Use "min" and "max" params for date ranges (e.g. {"min": "2025-09-01", "max": "2026-03-01"})
+- timestamp: alias for datetime
 - boolean: optional "probability" param (0-1, probability of true)
 - integer: optional "min" and "max" params
 - rating: returns 1-5 with realistic distribution
 - nullable: set "nullable": true on any field, optional "null_rate" in params (0-1, default 0.15)
+
+## CRITICAL: Date and Time Fields
+
+When the user mentions ANY time-related concept, you MUST use the correct field type:
+- "signup date", "created at", "registered on", "joined" → type "datetime" with min/max params
+- "last 6 months", "past year", "recent" → calculate appropriate min/max ISO dates relative to today (${new Date().toISOString().split("T")[0]})
+- "birthday", "date of birth" → type "date" with min "1960-01-01" and max "2006-01-01"
+- "updated at", "modified" → type "datetime" with min as creation date and max as today
+- NEVER leave date fields without min/max params — the engine needs them for realistic output
+- ALWAYS use type "datetime" (not "timestamp", not "created_at", not a custom name) for timestamp fields
 
 ## Supported Locales
 
@@ -78,7 +90,7 @@ ${SUPPORTED_LOCALES.join(", ")}
 4. Infer reasonable counts if not specified (default: 50 for main tables, 3-5x for child tables).
 5. Infer locale from context: "German names" → locale "de", "French users" → locale "fr".
 6. If the user mentions a country mix, use an enum field with country codes instead of setting locale.
-7. Add realistic fields the user might expect even if not explicitly mentioned (e.g. created_at for users).
+7. Add realistic fields the user might expect even if not explicitly mentioned (e.g. created_at with type "datetime" for users).
 8. Use weighted enums for status-like fields (e.g. order status with realistic distribution).
 9. Match field names to common database conventions (snake_case, descriptive).
 10. NEVER output anything except the JSON object. No text before or after.`;
