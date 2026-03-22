@@ -65,6 +65,16 @@ function resolveTier(event: PolarSubscription): Tier {
 }
 
 export async function POST(req: Request) {
+  try {
+  return await handlePolarWebhook(req)
+  } catch (err) {
+    console.error("Polar webhook unhandled error:", err)
+    // Always return 200 to prevent Polar from disabling the webhook
+    return new Response("OK (error logged)", { status: 200 })
+  }
+}
+
+async function handlePolarWebhook(req: Request) {
   // 1. Verify webhook signature
   const secret = process.env.POLAR_WEBHOOK_SECRET
   if (!secret) {
@@ -99,11 +109,22 @@ export async function POST(req: Request) {
 
   // 2. Extract subscription data
   const sub = event.data
-  const userId = sub.metadata?.user_id
+  console.log("Polar webhook received:", event.type, JSON.stringify(sub, null, 2))
+
+  // Try multiple locations for user_id — Polar may put metadata in different places
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawData = sub as any
+  const userId: string | null =
+    sub.metadata?.user_id ??
+    rawData?.customer_metadata?.user_id ??
+    rawData?.checkout?.metadata?.user_id ??
+    null
 
   if (!userId) {
-    console.error("Polar webhook missing user_id in metadata:", event.type)
-    return new Response("Missing user_id metadata", { status: 400 })
+    // If no user_id in metadata, try to resolve by customer email
+    console.error("Polar webhook missing user_id in metadata. Full payload:", JSON.stringify(event))
+    // Still return 200 to prevent Polar from disabling the webhook
+    return new Response("OK (no user_id, skipped)", { status: 200 })
   }
 
   const supabase = createAdminClient()
@@ -131,7 +152,8 @@ export async function POST(req: Request) {
 
       if (subError) {
         console.error("Failed to upsert subscription:", subError)
-        return new Response("DB error", { status: 500 })
+        // Return 200 anyway to prevent Polar from disabling the webhook
+        return new Response("OK (db error logged)", { status: 200 })
       }
 
       // Upgrade profile tier
