@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
     },
   },
 
+  // Rewrite admin.mockhero.dev/* → /admin/*
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/:path*",
+          has: [{ type: "host", value: "admin.mockhero.dev" }],
+          destination: "/admin/:path*",
+        },
+      ],
+    };
+  },
+
   // Security headers for all responses
   async headers() {
     return [
