@@ -78,6 +78,12 @@ export default function RootLayout({
           id="gtm-init"
           strategy="afterInteractive"
         >{`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});`}</Script>
+        <Script
+          src="https://datafa.st/js/script.js"
+          data-website-id="dfid_PYXSi49nZAMBhuQhn2krI"
+          data-domain="mockhero.dev"
+          strategy="afterInteractive"
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <noscript>
