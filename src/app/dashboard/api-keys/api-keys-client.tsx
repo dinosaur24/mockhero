@@ -149,77 +149,123 @@ export default function ApiKeysClient({ initialKeys }: Props) {
             <p className="text-xs text-muted-foreground mb-6">
               Create your first key to start generating test data.
             </p>
-            <Button onClick={handleCreate} disabled={creating}>
+            <Button onClick={handleCreate} disabled={creating} className="min-h-[44px]">
               <Plus className="size-3.5" />
               Create Key
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Last Used</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {keys.map((key) => (
-                  <TableRow
-                    key={key.id}
-                    className={!key.is_active ? "opacity-50" : ""}
-                  >
-                    <TableCell className="font-mono text-muted-foreground">
+        <>
+          {/* Mobile: card layout */}
+          <div className="space-y-3 md:hidden">
+            {keys.map((key) => (
+              <Card key={key.id} className={!key.is_active ? "opacity-50" : ""}>
+                <CardContent className="pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <code className="font-mono text-xs text-muted-foreground">
                       {key.key_prefix}...
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {formatDate(key.created_at)}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground" suppressHydrationWarning>
-                      {formatLastUsed(key.last_used_at)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={key.is_active ? "secondary" : "destructive"}>
-                        {key.is_active ? "Active" : "Revoked"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {key.is_active && (
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleCopy(key.id, key.key_prefix)}
-                          >
-                            {copiedId === key.id ? (
-                              <Check className="size-3" />
-                            ) : (
-                              <Copy className="size-3" />
-                            )}
-                            {copiedId === key.id ? "Copied" : "Copy"}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-muted-foreground hover:text-destructive"
-                            onClick={() => handleRevoke(key.id)}
-                          >
-                            Revoke
-                          </Button>
-                        </div>
-                      )}
-                    </TableCell>
+                    </code>
+                    <Badge variant={key.is_active ? "secondary" : "destructive"}>
+                      {key.is_active ? "Active" : "Revoked"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                    <span>Created {formatDate(key.created_at)}</span>
+                    <span suppressHydrationWarning>Used {formatLastUsed(key.last_used_at)}</span>
+                  </div>
+                  {key.is_active && (
+                    <div className="flex items-center gap-2 pt-2 border-t border-border">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="min-h-[44px] flex-1"
+                        onClick={() => handleCopy(key.id, key.key_prefix)}
+                      >
+                        {copiedId === key.id ? <Check className="size-3" /> : <Copy className="size-3" />}
+                        {copiedId === key.id ? "Copied" : "Copy"}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="min-h-[44px] flex-1 text-muted-foreground hover:text-destructive"
+                        onClick={() => handleRevoke(key.id)}
+                      >
+                        Revoke
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop: table layout */}
+          <Card className="hidden md:block">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Key</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Last Used</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {keys.map((key) => (
+                    <TableRow
+                      key={key.id}
+                      className={!key.is_active ? "opacity-50" : ""}
+                    >
+                      <TableCell className="font-mono text-muted-foreground">
+                        {key.key_prefix}...
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatDate(key.created_at)}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground" suppressHydrationWarning>
+                        {formatLastUsed(key.last_used_at)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={key.is_active ? "secondary" : "destructive"}>
+                          {key.is_active ? "Active" : "Revoked"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {key.is_active && (
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopy(key.id, key.key_prefix)}
+                            >
+                              {copiedId === key.id ? (
+                                <Check className="size-3" />
+                              ) : (
+                                <Copy className="size-3" />
+                              )}
+                              {copiedId === key.id ? "Copied" : "Copy"}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-muted-foreground hover:text-destructive"
+                              onClick={() => handleRevoke(key.id)}
+                            >
+                              Revoke
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   )

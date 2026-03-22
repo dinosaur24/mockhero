@@ -92,7 +92,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             <span className="text-xs text-muted-foreground">Dashboard</span>
           </header>
           <main className="flex-1">
-            <div className="mx-auto max-w-4xl px-6 py-8">
+            <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
               {children}
             </div>
           </main>

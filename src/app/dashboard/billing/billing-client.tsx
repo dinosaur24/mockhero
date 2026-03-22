@@ -237,7 +237,7 @@ export default function BillingClient({ tier, subscription }: Props) {
       {/* Plan Comparison */}
       <div>
         <h2 className="font-heading text-sm font-semibold mb-4">All Plans</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {plans.map((plan) => {
             const isCurrent = plan.tier === tier
             const isUpgrade = tierRank[plan.tier] > tierRank[tier]
@@ -279,18 +279,18 @@ export default function BillingClient({ tier, subscription }: Props) {
                   </ul>
 
                   {isCurrent ? (
-                    <Button variant="outline" size="sm" className="w-full" disabled>
+                    <Button variant="outline" size="sm" className="w-full min-h-[44px]" disabled>
                       Current plan
                     </Button>
                   ) : plan.tier === "free" ? (
                     // Can't "downgrade" to free via checkout — canceling handles that
-                    <Button variant="outline" size="sm" className="w-full" disabled>
+                    <Button variant="outline" size="sm" className="w-full min-h-[44px]" disabled>
                       {tier === "free" ? "Current plan" : "Cancel to downgrade"}
                     </Button>
                   ) : (
                     <Button
                       size="sm"
-                      className="w-full"
+                      className="w-full min-h-[44px]"
                       variant={isUpgrade ? "default" : "outline"}
                       onClick={() => handleCheckout(plan.tier)}
                       disabled={loadingTier !== null}

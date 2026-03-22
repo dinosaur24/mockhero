@@ -100,13 +100,14 @@ export default function UsageClient({ usage }: Props) {
             <CardTitle>Last 7 days</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-end gap-3 h-32">
+            <div className="flex items-end gap-1.5 sm:gap-3 h-32">
               {usage.daily.map((day, i) => (
                 <div
                   key={day.date}
                   className="flex-1 flex flex-col items-center gap-2"
                   onMouseEnter={() => setHoveredBar(i)}
                   onMouseLeave={() => setHoveredBar(null)}
+                  onTouchStart={() => setHoveredBar(i)}
                 >
                   <span
                     className={`text-[10px] tabular-nums transition-opacity ${
@@ -137,48 +138,73 @@ export default function UsageClient({ usage }: Props) {
 
       {/* Recent calls */}
       {usage.recentCalls.length > 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent calls</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Records</TableHead>
-                  <TableHead>Tables</TableHead>
-                  <TableHead>Format</TableHead>
-                  <TableHead className="text-right">Locale</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {usage.recentCalls.map((call) => (
-                  <TableRow key={call.id}>
-                    <TableCell
-                      className="font-mono text-muted-foreground"
-                      suppressHydrationWarning
-                    >
+        <>
+          {/* Mobile: card layout */}
+          <div className="space-y-3 md:hidden">
+            <h3 className="font-heading text-sm font-semibold">Recent calls</h3>
+            {usage.recentCalls.map((call) => (
+              <Card key={call.id}>
+                <CardContent className="pt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-xs text-muted-foreground" suppressHydrationWarning>
                       {formatRelativeTime(call.created_at)}
-                    </TableCell>
-                    <TableCell>
-                      {call.records_generated.toLocaleString()}
-                    </TableCell>
-                    <TableCell>{call.tables_count}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">
-                        {call.format.toUpperCase()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-muted-foreground">
-                      {call.locale}
-                    </TableCell>
+                    </span>
+                    <Badge variant="secondary">{call.format.toUpperCase()}</Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs">
+                    <span><span className="text-muted-foreground">Records:</span> {call.records_generated.toLocaleString()}</span>
+                    <span><span className="text-muted-foreground">Tables:</span> {call.tables_count}</span>
+                    <span className="font-mono text-muted-foreground">{call.locale}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop: table layout */}
+          <Card className="hidden md:block">
+            <CardHeader>
+              <CardTitle>Recent calls</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Records</TableHead>
+                    <TableHead>Tables</TableHead>
+                    <TableHead>Format</TableHead>
+                    <TableHead className="text-right">Locale</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {usage.recentCalls.map((call) => (
+                    <TableRow key={call.id}>
+                      <TableCell
+                        className="font-mono text-muted-foreground"
+                        suppressHydrationWarning
+                      >
+                        {formatRelativeTime(call.created_at)}
+                      </TableCell>
+                      <TableCell>
+                        {call.records_generated.toLocaleString()}
+                      </TableCell>
+                      <TableCell>{call.tables_count}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">
+                          {call.format.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-muted-foreground">
+                        {call.locale}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
