@@ -166,14 +166,14 @@ export async function POST(req: Request) {
           console.log("[Polar webhook] Profile updated to tier:", tier)
         }
 
-        // Send upgrade email (fire-and-forget)
-        if (tier !== "free") {
+        // Only send upgrade email on subscription.created (not .updated to avoid duplicates)
+        if (tier !== "free" && event.type === "subscription.created") {
           getUserEmail(userId).then((email) => {
             if (email) {
               const dailyLimit = TIER_LIMITS[tier].dailyRecords
               sendEmail({
                 to: email,
-                subject: `Upgraded to MockHero ${tier.charAt(0).toUpperCase() + tier.slice(1)}`,
+                subject: `Welcome to MockHero ${tier.charAt(0).toUpperCase() + tier.slice(1)}`,
                 html: upgradeConfirmationEmail(tier, dailyLimit),
               }).catch(() => {})
             }
