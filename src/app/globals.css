@@ -134,17 +134,23 @@
 
 /* Mobile-friendly code blocks */
 @layer components {
-  /* Docs code blocks: tighter on mobile, smooth momentum scroll */
+  /* Docs code blocks: tighter on mobile, smooth momentum scroll, contained */
   article pre {
     -webkit-overflow-scrolling: touch;
     @apply text-xs sm:text-sm;
     @apply p-3 sm:p-4;
     @apply rounded-lg;
+    @apply max-w-full overflow-x-auto;
   }
 
   /* Inline code: prevent layout-breaking long strings on mobile */
   article code {
     word-break: break-word;
+  }
+
+  /* Ensure article content never overflows viewport */
+  article {
+    @apply overflow-x-hidden;
   }
 
   /* Docs headings: scale down on mobile */
