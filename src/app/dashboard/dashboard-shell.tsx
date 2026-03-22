@@ -17,12 +17,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/api-keys", label: "API Keys", icon: Key },
+  { href: "/dashboard/api-keys", label: "Keys", icon: Key },
   { href: "/dashboard/usage", label: "Usage", icon: BarChart3 },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -81,23 +80,65 @@ function AppSidebar() {
   )
 }
 
+function MobileBottomNav() {
+  const pathname = usePathname()
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:hidden">
+      <div className="flex items-center justify-around h-14 px-1">
+        {navItems.map((item) => {
+          const isActive =
+            item.href === "/dashboard"
+              ? pathname === "/dashboard"
+              : pathname.startsWith(item.href)
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] rounded-md transition-colors ${
+                isActive
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground"
+              }`}
+            >
+              <item.icon className="size-5" />
+              <span>{item.label}</span>
+            </Link>
+          )
+        })}
+      </div>
+      {/* Safe area spacing for iPhones with home indicator */}
+      <div className="h-[env(safe-area-inset-bottom)]" />
+    </nav>
+  )
+}
+
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
     <TooltipProvider>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 flex h-12 items-center gap-2 border-b border-sidebar-border px-3 sm:px-4">
-            <SidebarTrigger className="-ml-1" aria-label="Toggle sidebar" />
-            <span className="text-xs text-muted-foreground">Dashboard</span>
-          </header>
-          <main className="flex-1">
-            <div className="mx-auto max-w-4xl px-3 py-4 sm:px-6 sm:py-8">
-              {children}
-            </div>
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
+      {/* Desktop: sidebar layout */}
+      <div className="hidden md:contents">
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <main className="flex-1">
+              <div className="mx-auto max-w-4xl px-6 py-8">
+                {children}
+              </div>
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
+
+      {/* Mobile: bottom nav layout */}
+      <div className="md:hidden flex flex-col min-h-svh">
+        <main className="flex-1">
+          <div className="px-4 py-4 pb-20">
+            {children}
+          </div>
+        </main>
+        <MobileBottomNav />
+      </div>
     </TooltipProvider>
   )
 }
