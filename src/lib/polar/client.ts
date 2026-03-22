@@ -45,9 +45,18 @@ export async function createCheckoutSession(params: {
   tier: Tier
   customerEmail: string
   userId: string
+  datafastVisitorId?: string
+  datafastSessionId?: string
 }): Promise<{ id: string; url: string }> {
   const productId = getProductId(params.tier)
   const appUrl = getAppUrl()
+
+  const metadata: Record<string, string> = {
+    user_id: params.userId,
+    tier: params.tier,
+  }
+  if (params.datafastVisitorId) metadata.datafast_visitor_id = params.datafastVisitorId
+  if (params.datafastSessionId) metadata.datafast_session_id = params.datafastSessionId
 
   const res = await fetch(`${POLAR_API}/checkouts/`, {
     method: "POST",
@@ -59,10 +68,7 @@ export async function createCheckoutSession(params: {
       products: [productId],
       success_url: `${appUrl}/dashboard/billing?success=true`,
       customer_email: params.customerEmail,
-      metadata: {
-        user_id: params.userId,
-        tier: params.tier,
-      },
+      metadata,
     }),
   })
 
