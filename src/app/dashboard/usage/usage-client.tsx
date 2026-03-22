@@ -52,7 +52,7 @@ export default function UsageClient({ usage }: Props) {
       : 0
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <div>
         <h1 className="font-heading text-lg font-semibold">Usage</h1>
         <p className="text-xs text-muted-foreground mt-1">{monthLabel}</p>
@@ -77,7 +77,7 @@ export default function UsageClient({ usage }: Props) {
       </Card>
 
       {/* Aggregate stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {[
           { label: "Total requests", value: usage.totalRequests.toLocaleString() },
           { label: "Total records", value: usage.totalRecords.toLocaleString() },

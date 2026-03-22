@@ -128,7 +128,7 @@ export default function BillingClient({ tier, subscription }: Props) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <div>
         <h1 className="font-heading text-lg font-semibold">Billing</h1>
         <p className="text-xs text-muted-foreground mt-1">

@@ -107,7 +107,7 @@ export default function ApiKeysClient({ initialKeys }: Props) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-lg font-semibold">API Keys</h1>
