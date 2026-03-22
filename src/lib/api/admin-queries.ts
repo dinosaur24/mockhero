@@ -678,7 +678,7 @@ export async function getAdminRevenue(): Promise<AdminRevenue> {
 
   // Fetch display names for subscription holders
   const userIds = [...new Set(activeSubs.map((s) => s.user_id))]
-  let nameMap = new Map<string, string | null>()
+  const nameMap = new Map<string, string | null>()
   if (userIds.length > 0) {
     const { data: profilesData } = await supabase
       .from("profiles")
