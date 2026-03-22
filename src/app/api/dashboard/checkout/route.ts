@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { createCheckoutSession } from "@/lib/polar/client"
 import { unauthorizedError, validationError, internalError } from "@/lib/api/errors"
@@ -34,10 +35,16 @@ export async function POST(request: Request) {
       return validationError("No email address found on account")
     }
 
+    const cookieStore = await cookies()
+    const datafastVisitorId = cookieStore.get("datafast_visitor_id")?.value
+    const datafastSessionId = cookieStore.get("datafast_session_id")?.value
+
     const { url } = await createCheckoutSession({
       tier,
       customerEmail: email,
       userId,
+      datafastVisitorId,
+      datafastSessionId,
     })
 
     return NextResponse.json({ url })
