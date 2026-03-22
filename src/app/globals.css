@@ -131,3 +131,37 @@
     @apply font-sans;
   }
 }
+
+/* Mobile-friendly code blocks */
+@layer components {
+  /* Docs code blocks: tighter on mobile, smooth momentum scroll */
+  article pre {
+    -webkit-overflow-scrolling: touch;
+    @apply text-xs sm:text-sm;
+    @apply p-3 sm:p-4;
+    @apply rounded-lg;
+  }
+
+  /* Inline code: prevent layout-breaking long strings on mobile */
+  article code {
+    word-break: break-word;
+  }
+
+  /* Docs headings: scale down on mobile */
+  article h1 {
+    @apply text-2xl sm:text-3xl;
+  }
+
+  article h2 {
+    @apply text-xl sm:text-2xl;
+  }
+
+  /* Docs section spacing: tighter on mobile */
+  article .space-y-12 {
+    @apply space-y-8 sm:space-y-12;
+  }
+
+  article .space-y-10 {
+    @apply space-y-6 sm:space-y-10;
+  }
+}

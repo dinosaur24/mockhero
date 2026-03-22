@@ -10,11 +10,11 @@ export const metadata = {
 
 export default function DocsOverview() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       {/* Hero */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Documentation</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Documentation</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           MockHero is a developer API that generates realistic, relationally-consistent
           test data in a single call. Describe what you need with a schema, a plain-English
           prompt, or a pre-built template and get back production-quality JSON, CSV, or SQL.
@@ -25,7 +25,7 @@ export default function DocsOverview() {
 
       {/* Quick Start */}
       <section>
-        <h2 id="quick-start" className="text-2xl font-bold">Quick Start</h2>
+        <h2 id="quick-start" className="text-xl sm:text-2xl font-bold">Quick Start</h2>
         <p className="mt-2 text-muted-foreground">
           Get generating in under a minute. You only need an API key and a single HTTP request.
         </p>
@@ -33,7 +33,7 @@ export default function DocsOverview() {
         <div className="mt-6 space-y-4">
           <div className="flex items-start gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</span>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold">Get an API key</p>
               <p className="text-sm text-muted-foreground">
                 Sign up at{" "}
@@ -48,7 +48,7 @@ export default function DocsOverview() {
 
           <div className="flex items-start gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">2</span>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold">Make your first call</p>
               <p className="text-sm text-muted-foreground">
                 Pick one of three input modes below and POST to{" "}
@@ -59,7 +59,7 @@ export default function DocsOverview() {
 
           <div className="flex items-start gap-3">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">3</span>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold">Use the data</p>
               <p className="text-sm text-muted-foreground">
                 Pipe the JSON response into your database seeder, test suite, or frontend prototype.
@@ -73,14 +73,14 @@ export default function DocsOverview() {
 
       {/* Three Input Modes */}
       <section>
-        <h2 id="input-modes" className="text-2xl font-bold">Three Input Modes</h2>
+        <h2 id="input-modes" className="text-xl sm:text-2xl font-bold">Three Input Modes</h2>
         <p className="mt-2 text-muted-foreground">
           MockHero accepts three ways to describe the data you need. Each one hits the same{" "}
           <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">POST /api/v1/generate</code>{" "}
           endpoint.
         </p>
 
-        <div className="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <Card>
             <CardHeader>
               <CardTitle>Schema Mode</CardTitle>
@@ -129,12 +129,12 @@ export default function DocsOverview() {
 
       {/* Schema Mode Example */}
       <section>
-        <h3 id="schema-example" className="text-lg font-semibold">Schema Mode</h3>
+        <h3 id="schema-example" className="text-base sm:text-lg font-semibold">Schema Mode</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Pass a <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">tables</code>{" "}
           array with explicit field definitions.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`curl -X POST https://api.mockhero.dev/api/v1/generate \\
   -H "Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0" \\
   -H "Content-Type: application/json" \\
@@ -158,12 +158,12 @@ export default function DocsOverview() {
 
       {/* Prompt Mode Example */}
       <section>
-        <h3 id="prompt-example" className="text-lg font-semibold">Prompt Mode</h3>
+        <h3 id="prompt-example" className="text-base sm:text-lg font-semibold">Prompt Mode</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Pass a <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">prompt</code>{" "}
           string describing the data you need.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`curl -X POST https://api.mockhero.dev/api/v1/generate \\
   -H "Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0" \\
   -H "Content-Type: application/json" \\
@@ -176,13 +176,13 @@ export default function DocsOverview() {
 
       {/* Template Mode Example */}
       <section>
-        <h3 id="template-example" className="text-lg font-semibold">Template Mode</h3>
+        <h3 id="template-example" className="text-base sm:text-lg font-semibold">Template Mode</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Pass a <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">template</code>{" "}
           name and optional <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">scale</code>{" "}
           multiplier.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`curl -X POST https://api.mockhero.dev/api/v1/generate \\
   -H "Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0" \\
   -H "Content-Type: application/json" \\
@@ -198,11 +198,11 @@ export default function DocsOverview() {
 
       {/* Example Response */}
       <section>
-        <h2 id="example-response" className="text-2xl font-bold">Example Response</h2>
+        <h2 id="example-response" className="text-xl sm:text-2xl font-bold">Example Response</h2>
         <p className="mt-2 text-muted-foreground">
           Every successful response wraps the generated data in a consistent envelope.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "users": [
@@ -235,11 +235,11 @@ export default function DocsOverview() {
 
       {/* Next Steps */}
       <section>
-        <h2 id="next-steps" className="text-2xl font-bold">Next Steps</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <h2 id="next-steps" className="text-xl sm:text-2xl font-bold">Next Steps</h2>
+        <div className="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2">
           <Link
             href="/docs/api-reference"
-            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted"
+            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted active:bg-muted/80 min-h-[44px]"
           >
             <p className="font-semibold group-hover:text-primary">API Reference</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -248,7 +248,7 @@ export default function DocsOverview() {
           </Link>
           <Link
             href="/docs/field-types"
-            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted"
+            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted active:bg-muted/80 min-h-[44px]"
           >
             <p className="font-semibold group-hover:text-primary">Field Types</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -257,7 +257,7 @@ export default function DocsOverview() {
           </Link>
           <Link
             href="/docs/templates"
-            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted"
+            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted active:bg-muted/80 min-h-[44px]"
           >
             <p className="font-semibold group-hover:text-primary">Templates</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -266,7 +266,7 @@ export default function DocsOverview() {
           </Link>
           <Link
             href="/docs/authentication"
-            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted"
+            className="group rounded-lg border border-border p-4 transition-colors hover:bg-muted active:bg-muted/80 min-h-[44px]"
           >
             <p className="font-semibold group-hover:text-primary">Authentication</p>
             <p className="mt-1 text-sm text-muted-foreground">

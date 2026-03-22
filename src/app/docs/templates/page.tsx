@@ -8,23 +8,67 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { ResponsiveTable, MobileCard } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Templates",
   description: "Pre-built data templates for ecommerce, blog, SaaS, and social apps.",
 }
 
+function TemplateTable({
+  rows,
+}: {
+  rows: { table: string; count: number | string; columns: string }[]
+}) {
+  return (
+    <ResponsiveTable
+      mobileCards={
+        <div className="mt-4 space-y-2">
+          {rows.map((row) => (
+            <MobileCard
+              key={row.table}
+              items={[
+                { label: "Table", value: <code className="font-mono text-xs">{row.table}</code> },
+                { label: "Count", value: <span className="text-xs">{row.count}</span> },
+                { label: "Columns", value: <span className="text-xs break-words">{row.columns}</span> },
+              ]}
+            />
+          ))}
+        </div>
+      }
+    >
+      <Table className="mt-4 min-w-[500px]">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Table</TableHead>
+            <TableHead>Default Count</TableHead>
+            <TableHead>Key Columns</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow key={row.table}>
+              <TableCell><code className="font-mono">{row.table}</code></TableCell>
+              <TableCell>{row.count}</TableCell>
+              <TableCell>{row.columns}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </ResponsiveTable>
+  )
+}
+
 export default function TemplatesPage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Templates</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Templates</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           Templates are pre-built schemas for common application types. Pass a template name
           to the generate endpoint and get back a fully relational dataset with sensible
           defaults. Use the{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono">scale</code>{" "}
+          <code className="rounded bg-muted px-1.5 py-0.5 text-xs sm:text-sm font-mono">scale</code>{" "}
           parameter to multiply the default record counts.
         </p>
       </div>
@@ -33,13 +77,35 @@ export default function TemplatesPage() {
 
       {/* Scale Parameter */}
       <section>
-        <h2 id="scale-parameter" className="text-2xl font-bold">Scale Parameter</h2>
+        <h2 id="scale-parameter" className="text-xl sm:text-2xl font-bold">Scale Parameter</h2>
         <p className="mt-2 text-muted-foreground">
           Every template has default record counts per table. The{" "}
           <code className="rounded bg-muted px-1.5 py-0.5 font-mono">scale</code>{" "}
           parameter multiplies all counts proportionally.
         </p>
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-4 space-y-2">
+              {[
+                { scale: "0.1", effect: "10% of default counts (minimum 1 per table)", useCase: "Quick smoke test" },
+                { scale: "1", effect: "Default counts", useCase: "Development and unit tests" },
+                { scale: "5", effect: "5x default counts", useCase: "Integration testing" },
+                { scale: "50", effect: "50x default counts", useCase: "Performance and load testing" },
+                { scale: "100", effect: "Maximum multiplier", useCase: "Stress testing (subject to per-request limits)" },
+              ].map((row) => (
+                <MobileCard
+                  key={row.scale}
+                  items={[
+                    { label: "Scale", value: <code className="font-mono text-xs">{row.scale}</code> },
+                    { label: "Effect", value: <span className="text-xs">{row.effect}</span> },
+                    { label: "Use Case", value: <span className="text-xs">{row.useCase}</span> },
+                  ]}
+                />
+              ))}
+            </div>
+          }
+        >
+          <Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Scale</TableHead>
@@ -74,14 +140,15 @@ export default function TemplatesPage() {
               <TableCell>Stress testing (subject to per-request limits)</TableCell>
             </TableRow>
           </TableBody>
-        </Table></ResponsiveTable>
+        </Table>
+        </ResponsiveTable>
       </section>
 
       <Separator />
 
       {/* Ecommerce */}
       <section>
-        <h2 id="ecommerce" className="text-2xl font-bold">
+        <h2 id="ecommerce" className="text-xl sm:text-2xl font-bold">
           ecommerce <Badge variant="outline">5 tables</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -90,46 +157,19 @@ export default function TemplatesPage() {
           and dates are chronologically ordered.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Table</TableHead>
-              <TableHead>Default Count</TableHead>
-              <TableHead>Key Columns</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell><code className="font-mono">customers</code></TableCell>
-              <TableCell>100</TableCell>
-              <TableCell>id, first_name, last_name, email, phone, address, city, country, postal_code, avatar_url, created_at, updated_at, is_active</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">products</code></TableCell>
-              <TableCell>50</TableCell>
-              <TableCell>id, name, description, category, price, sku, image_url, stock_quantity, created_at, updated_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">orders</code></TableCell>
-              <TableCell>300</TableCell>
-              <TableCell>id, order_number, customer_id (ref), status, total, currency, payment_method, ordered_at, updated_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">order_items</code></TableCell>
-              <TableCell>900</TableCell>
-              <TableCell>id, order_id (ref), product_id (ref), quantity, unit_price</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">reviews</code></TableCell>
-              <TableCell>200</TableCell>
-              <TableCell>id, customer_id (ref), product_id (ref), rating, title, body, created_at</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table></ResponsiveTable>
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Tables and Default Counts</h3>
+        <TemplateTable
+          rows={[
+            { table: "customers", count: 100, columns: "id, first_name, last_name, email, phone, address, city, country, postal_code, avatar_url, created_at, updated_at, is_active" },
+            { table: "products", count: 50, columns: "id, name, description, category, price, sku, image_url, stock_quantity, created_at, updated_at" },
+            { table: "orders", count: 300, columns: "id, order_number, customer_id (ref), status, total, currency, payment_method, ordered_at, updated_at" },
+            { table: "order_items", count: 900, columns: "id, order_id (ref), product_id (ref), quantity, unit_price" },
+            { table: "reviews", count: 200, columns: "id, customer_id (ref), product_id (ref), rating, title, body, created_at" },
+          ]}
+        />
 
-        <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Request</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -141,8 +181,8 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Example Response (truncated)</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Response (truncated)</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "customers": [
@@ -214,7 +254,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* Blog */}
       <section>
-        <h2 id="blog" className="text-2xl font-bold">
+        <h2 id="blog" className="text-xl sm:text-2xl font-bold">
           blog <Badge variant="outline">5 tables</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -222,46 +262,19 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           comments, tags, and a many-to-many join table for post-tag relationships.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Table</TableHead>
-              <TableHead>Default Count</TableHead>
-              <TableHead>Key Columns</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell><code className="font-mono">authors</code></TableCell>
-              <TableCell>30</TableCell>
-              <TableCell>id, country, first_name, last_name, email, username, avatar_url, bio, created_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">posts</code></TableCell>
-              <TableCell>150</TableCell>
-              <TableCell>id, author_id (ref), title, slug, excerpt, content (markdown), featured_image, status, created_at, published_at, updated_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">comments</code></TableCell>
-              <TableCell>600</TableCell>
-              <TableCell>id, post_id (ref), commenter_name, commenter_email, body, is_approved, created_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">tags</code></TableCell>
-              <TableCell>20</TableCell>
-              <TableCell>id, name, slug</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">post_tags</code></TableCell>
-              <TableCell>400</TableCell>
-              <TableCell>id, post_id (ref), tag_id (ref)</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table></ResponsiveTable>
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Tables and Default Counts</h3>
+        <TemplateTable
+          rows={[
+            { table: "authors", count: 30, columns: "id, country, first_name, last_name, email, username, avatar_url, bio, created_at" },
+            { table: "posts", count: 150, columns: "id, author_id (ref), title, slug, excerpt, content (markdown), featured_image, status, created_at, published_at, updated_at" },
+            { table: "comments", count: 600, columns: "id, post_id (ref), commenter_name, commenter_email, body, is_approved, created_at" },
+            { table: "tags", count: 20, columns: "id, name, slug" },
+            { table: "post_tags", count: 400, columns: "id, post_id (ref), tag_id (ref)" },
+          ]}
+        />
 
-        <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Request</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -273,8 +286,8 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Example Response (truncated)</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Response (truncated)</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "authors": [
@@ -338,7 +351,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* SaaS */}
       <section>
-        <h2 id="saas" className="text-2xl font-bold">
+        <h2 id="saas" className="text-xl sm:text-2xl font-bold">
           saas <Badge variant="outline">4 tables</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -346,41 +359,18 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           subscriptions, and invoices with realistic billing data and timestamps.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Table</TableHead>
-              <TableHead>Default Count</TableHead>
-              <TableHead>Key Columns</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell><code className="font-mono">organizations</code></TableCell>
-              <TableCell>20</TableCell>
-              <TableCell>id, name, slug, domain, country, created_at, updated_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">members</code></TableCell>
-              <TableCell>100</TableCell>
-              <TableCell>id, org_id (ref), first_name, last_name, email, role, job_title, avatar_url, invited_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">subscriptions</code></TableCell>
-              <TableCell>20</TableCell>
-              <TableCell>id, org_id (ref), plan, status, interval, amount, currency, current_period_start, current_period_end, trial_end, started_at, updated_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">invoices</code></TableCell>
-              <TableCell>120</TableCell>
-              <TableCell>id, invoice_number, subscription_id (ref), amount, currency, status, issued_at, due_date</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table></ResponsiveTable>
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Tables and Default Counts</h3>
+        <TemplateTable
+          rows={[
+            { table: "organizations", count: 20, columns: "id, name, slug, domain, country, created_at, updated_at" },
+            { table: "members", count: 100, columns: "id, org_id (ref), first_name, last_name, email, role, job_title, avatar_url, invited_at" },
+            { table: "subscriptions", count: 20, columns: "id, org_id (ref), plan, status, interval, amount, currency, current_period_start, current_period_end, trial_end, started_at, updated_at" },
+            { table: "invoices", count: 120, columns: "id, invoice_number, subscription_id (ref), amount, currency, status, issued_at, due_date" },
+          ]}
+        />
 
-        <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Request</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -392,8 +382,8 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Example Response (truncated)</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Response (truncated)</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "organizations": [
@@ -463,7 +453,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* Social */}
       <section>
-        <h2 id="social" className="text-2xl font-bold">
+        <h2 id="social" className="text-xl sm:text-2xl font-bold">
           social <Badge variant="outline">5 tables</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -471,46 +461,19 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           and direct messages. Follows and likes reference valid users and posts.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Table</TableHead>
-              <TableHead>Default Count</TableHead>
-              <TableHead>Key Columns</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell><code className="font-mono">users</code></TableCell>
-              <TableCell>150</TableCell>
-              <TableCell>id, country, username, first_name, last_name, email, avatar_url, display_name, bio, is_verified, created_at, updated_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">posts</code></TableCell>
-              <TableCell>600</TableCell>
-              <TableCell>id, user_id (ref), content, hashtag, created_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">likes</code></TableCell>
-              <TableCell>3000</TableCell>
-              <TableCell>id, user_id (ref), post_id (ref), created_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">follows</code></TableCell>
-              <TableCell>2000</TableCell>
-              <TableCell>id, follower_id (ref users), following_id (ref users), created_at</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell><code className="font-mono">messages</code></TableCell>
-              <TableCell>1000</TableCell>
-              <TableCell>id, sender_id (ref), receiver_id (ref), body, is_read, sent_at</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table></ResponsiveTable>
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Tables and Default Counts</h3>
+        <TemplateTable
+          rows={[
+            { table: "users", count: 150, columns: "id, country, username, first_name, last_name, email, avatar_url, display_name, bio, is_verified, created_at, updated_at" },
+            { table: "posts", count: 600, columns: "id, user_id (ref), content, hashtag, created_at" },
+            { table: "likes", count: 3000, columns: "id, user_id (ref), post_id (ref), created_at" },
+            { table: "follows", count: 2000, columns: "id, follower_id (ref users), following_id (ref users), created_at" },
+            { table: "messages", count: 1000, columns: "id, sender_id (ref), receiver_id (ref), body, is_read, sent_at" },
+          ]}
+        />
 
-        <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Request</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -522,8 +485,8 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Example Response (truncated)</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Response (truncated)</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "users": [
