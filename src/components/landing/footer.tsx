@@ -15,11 +15,11 @@ const footerLinks = {
     { label: "API Reference", href: "/docs/api-reference" },
     { label: "Playground", href: "/#playground" },
   ],
-  /* Placeholder links — update hrefs when pages are live */
   legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
-    { label: "Security", href: "#" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms of Service", href: "/terms-of-service" },
+    { label: "Cookie Policy", href: "/cookie-policy" },
+    { label: "Refund Policy", href: "/refund-policy" },
   ],
 }
 
@@ -76,7 +76,7 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-3">
             <Link
-              href="https://x.com/mockhero"
+              href="https://x.com/mockherodev"
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="X"
             >
