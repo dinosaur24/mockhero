@@ -21,7 +21,7 @@ export function emailLayout(content: string): string {
           <tr>
             <td style="padding:0 0 32px 0;">
               <a href="${APP_URL}" style="text-decoration:none;color:#0f172a;font-size:20px;font-weight:700;letter-spacing:-0.02em;">
-                MockHero
+                <img src="${APP_URL}/logo.png" alt="" width="24" height="24" style="vertical-align:middle;margin-right:8px;border-radius:4px;" />MockHero
               </a>
             </td>
           </tr>
