@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Copy, Check, ArrowRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,14 @@ interface Props {
 
 export default function OverviewClient({ stats, keyPrefix }: Props) {
   const [copied, setCopied] = useState(false)
+
+  // Fire signup goal once for new users arriving at the dashboard for the first time
+  useEffect(() => {
+    if (stats.requestsToday === 0 && stats.activeKeys <= 1 && !sessionStorage.getItem("df_signup_tracked")) {
+      sessionStorage.setItem("df_signup_tracked", "1")
+      window.datafast?.("signed_up")
+    }
+  }, [])
 
   const keyDisplay = keyPrefix ?? "mh_xxxxx"
 

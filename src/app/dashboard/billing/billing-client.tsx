@@ -88,6 +88,7 @@ export default function BillingClient({ tier, subscription }: Props) {
   async function handleCheckout(targetTier: Tier) {
     setLoadingTier(targetTier)
     setError(null)
+    window.datafast?.("initiate_checkout", { plan: targetTier, current_plan: tier })
     try {
       const res = await fetch("/api/dashboard/checkout", {
         method: "POST",
