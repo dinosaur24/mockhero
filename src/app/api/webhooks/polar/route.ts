@@ -198,7 +198,7 @@ export async function POST(req: Request) {
 
     default:
       // Unknown event — acknowledge but ignore
-      console.log("Unhandled Polar event:", event.type)
+      console.warn("Unhandled Polar event:", event.type)
   }
 
   return new Response("OK", { status: 200 })

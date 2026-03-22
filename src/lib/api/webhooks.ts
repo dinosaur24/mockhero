@@ -131,10 +131,6 @@ export async function deliverWebhook(
         console.warn(
           `Webhook delivery ${deliveryId} to ${wh.url} rejected: ${result.status}`
         );
-      } else {
-        console.log(
-          `Webhook delivery ${deliveryId} to ${wh.url}: ${result.status}`
-        );
       }
     }
   );

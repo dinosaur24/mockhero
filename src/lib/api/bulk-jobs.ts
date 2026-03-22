@@ -3,10 +3,7 @@
  * Reads a pending bulk_job from Supabase, runs the generation pipeline,
  * and writes the result (or error) back to the row.
  *
- * NOTE: This module is not yet wired to any route handler.
- * It will be consumed by a future POST /api/v1/bulk endpoint
- * that accepts large generation requests and processes them asynchronously.
- * See: https://github.com/mockhero/mockhero/issues/XXX
+ * Consumed by POST /api/v1/generate/async for Scale-tier users.
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";

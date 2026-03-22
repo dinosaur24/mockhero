@@ -79,12 +79,6 @@ export default function RateLimitsPage() {
               <TableCell>Yes</TableCell>
               <TableCell>Yes</TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Team access</TableCell>
-              <TableCell><span className="text-muted-foreground">No</span></TableCell>
-              <TableCell><span className="text-muted-foreground">No</span></TableCell>
-              <TableCell>Coming soon</TableCell>
-            </TableRow>
           </TableBody>
         </Table>
       </section>
