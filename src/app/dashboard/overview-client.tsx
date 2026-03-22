@@ -95,7 +95,7 @@ export default function OverviewClient({ stats, keyPrefix }: Props) {
           <CardDescription>Make your first API call</CardDescription>
         </CardHeader>
         <CardContent>
-          <pre className="rounded-md bg-muted p-4 text-xs font-mono leading-relaxed overflow-x-auto">
+          <pre className="rounded-md bg-muted p-3 sm:p-4 text-[11px] sm:text-xs font-mono leading-relaxed overflow-x-auto">
             <span className="text-primary">curl -X POST</span>{" "}
             <span className="text-foreground">https://mockhero.dev/api/v1/generate</span>{" \\\n"}
             {"  "}<span className="text-muted-foreground">-H</span>{" "}
