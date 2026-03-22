@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -14,6 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
 });
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   title: "MockHero — Synthetic Test Data API",
