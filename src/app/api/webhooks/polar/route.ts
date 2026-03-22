@@ -4,7 +4,7 @@
  * CRITICAL: Always returns 200 to prevent Polar from disabling the endpoint.
  */
 
-import { Webhook } from "svix"
+import { Webhook } from "standardwebhooks"
 import { headers } from "next/headers"
 import { clerkClient } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/admin"
@@ -75,9 +75,9 @@ export async function POST(req: Request) {
     try {
       const wh = new Webhook(secret)
       event = wh.verify(rawBody, {
-        "svix-id": svixId,
-        "svix-timestamp": svixTimestamp,
-        "svix-signature": svixSignature,
+        "webhook-id": svixId,
+        "webhook-timestamp": svixTimestamp,
+        "webhook-signature": svixSignature,
       }) as { type: string; data: Record<string, unknown> }
     } catch (err) {
       console.error("[Polar webhook] Signature verification failed:", err)
