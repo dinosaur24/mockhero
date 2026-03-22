@@ -150,8 +150,8 @@ export interface SystemSettings {
 
 // ─── Helpers ────────────────────────────────────────
 
-const PRO_PRICE = 29
-const SCALE_PRICE = 79
+const PRO_PRICE = 19
+const SCALE_PRICE = 59
 
 function toISODate(d: Date): string {
   return d.toISOString().slice(0, 10)

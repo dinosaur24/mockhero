@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { Check, Loader2, ExternalLink } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { Check, Loader2, ExternalLink, CheckCircle2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -23,6 +24,7 @@ import type { UserSubscription } from "@/lib/api/dashboard-queries"
 interface Props {
   tier: Tier
   subscription: UserSubscription | null
+  justUpgraded?: boolean
 }
 
 const plans: {
@@ -77,10 +79,22 @@ const plans: {
 
 const tierRank: Record<Tier, number> = { free: 0, pro: 1, scale: 2 }
 
-export default function BillingClient({ tier, subscription }: Props) {
+export default function BillingClient({ tier, subscription, justUpgraded }: Props) {
+  const router = useRouter()
   const [loadingTier, setLoadingTier] = useState<Tier | null>(null)
   const [canceling, setCanceling] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // After returning from checkout, the webhook may not have processed yet.
+  // Auto-refresh every 2s until the tier updates from "free" to paid.
+  useEffect(() => {
+    if (justUpgraded && tier === "free") {
+      const interval = setInterval(() => {
+        router.refresh()
+      }, 2000)
+      return () => clearInterval(interval)
+    }
+  }, [justUpgraded, tier, router])
 
   const currentPlan = plans.find((p) => p.tier === tier)!
   const isCanceling = subscription?.cancel_at_period_end ?? false
@@ -136,6 +150,20 @@ export default function BillingClient({ tier, subscription }: Props) {
           Manage your subscription and billing
         </p>
       </div>
+
+      {justUpgraded && tier === "free" && (
+        <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <span>Processing your upgrade... This page will update automatically.</span>
+        </div>
+      )}
+
+      {justUpgraded && tier !== "free" && (
+        <div className="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/5 px-4 py-3 text-sm text-green-700">
+          <CheckCircle2 className="h-4 w-4" />
+          <span>You&apos;ve been upgraded to {tier.charAt(0).toUpperCase() + tier.slice(1)}!</span>
+        </div>
+      )}
 
       {error && (
         <div className="rounded-md border border-destructive/50 bg-destructive/5 px-4 py-3 text-sm text-destructive">
