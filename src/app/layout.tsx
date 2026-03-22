@@ -80,6 +80,7 @@ export default function RootLayout({
           id="gtm-init"
           strategy="afterInteractive"
         >{`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});`}</Script>
+        <Script id="datafast-queue" strategy="beforeInteractive">{`window.datafast=window.datafast||function(){window.datafast.q=window.datafast.q||[];window.datafast.q.push(arguments);};`}</Script>
         <Script
           src="https://datafa.st/js/script.js"
           data-website-id="dfid_PYXSi49nZAMBhuQhn2krI"

@@ -125,7 +125,12 @@ export function Pricing() {
                   variant={plan.popular ? "default" : "outline"}
                   asChild
                 >
-                  <Link href={isSignedIn ? plan.hrefLoggedIn : plan.href}>
+                  <Link
+                    href={isSignedIn ? plan.hrefLoggedIn : plan.href}
+                    data-fast-goal="click_pricing_cta"
+                    data-fast-goal-plan={plan.name.toLowerCase()}
+                    data-fast-goal-location="pricing"
+                  >
                     {isSignedIn ? plan.ctaLoggedIn : plan.cta}
                   </Link>
                 </Button>

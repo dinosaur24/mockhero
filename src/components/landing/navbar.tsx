@@ -64,10 +64,10 @@ export function Navbar() {
           ) : (
             <>
               <Button variant="ghost" className="h-10 px-5 text-sm" asChild>
-                <Link href="/sign-in">Sign in</Link>
+                <Link href="/sign-in" data-fast-goal="click_sign_in" data-fast-goal-location="navbar">Sign in</Link>
               </Button>
               <Button className="h-10 px-5 text-sm" asChild>
-                <Link href="/sign-up">Get API Key</Link>
+                <Link href="/sign-up" data-fast-goal="click_get_api_key" data-fast-goal-location="navbar">Get API Key</Link>
               </Button>
             </>
           )}
@@ -105,10 +105,10 @@ export function Navbar() {
             ) : (
               <>
                 <Button variant="ghost" size="sm" className="justify-start" asChild>
-                  <Link href="/sign-in" onClick={() => setMobileOpen(false)}>Sign in</Link>
+                  <Link href="/sign-in" onClick={() => setMobileOpen(false)} data-fast-goal="click_sign_in" data-fast-goal-location="navbar_mobile">Sign in</Link>
                 </Button>
                 <Button size="sm" asChild>
-                  <Link href="/sign-up" onClick={() => setMobileOpen(false)}>Get API Key</Link>
+                  <Link href="/sign-up" onClick={() => setMobileOpen(false)} data-fast-goal="click_get_api_key" data-fast-goal-location="navbar_mobile">Get API Key</Link>
                 </Button>
               </>
             )}

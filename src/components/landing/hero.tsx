@@ -57,13 +57,13 @@ export function Hero() {
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="h-12 px-8 text-base" asChild>
-                <Link href="/sign-up">
+                <Link href="/sign-up" data-fast-goal="click_get_api_key" data-fast-goal-location="hero">
                   Get Free API Key
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="h-12 px-8 text-base" asChild>
-                <Link href="#playground">Try the Playground</Link>
+                <Link href="#playground" data-fast-goal="click_playground" data-fast-goal-location="hero">Try the Playground</Link>
               </Button>
             </div>
 
