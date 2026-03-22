@@ -22,9 +22,15 @@ export async function POST() {
       const user = await clerk.users.getUser(userId)
       const email = user.emailAddresses?.[0]?.emailAddress
       if (email) {
-        sendEmail({ to: email, subject: "New API Key Created", html: apiKeyCreatedEmail(keyPrefix) }).catch(() => {})
+        console.log("[create-key] Sending API key email to:", email)
+        await sendEmail({ to: email, subject: "New API Key Created", html: apiKeyCreatedEmail(keyPrefix) })
+        console.log("[create-key] Email sent successfully")
+      } else {
+        console.warn("[create-key] No email found for user:", userId)
       }
-    }).catch(() => {})
+    }).catch((err) => {
+      console.error("[create-key] Failed to send email:", err)
+    })
 
     return NextResponse.json({ rawKey, keyPrefix })
   } catch (err) {
