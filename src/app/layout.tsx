@@ -3,6 +3,7 @@ import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { StructuredData } from "@/components/structured-data";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -69,6 +70,7 @@ export default function RootLayout({
       )}
     >
       <head>
+        <StructuredData />
         <Script
           id="gtm-script"
           strategy="afterInteractive"
