@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { ResponsiveTable, MobileCard } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Field Types",
@@ -21,7 +21,41 @@ function TypeTable({
   types: { name: string; description: string; params: string; example: string }[]
 }) {
   return (
-    <ResponsiveTable>
+    <ResponsiveTable
+      mobileCards={
+        <div className="mt-4 space-y-2">
+          {types.map((t) => (
+            <MobileCard
+              key={t.name}
+              items={[
+                {
+                  label: "Type",
+                  value: (
+                    <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                      {t.name}
+                    </code>
+                  ),
+                },
+                { label: "Description", value: <span className="text-xs">{t.description}</span> },
+                {
+                  label: "Params",
+                  value:
+                    t.params === "—" ? (
+                      <span className="text-muted-foreground text-xs">—</span>
+                    ) : (
+                      <code className="font-mono text-xs">{t.params}</code>
+                    ),
+                },
+                {
+                  label: "Example",
+                  value: <code className="font-mono text-xs break-all">{t.example}</code>,
+                },
+              ]}
+            />
+          ))}
+        </div>
+      }
+    >
       <Table className="mt-4 min-w-[600px]">
         <TableHeader>
           <TableRow>
@@ -50,14 +84,14 @@ function TypeTable({
 
 export default function FieldTypesPage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Field Types</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Field Types</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           MockHero supports 156 field types organized into 8 categories. Use the{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono">type</code>{" "}
+          <code className="rounded bg-muted px-1.5 py-0.5 text-xs sm:text-sm font-mono">type</code>{" "}
           value in your column definition to select a generator. Many types accept optional{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono">params</code>{" "}
+          <code className="rounded bg-muted px-1.5 py-0.5 text-xs sm:text-sm font-mono">params</code>{" "}
           for fine-tuning.
         </p>
       </div>
@@ -66,7 +100,7 @@ export default function FieldTypesPage() {
 
       {/* Identity */}
       <section>
-        <h2 id="identity" className="text-2xl font-bold">Identity</h2>
+        <h2 id="identity" className="text-xl sm:text-2xl font-bold">Identity</h2>
         <p className="mt-2 text-muted-foreground">
           People-related fields. All name fields are locale-aware and will produce culturally
           appropriate names when a locale is specified.
@@ -90,7 +124,7 @@ export default function FieldTypesPage() {
 
       {/* Location */}
       <section>
-        <h2 id="location" className="text-2xl font-bold">Location</h2>
+        <h2 id="location" className="text-xl sm:text-2xl font-bold">Location</h2>
         <p className="mt-2 text-muted-foreground">
           Geographic and address fields. Locale-aware where applicable.
         </p>
@@ -112,7 +146,7 @@ export default function FieldTypesPage() {
 
       {/* Business */}
       <section>
-        <h2 id="business" className="text-2xl font-bold">Business</h2>
+        <h2 id="business" className="text-xl sm:text-2xl font-bold">Business</h2>
         <p className="mt-2 text-muted-foreground">
           Commerce, finance, and organizational data.
         </p>
@@ -138,7 +172,7 @@ export default function FieldTypesPage() {
 
       {/* Temporal */}
       <section>
-        <h2 id="temporal" className="text-2xl font-bold">Temporal</h2>
+        <h2 id="temporal" className="text-xl sm:text-2xl font-bold">Temporal</h2>
         <p className="mt-2 text-muted-foreground">
           Date, time, and duration fields.
         </p>
@@ -158,7 +192,7 @@ export default function FieldTypesPage() {
 
       {/* Technical */}
       <section>
-        <h2 id="technical" className="text-2xl font-bold">Technical</h2>
+        <h2 id="technical" className="text-xl sm:text-2xl font-bold">Technical</h2>
         <p className="mt-2 text-muted-foreground">
           IDs, network, and system-level data types.
         </p>
@@ -181,7 +215,7 @@ export default function FieldTypesPage() {
 
       {/* Content */}
       <section>
-        <h2 id="content" className="text-2xl font-bold">Content</h2>
+        <h2 id="content" className="text-xl sm:text-2xl font-bold">Content</h2>
         <p className="mt-2 text-muted-foreground">
           Text, media, and content-generation fields.
         </p>
@@ -204,7 +238,7 @@ export default function FieldTypesPage() {
 
       {/* Logic */}
       <section>
-        <h2 id="logic" className="text-2xl font-bold">Logic</h2>
+        <h2 id="logic" className="text-xl sm:text-2xl font-bold">Logic</h2>
         <p className="mt-2 text-muted-foreground">
           Structural and control types for building complex schemas.
         </p>
@@ -219,7 +253,7 @@ export default function FieldTypesPage() {
           ]}
         />
 
-        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Using ref for relationships</p>
           <p className="mt-1 text-muted-foreground">
             The <code className="rounded bg-muted px-1.5 py-0.5 font-mono">ref</code> type creates
@@ -240,7 +274,7 @@ export default function FieldTypesPage() {
 
       {/* Security Testing */}
       <section>
-        <h2 id="security-testing" className="text-2xl font-bold">
+        <h2 id="security-testing" className="text-xl sm:text-2xl font-bold">
           Security Testing <Badge variant="secondary">Testing</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -255,7 +289,7 @@ export default function FieldTypesPage() {
           ]}
         />
 
-        <div className="mt-6 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
+        <div className="mt-6 rounded-lg border border-destructive/30 bg-destructive/5 p-3 sm:p-4 text-sm">
           <p className="font-semibold text-destructive">Warning</p>
           <p className="mt-1 text-muted-foreground">
             Security testing types generate intentionally malicious strings. Only use them
@@ -269,33 +303,33 @@ export default function FieldTypesPage() {
 
       {/* Using Params */}
       <section>
-        <h2 id="using-params" className="text-2xl font-bold">Using Params</h2>
+        <h2 id="using-params" className="text-xl sm:text-2xl font-bold">Using Params</h2>
         <p className="mt-2 text-muted-foreground">
           Many field types accept a <code className="rounded bg-muted px-1.5 py-0.5 font-mono">params</code>{" "}
           object for customization. Here are common patterns.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Numeric Ranges</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Numeric Ranges</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{ "name": "price", "type": "price", "params": { "min": 9.99, "max": 499.99 } }
 { "name": "quantity", "type": "integer", "params": { "min": 1, "max": 100 } }
 { "name": "score", "type": "rating", "params": { "min": 1, "max": 5, "precision": 1 } }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Enum Values</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Enum Values</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{ "name": "status", "type": "enum", "params": { "values": ["pending", "active", "suspended"] } }
 { "name": "role",   "type": "enum", "params": { "values": ["admin", "editor", "viewer"] } }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Date Ranges</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Date Ranges</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{ "name": "created_at", "type": "datetime", "params": { "min": "2024-01-01", "max": "2025-12-31" } }
 { "name": "birthday",   "type": "date_of_birth", "params": { "min_age": 18, "max_age": 65 } }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Foreign Keys</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Foreign Keys</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{ "name": "user_id",    "type": "ref", "params": { "table": "users", "field": "id" } }
 { "name": "product_id", "type": "ref", "params": { "table": "products", "field": "id" } }`}
         </pre>

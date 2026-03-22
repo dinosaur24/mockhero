@@ -17,10 +17,10 @@ export const metadata = {
 
 export default function ApiReferencePage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">API Reference</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">API Reference</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           All endpoints live under{" "}
           <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono">
             https://api.mockhero.dev/api/v1
@@ -35,8 +35,8 @@ export default function ApiReferencePage() {
 
       {/* Base URL */}
       <section>
-        <h2 id="base-url" className="text-2xl font-bold">Base URL</h2>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h2 id="base-url" className="text-xl sm:text-2xl font-bold">Base URL</h2>
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`https://api.mockhero.dev/api/v1`}
         </pre>
       </section>
@@ -45,7 +45,7 @@ export default function ApiReferencePage() {
 
       {/* ── POST /generate ── */}
       <section>
-        <h2 id="generate" className="text-2xl font-bold">
+        <h2 id="generate" className="text-xl sm:text-2xl font-bold">
           POST /generate <Badge variant="outline">Core</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -54,7 +54,7 @@ export default function ApiReferencePage() {
         </p>
 
         {/* Common Parameters */}
-        <h3 id="generate-common" className="mt-8 text-lg font-semibold">Common Parameters</h3>
+        <h3 id="generate-common" className="mt-8 text-base sm:text-lg font-semibold">Common Parameters</h3>
         <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
@@ -93,7 +93,7 @@ export default function ApiReferencePage() {
         </Table></ResponsiveTable>
 
         {/* Schema Mode */}
-        <h3 id="schema-mode" className="mt-10 text-lg font-semibold">Schema Mode</h3>
+        <h3 id="schema-mode" className="mt-10 text-base sm:text-lg font-semibold">Schema Mode</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Pass a <code className="rounded bg-muted px-1.5 py-0.5 font-mono">tables</code> array
           with explicit field definitions for full control.
@@ -155,7 +155,7 @@ export default function ApiReferencePage() {
         </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -179,7 +179,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "products": [
@@ -201,7 +201,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         {/* Prompt Mode */}
-        <h3 id="prompt-mode" className="mt-10 text-lg font-semibold">Prompt Mode</h3>
+        <h3 id="prompt-mode" className="mt-10 text-base sm:text-lg font-semibold">Prompt Mode</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Describe the data you need in plain English. MockHero infers the schema, generates
           the data, and returns the inferred schema alongside the results.
@@ -227,7 +227,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -239,7 +239,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "data": {
     "authors": [
@@ -269,7 +269,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         {/* Template Mode */}
-        <h3 id="template-mode" className="mt-10 text-lg font-semibold">Template Mode</h3>
+        <h3 id="template-mode" className="mt-10 text-base sm:text-lg font-semibold">Template Mode</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Use a pre-built template for common data shapes. See{" "}
           <a href="/docs/templates" className="text-primary underline underline-offset-4">Templates</a>{" "}
@@ -302,7 +302,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -319,7 +319,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* ── GET /types ── */}
       <section>
-        <h2 id="types" className="text-2xl font-bold">
+        <h2 id="types" className="text-xl sm:text-2xl font-bold">
           GET /types
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -328,12 +328,12 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`GET /api/v1/types`}
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response (truncated)</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "identity": {
     "first_name": {
@@ -359,7 +359,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* ── GET /templates ── */}
       <section>
-        <h2 id="templates-endpoint" className="text-2xl font-bold">
+        <h2 id="templates-endpoint" className="text-xl sm:text-2xl font-bold">
           GET /templates
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -367,12 +367,12 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`GET /api/v1/templates`}
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "templates": [
     {
@@ -412,7 +412,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* ── POST /schema/detect ── */}
       <section>
-        <h2 id="schema-detect" className="text-2xl font-bold">
+        <h2 id="schema-detect" className="text-xl sm:text-2xl font-bold">
           POST /schema/detect <Badge variant="secondary">Pro+</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -447,7 +447,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/schema/detect
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -458,7 +458,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "schema": {
     "tables": [
@@ -481,7 +481,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* ── POST /generate/async ── */}
       <section>
-        <h2 id="generate-async" className="text-2xl font-bold">
+        <h2 id="generate-async" className="text-xl sm:text-2xl font-bold">
           POST /generate/async <Badge variant="secondary">Scale</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -491,7 +491,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/generate/async
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -504,7 +504,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response (202 Accepted)</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "job_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
   "status": "pending",
@@ -546,7 +546,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
       {/* ── GET /jobs/:id ── */}
       <section>
-        <h2 id="jobs" className="text-2xl font-bold">
+        <h2 id="jobs" className="text-xl sm:text-2xl font-bold">
           GET /jobs/:id <Badge variant="secondary">Scale</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -555,13 +555,13 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`GET /api/v1/jobs/f47ac10b-58cc-4372-a567-0e02b2c3d479
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response (completed)</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "job_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
   "status": "completed",
@@ -606,7 +606,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
 
       {/* ── Webhooks ── */}
       <section>
-        <h2 id="webhooks" className="text-2xl font-bold">
+        <h2 id="webhooks" className="text-xl sm:text-2xl font-bold">
           Webhooks <Badge variant="secondary">Scale</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
@@ -615,13 +615,13 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
           verification.
         </p>
 
-        <h3 id="create-webhook" className="mt-8 text-lg font-semibold">POST /webhooks</h3>
+        <h3 id="create-webhook" className="mt-8 text-base sm:text-lg font-semibold">POST /webhooks</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Register a webhook endpoint. The secret is returned only once — store it securely.
         </p>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/webhooks
 Content-Type: application/json
 Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
@@ -633,7 +633,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "id": "a1b2c3d4-...",
   "url": "https://your-app.com/api/mockhero-webhook",
@@ -642,17 +642,17 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 }`}
         </pre>
 
-        <h3 id="list-webhooks" className="mt-8 text-lg font-semibold">GET /webhooks</h3>
+        <h3 id="list-webhooks" className="mt-8 text-base sm:text-lg font-semibold">GET /webhooks</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           List all active webhooks. Secrets are not returned in the list response.
         </p>
 
-        <h3 id="delete-webhook" className="mt-8 text-lg font-semibold">DELETE /webhooks/:id</h3>
+        <h3 id="delete-webhook" className="mt-8 text-base sm:text-lg font-semibold">DELETE /webhooks/:id</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Remove a webhook. It will no longer receive deliveries.
         </p>
 
-        <h3 id="webhook-payload" className="mt-8 text-lg font-semibold">Webhook Payload</h3>
+        <h3 id="webhook-payload" className="mt-8 text-base sm:text-lg font-semibold">Webhook Payload</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Each delivery is a POST to your URL with these headers:
         </p>
@@ -681,7 +681,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Verifying Signatures</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`import crypto from "crypto";
 
 function verifyWebhook(body: string, signature: string, secret: string): boolean {
@@ -695,18 +695,18 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
 
       {/* ── GET /health ── */}
       <section>
-        <h2 id="health" className="text-2xl font-bold">GET /health</h2>
+        <h2 id="health" className="text-xl sm:text-2xl font-bold">GET /health</h2>
         <p className="mt-2 text-muted-foreground">
           Public endpoint (no auth required) that returns API status. Useful for uptime monitoring.
         </p>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`GET /api/v1/health`}
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Response</h4>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "status": "ok",
   "version": "0.1.0",
@@ -719,7 +719,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
 
       {/* Response Headers */}
       <section>
-        <h2 id="response-headers" className="text-2xl font-bold">Response Headers</h2>
+        <h2 id="response-headers" className="text-xl sm:text-2xl font-bold">Response Headers</h2>
         <p className="mt-2 text-muted-foreground">
           Every authenticated response includes rate-limit headers so you can track usage programmatically.
         </p>
@@ -756,7 +756,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
 
       {/* Error Codes */}
       <section>
-        <h2 id="error-codes" className="text-2xl font-bold">Error Codes</h2>
+        <h2 id="error-codes" className="text-xl sm:text-2xl font-bold">Error Codes</h2>
         <p className="mt-2 text-muted-foreground">
           See the full <a href="/docs/errors" className="text-primary underline underline-offset-4">Error Codes</a>{" "}
           page for detailed examples. Here is a summary.
@@ -812,7 +812,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
         <p className="mt-4 text-sm text-muted-foreground">
           All error responses follow a consistent envelope:
         </p>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "error": {
     "code": "ERROR_CODE",

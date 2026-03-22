@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu } from "lucide-react"
+import { Menu, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -102,7 +102,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const activeHash = useActiveSection()
 
   return (
-    <nav className="flex flex-col gap-6" aria-label="Documentation">
+    <nav className="flex flex-col gap-5 md:gap-6" aria-label="Documentation">
       {sidebarSections.map((section) => (
         <div key={section.title}>
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -128,10 +128,11 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                     href={link.href}
                     onClick={onNavigate}
                     className={cn(
-                      "block rounded-md px-3 py-1.5 text-sm transition-colors",
+                      "block rounded-md px-3 py-2.5 text-sm transition-colors min-h-[44px] flex items-center",
+                      "md:py-1.5 md:min-h-0",
                       isActive
                         ? "bg-primary/10 font-medium text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground active:bg-muted/80"
                     )}
                   >
                     {link.label}
@@ -151,18 +152,24 @@ export function DocsSidebar() {
 
   return (
     <>
-      {/* Mobile: floating sheet trigger */}
-      <div className="sticky top-20 z-30 flex items-center border-b border-border bg-background px-4 py-2 md:hidden">
+      {/* Mobile: sticky bar with bottom sheet trigger */}
+      <div className="sticky top-20 z-30 flex items-center border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-2 md:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Menu className="size-4" />
-              <span className="text-sm">Docs menu</span>
+            <Button variant="ghost" size="sm" className="gap-2 min-h-[44px] -ml-2 px-3">
+              <BookOpen className="size-4" />
+              <span className="text-sm font-medium">Docs menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-64 pt-10">
+          <SheetContent
+            side="bottom"
+            className="max-h-[70dvh] rounded-t-2xl px-6 pb-8 pt-4"
+          >
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30" />
             <SheetTitle className="sr-only">Documentation navigation</SheetTitle>
-            <SidebarNav onNavigate={() => setOpen(false)} />
+            <div className="overflow-y-auto overscroll-contain">
+              <SidebarNav onNavigate={() => setOpen(false)} />
+            </div>
           </SheetContent>
         </Sheet>
       </div>

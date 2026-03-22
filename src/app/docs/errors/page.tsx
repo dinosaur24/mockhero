@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { ResponsiveTable, MobileCard } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Error Codes",
@@ -16,12 +16,12 @@ export const metadata = {
 
 export default function ErrorsPage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Error Codes</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Error Codes</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           All errors follow a consistent envelope format. The HTTP status code indicates the
-          error category, while the <code className="rounded bg-muted px-1.5 py-0.5 text-sm font-mono">error.code</code>{" "}
+          error category, while the <code className="rounded bg-muted px-1.5 py-0.5 text-xs sm:text-sm font-mono">error.code</code>{" "}
           field provides a machine-readable identifier you can match on in your code.
         </p>
       </div>
@@ -30,11 +30,11 @@ export default function ErrorsPage() {
 
       {/* Error Envelope */}
       <section>
-        <h2 id="error-format" className="text-2xl font-bold">Error Response Format</h2>
+        <h2 id="error-format" className="text-xl sm:text-2xl font-bold">Error Response Format</h2>
         <p className="mt-2 text-muted-foreground">
           Every error response has the same shape, regardless of HTTP status code.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "error": {
     "code": "ERROR_CODE",
@@ -44,7 +44,27 @@ export default function ErrorsPage() {
 }`}
         </pre>
 
-        <ResponsiveTable>
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-6 space-y-2">
+              <MobileCard items={[
+                { label: "Field", value: <code className="font-mono text-xs">error.code</code> },
+                { label: "Type", value: <code className="font-mono text-xs">string</code> },
+                { label: "Description", value: <span className="text-xs">Machine-readable error code. Stable across versions.</span> },
+              ]} />
+              <MobileCard items={[
+                { label: "Field", value: <code className="font-mono text-xs">error.message</code> },
+                { label: "Type", value: <code className="font-mono text-xs">string</code> },
+                { label: "Description", value: <span className="text-xs">Human-readable message. May change; do not match on this.</span> },
+              ]} />
+              <MobileCard items={[
+                { label: "Field", value: <code className="font-mono text-xs">error.details</code> },
+                { label: "Type", value: <code className="font-mono text-xs">array</code> },
+                { label: "Description", value: <span className="text-xs">Optional. Array of objects for validation errors.</span> },
+              ]} />
+            </div>
+          }
+        >
         <Table className="mt-6 min-w-[500px]">
           <TableHeader>
             <TableRow>
@@ -78,13 +98,13 @@ export default function ErrorsPage() {
 
       {/* 400 */}
       <section>
-        <h2 id="400" className="text-2xl font-bold">400 Bad Request</h2>
+        <h2 id="400" className="text-xl sm:text-2xl font-bold">400 Bad Request</h2>
         <p className="mt-2 text-muted-foreground">
           The request body is not valid JSON, is empty, or is missing top-level required fields.
           This fires before schema validation, so it typically means the payload could not
           be parsed at all.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 400 Bad Request
 Content-Type: application/json
 
@@ -95,7 +115,7 @@ Content-Type: application/json
   }
 }`}
         </pre>
-        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Common causes</p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
             <li>Trailing comma in JSON body</li>
@@ -110,12 +130,12 @@ Content-Type: application/json
 
       {/* 400 SCHEMA_ERROR */}
       <section>
-        <h2 id="400-schema-error" className="text-2xl font-bold">400 Bad Request &mdash; Schema Error</h2>
+        <h2 id="400-schema-error" className="text-xl sm:text-2xl font-bold">400 Bad Request &mdash; Schema Error</h2>
         <p className="mt-2 text-muted-foreground">
           The schema definition contains invalid field types, references to undefined tables, or
           invalid count values.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 400 Bad Request
 Content-Type: application/json
 
@@ -132,11 +152,11 @@ Content-Type: application/json
 
       {/* 400 DEPENDENCY_CYCLE */}
       <section>
-        <h2 id="400-dependency-cycle" className="text-2xl font-bold">400 Bad Request &mdash; Dependency Cycle</h2>
+        <h2 id="400-dependency-cycle" className="text-xl sm:text-2xl font-bold">400 Bad Request &mdash; Dependency Cycle</h2>
         <p className="mt-2 text-muted-foreground">
           The schema contains circular foreign-key references between tables that cannot be resolved.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 400 Bad Request
 Content-Type: application/json
 
@@ -153,13 +173,13 @@ Content-Type: application/json
 
       {/* 401 */}
       <section>
-        <h2 id="401" className="text-2xl font-bold">401 Unauthorized</h2>
+        <h2 id="401" className="text-xl sm:text-2xl font-bold">401 Unauthorized</h2>
         <p className="mt-2 text-muted-foreground">
           The API key is missing, malformed, expired, or revoked. Check that you are
           sending a valid key in the <code className="rounded bg-muted px-1.5 py-0.5 font-mono">Authorization</code>{" "}
           or <code className="rounded bg-muted px-1.5 py-0.5 font-mono">x-api-key</code> header.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 401 Unauthorized
 Content-Type: application/json
 
@@ -170,7 +190,7 @@ Content-Type: application/json
   }
 }`}
         </pre>
-        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Common causes</p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
             <li>No <code className="rounded bg-muted px-1.5 py-0.5 font-mono">Authorization</code> or <code className="rounded bg-muted px-1.5 py-0.5 font-mono">x-api-key</code> header</li>
@@ -185,12 +205,12 @@ Content-Type: application/json
 
       {/* 403 */}
       <section>
-        <h2 id="403" className="text-2xl font-bold">403 Forbidden</h2>
+        <h2 id="403" className="text-xl sm:text-2xl font-bold">403 Forbidden</h2>
         <p className="mt-2 text-muted-foreground">
           Your API key is valid but your plan does not include the requested feature.
           Upgrade your plan to access the feature.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 403 Forbidden
 Content-Type: application/json
 
@@ -201,7 +221,7 @@ Content-Type: application/json
   }
 }`}
         </pre>
-        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Features that require Pro or Scale</p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
             <li>Schema detection endpoint (<code className="rounded bg-muted px-1.5 py-0.5 font-mono">POST /schema/detect</code>)</li>
@@ -215,12 +235,12 @@ Content-Type: application/json
 
       {/* 404 */}
       <section>
-        <h2 id="404" className="text-2xl font-bold">404 Not Found</h2>
+        <h2 id="404" className="text-xl sm:text-2xl font-bold">404 Not Found</h2>
         <p className="mt-2 text-muted-foreground">
           The requested resource does not exist. This typically means the ID in the URL path is
           invalid or the resource has been deleted.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 404 Not Found
 Content-Type: application/json
 
@@ -237,12 +257,12 @@ Content-Type: application/json
 
       {/* 413 */}
       <section>
-        <h2 id="413" className="text-2xl font-bold">413 Payload Too Large</h2>
+        <h2 id="413" className="text-xl sm:text-2xl font-bold">413 Payload Too Large</h2>
         <p className="mt-2 text-muted-foreground">
           The request body exceeds the maximum allowed size of 1 MB. This typically happens
           when sending very large schema definitions or long prompts.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 413 Payload Too Large
 Content-Type: application/json
 
@@ -259,15 +279,15 @@ Content-Type: application/json
 
       {/* 422 */}
       <section>
-        <h2 id="422" className="text-2xl font-bold">422 Unprocessable Entity</h2>
+        <h2 id="422" className="text-xl sm:text-2xl font-bold">422 Unprocessable Entity</h2>
         <p className="mt-2 text-muted-foreground">
           The JSON is well-formed but the content fails validation. This covers schema
           errors (invalid field types, missing required fields, circular references) and
           prompt conversion failures.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Schema Validation Error</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Schema Validation Error</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 422 Unprocessable Entity
 Content-Type: application/json
 
@@ -290,8 +310,8 @@ Content-Type: application/json
 }`}
         </pre>
 
-        <h3 className="mt-8 text-lg font-semibold">Prompt Conversion Error</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-8 text-base sm:text-lg font-semibold">Prompt Conversion Error</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 422 Unprocessable Entity
 Content-Type: application/json
 
@@ -309,15 +329,15 @@ Content-Type: application/json
 
       {/* 429 */}
       <section>
-        <h2 id="429" className="text-2xl font-bold">429 Too Many Requests</h2>
+        <h2 id="429" className="text-xl sm:text-2xl font-bold">429 Too Many Requests</h2>
         <p className="mt-2 text-muted-foreground">
           You have exceeded your daily record limit or per-minute request limit. For per-minute
           limits, the response includes a <code className="rounded bg-muted px-1.5 py-0.5 font-mono">Retry-After</code>{" "}
           header indicating how many seconds to wait.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">Per-Request Limit Exceeded</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Per-Request Limit Exceeded</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
 
@@ -329,8 +349,8 @@ Content-Type: application/json
 }`}
         </pre>
 
-        <h3 className="mt-8 text-lg font-semibold">Daily Limit Exceeded</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-8 text-base sm:text-lg font-semibold">Daily Limit Exceeded</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
 X-RateLimit-Limit: 1000
@@ -345,8 +365,8 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
 }`}
         </pre>
 
-        <h3 className="mt-8 text-lg font-semibold">Per-Minute Limit Exceeded</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-8 text-base sm:text-lg font-semibold">Per-Minute Limit Exceeded</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
 Retry-After: 42
@@ -359,7 +379,7 @@ Retry-After: 42
 }`}
         </pre>
 
-        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Handling 429 responses</p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
             <li>Read the <code className="rounded bg-muted px-1.5 py-0.5 font-mono">Retry-After</code> header and wait that many seconds before retrying.</li>
@@ -373,14 +393,14 @@ Retry-After: 42
 
       {/* 500 */}
       <section>
-        <h2 id="500" className="text-2xl font-bold">500 Internal Server Error</h2>
+        <h2 id="500" className="text-xl sm:text-2xl font-bold">500 Internal Server Error</h2>
         <p className="mt-2 text-muted-foreground">
           An unexpected error occurred on the MockHero server. These are rare and are
           automatically reported to our engineering team. If the error persists, include
           the <code className="rounded bg-muted px-1.5 py-0.5 font-mono">X-Request-Id</code>{" "}
           header value when contacting support.
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-4 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 500 Internal Server Error
 Content-Type: application/json
 X-Request-Id: req_8a3f2c1d7e9b
@@ -393,7 +413,7 @@ X-Request-Id: req_8a3f2c1d7e9b
 }`}
         </pre>
 
-        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-4 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">When to retry</p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
             <li>Wait 1-2 seconds and retry once. Most 500 errors are transient.</li>
@@ -407,8 +427,35 @@ X-Request-Id: req_8a3f2c1d7e9b
 
       {/* Summary Table */}
       <section>
-        <h2 id="summary" className="text-2xl font-bold">Quick Reference</h2>
-        <ResponsiveTable>
+        <h2 id="summary" className="text-xl sm:text-2xl font-bold">Quick Reference</h2>
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-4 space-y-2">
+              {[
+                { status: "400", code: "VALIDATION_ERROR", retryable: "No", action: "Fix the JSON payload." },
+                { status: "400", code: "SCHEMA_ERROR", retryable: "No", action: "Fix field types, table refs, or counts." },
+                { status: "400", code: "DEPENDENCY_CYCLE", retryable: "No", action: "Remove circular table dependencies." },
+                { status: "401", code: "UNAUTHORIZED", retryable: "No", action: "Check your API key." },
+                { status: "403", code: "FEATURE_REQUIRES_UPGRADE", retryable: "No", action: "Upgrade your plan." },
+                { status: "404", code: "NOT_FOUND", retryable: "No", action: "Check the resource ID and try again." },
+                { status: "413", code: "PAYLOAD_TOO_LARGE", retryable: "No", action: "Reduce request body size." },
+                { status: "422", code: "VALIDATION_ERROR", retryable: "No", action: "Fix validation issues in details." },
+                { status: "429", code: "RATE_LIMIT_EXCEEDED", retryable: "Yes", action: "Wait for Retry-After seconds." },
+                { status: "500", code: "INTERNAL_ERROR", retryable: "Yes", action: "Retry after 1-2 seconds." },
+              ].map((row, i) => (
+                <MobileCard
+                  key={i}
+                  items={[
+                    { label: "Status", value: <code className="font-mono text-xs">{row.status}</code> },
+                    { label: "Code", value: <code className="font-mono text-xs">{row.code}</code> },
+                    { label: "Retryable", value: <span className="text-xs">{row.retryable}</span> },
+                    { label: "Action", value: <span className="text-xs">{row.action}</span> },
+                  ]}
+                />
+              ))}
+            </div>
+          }
+        >
         <Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>

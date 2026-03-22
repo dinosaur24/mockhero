@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { ResponsiveTable, MobileCard } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Authentication",
@@ -17,10 +17,10 @@ export const metadata = {
 
 export default function AuthenticationPage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Authentication</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Authentication</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           All MockHero API requests require an API key. Keys are scoped to your account
           and can be created and revoked from your dashboard.
         </p>
@@ -30,14 +30,26 @@ export default function AuthenticationPage() {
 
       {/* API Key Format */}
       <section>
-        <h2 id="api-key-format" className="text-2xl font-bold">API Key Format</h2>
+        <h2 id="api-key-format" className="text-xl sm:text-2xl font-bold">API Key Format</h2>
         <p className="mt-2 text-muted-foreground">
           All MockHero API keys share the same format:{" "}
           <code className="rounded bg-muted px-1.5 py-0.5 font-mono">mh_</code> followed by 32
           hexadecimal characters. There is no distinction between test and production keys.
         </p>
 
-        <ResponsiveTable>
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-4">
+              <MobileCard
+                items={[
+                  { label: "Prefix", value: <code className="rounded bg-muted px-1.5 py-0.5 font-mono">mh_</code> },
+                  { label: "Format", value: <code className="font-mono text-xs text-muted-foreground">mh_</code> },
+                  { label: "Example", value: <code className="font-mono text-xs text-muted-foreground break-all">mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0</code> },
+                ]}
+              />
+            </div>
+          }
+        >
         <Table className="mt-6 min-w-[500px]">
           <TableHeader>
             <TableRow>
@@ -65,28 +77,28 @@ export default function AuthenticationPage() {
 
       {/* Sending Your Key */}
       <section>
-        <h2 id="sending-your-key" className="text-2xl font-bold">Sending Your Key</h2>
+        <h2 id="sending-your-key" className="text-xl sm:text-2xl font-bold">Sending Your Key</h2>
         <p className="mt-2 text-muted-foreground">
           Include your API key in every request using one of the two supported header formats.
           Both are equivalent; use whichever fits your HTTP client.
         </p>
 
-        <h3 id="bearer-token" className="mt-6 text-lg font-semibold">
+        <h3 id="bearer-token" className="mt-6 text-base sm:text-lg font-semibold">
           Option 1: Authorization Bearer <Badge variant="outline">Recommended</Badge>
         </h3>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
         </pre>
 
-        <h3 id="x-api-key" className="mt-8 text-lg font-semibold">
+        <h3 id="x-api-key" className="mt-8 text-base sm:text-lg font-semibold">
           Option 2: x-api-key Header
         </h3>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`x-api-key: mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
         </pre>
 
-        <h3 id="full-example" className="mt-8 text-lg font-semibold">Full Request Example</h3>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 id="full-example" className="mt-8 text-base sm:text-lg font-semibold">Full Request Example</h3>
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`curl -X POST https://api.mockhero.dev/api/v1/generate \\
   -H "Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0" \\
   -H "Content-Type: application/json" \\
@@ -98,7 +110,7 @@ export default function AuthenticationPage() {
 
       {/* Getting a Key */}
       <section>
-        <h2 id="getting-a-key" className="text-2xl font-bold">Getting an API Key</h2>
+        <h2 id="getting-a-key" className="text-xl sm:text-2xl font-bold">Getting an API Key</h2>
         <p className="mt-2 text-muted-foreground">
           API keys are managed from your MockHero dashboard.
         </p>
@@ -123,7 +135,7 @@ export default function AuthenticationPage() {
 
       {/* Key Rotation */}
       <section>
-        <h2 id="key-rotation" className="text-2xl font-bold">Key Rotation</h2>
+        <h2 id="key-rotation" className="text-xl sm:text-2xl font-bold">Key Rotation</h2>
         <p className="mt-2 text-muted-foreground">
           If a key is compromised or you want to rotate keys as a security practice,
           you can revoke and replace keys without downtime.
@@ -145,7 +157,7 @@ export default function AuthenticationPage() {
           </li>
         </ol>
 
-        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-4 text-sm">
+        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Best practice</p>
           <p className="mt-1 text-muted-foreground">
             Store your API key in an environment variable (e.g.{" "}
@@ -159,13 +171,13 @@ export default function AuthenticationPage() {
 
       {/* Error Responses */}
       <section>
-        <h2 id="auth-errors" className="text-2xl font-bold">Authentication Errors</h2>
+        <h2 id="auth-errors" className="text-xl sm:text-2xl font-bold">Authentication Errors</h2>
         <p className="mt-2 text-muted-foreground">
           If your key is missing, malformed, or revoked, the API returns one of these responses.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">401 Unauthorized &mdash; Missing or Invalid Key</h3>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">401 Unauthorized &mdash; Missing or Invalid Key</h3>
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "error": {
     "code": "UNAUTHORIZED",
@@ -174,8 +186,8 @@ export default function AuthenticationPage() {
 }`}
         </pre>
 
-        <h3 className="mt-8 text-lg font-semibold">403 Forbidden &mdash; Key Lacks Permission</h3>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-8 text-base sm:text-lg font-semibold">403 Forbidden &mdash; Key Lacks Permission</h3>
+        <pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`{
   "error": {
     "code": "FEATURE_REQUIRES_UPGRADE",

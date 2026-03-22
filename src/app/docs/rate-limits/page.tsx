@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { ResponsiveTable, MobileCard } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Rate Limits",
@@ -16,10 +16,10 @@ export const metadata = {
 
 export default function RateLimitsPage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Rate Limits</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Rate Limits</h1>
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground">
           MockHero enforces rate limits to ensure fair usage and platform stability.
           Limits vary by plan and are measured in records generated, not API calls.
         </p>
@@ -29,12 +29,36 @@ export default function RateLimitsPage() {
 
       {/* Tier Comparison */}
       <section>
-        <h2 id="tier-comparison" className="text-2xl font-bold">Tier Comparison</h2>
+        <h2 id="tier-comparison" className="text-xl sm:text-2xl font-bold">Tier Comparison</h2>
         <p className="mt-2 text-muted-foreground">
           All limits reset daily at midnight UTC.
         </p>
 
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-4 space-y-2">
+              {[
+                { limit: "Daily records", free: "1,000", pro: "100,000", scale: "1,000,000" },
+                { limit: "Per-request records", free: "100", pro: "10,000", scale: "50,000" },
+                { limit: "Requests per minute", free: "10", pro: "60", scale: "120" },
+                { limit: "Output formats", free: "JSON", pro: "JSON, CSV, SQL", scale: "JSON, CSV, SQL" },
+                { limit: "Seed for reproducibility", free: "No", pro: "Yes", scale: "Yes" },
+                { limit: "Schema detection", free: "No", pro: "Yes", scale: "Yes" },
+              ].map((row) => (
+                <MobileCard
+                  key={row.limit}
+                  items={[
+                    { label: "Limit", value: <span className="font-medium text-xs">{row.limit}</span> },
+                    { label: "Free", value: <span className="text-xs">{row.free}</span> },
+                    { label: "Pro ($29)", value: <span className="text-xs">{row.pro}</span> },
+                    { label: "Scale ($79)", value: <span className="text-xs">{row.scale}</span> },
+                  ]}
+                />
+              ))}
+            </div>
+          }
+        >
+          <Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Limit</TableHead>
@@ -81,20 +105,42 @@ export default function RateLimitsPage() {
               <TableCell>Yes</TableCell>
             </TableRow>
           </TableBody>
-        </Table></ResponsiveTable>
+        </Table>
+        </ResponsiveTable>
       </section>
 
       <Separator />
 
       {/* Response Headers */}
       <section>
-        <h2 id="response-headers" className="text-2xl font-bold">Rate Limit Response Headers</h2>
+        <h2 id="response-headers" className="text-xl sm:text-2xl font-bold">Rate Limit Response Headers</h2>
         <p className="mt-2 text-muted-foreground">
           Every authenticated response includes headers so you can track your usage
           without making extra API calls.
         </p>
 
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-4 space-y-2">
+              {[
+                { header: "X-RateLimit-Limit", type: "integer", desc: "Maximum records your plan allows per day." },
+                { header: "X-RateLimit-Remaining", type: "integer", desc: "Records remaining in the current daily window." },
+                { header: "X-RateLimit-Reset", type: "string (ISO 8601)", desc: "Timestamp when the daily limit resets (midnight UTC)." },
+                { header: "Retry-After", type: "integer", desc: "Seconds to wait before retrying. Only on 429 responses." },
+              ].map((row) => (
+                <MobileCard
+                  key={row.header}
+                  items={[
+                    { label: "Header", value: <code className="font-mono text-xs">{row.header}</code> },
+                    { label: "Type", value: <code className="font-mono text-xs">{row.type}</code> },
+                    { label: "Description", value: <span className="text-xs">{row.desc}</span> },
+                  ]}
+                />
+              ))}
+            </div>
+          }
+        >
+          <Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Header</TableHead>
@@ -124,10 +170,11 @@ export default function RateLimitsPage() {
               <TableCell>Seconds to wait before retrying. Only present on 429 responses for per-minute rate limits (not daily limits).</TableCell>
             </TableRow>
           </TableBody>
-        </Table></ResponsiveTable>
+        </Table>
+        </ResponsiveTable>
 
-        <h3 className="mt-6 text-lg font-semibold">Example Headers</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Example Headers</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 200 OK
 Content-Type: application/json
 X-RateLimit-Limit: 100000
@@ -141,7 +188,7 @@ X-Request-Id: req_8a3f2c1d7e9b`}
 
       {/* What Happens When Limited */}
       <section>
-        <h2 id="rate-limit-exceeded" className="text-2xl font-bold">When You Hit the Limit</h2>
+        <h2 id="rate-limit-exceeded" className="text-xl sm:text-2xl font-bold">When You Hit the Limit</h2>
         <p className="mt-2 text-muted-foreground">
           When you exceed your daily record limit or per-minute request limit, the API
           returns a <code className="rounded bg-muted px-1.5 py-0.5 font-mono">429 Too Many Requests</code>{" "}
@@ -149,8 +196,8 @@ X-Request-Id: req_8a3f2c1d7e9b`}
           header is included indicating how many seconds to wait.
         </p>
 
-        <h3 className="mt-6 text-lg font-semibold">429 Response Example</h3>
-        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">429 Response Example</h3>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
 X-RateLimit-Limit: 1000
@@ -165,7 +212,7 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
 }`}
         </pre>
 
-        <h3 className="mt-6 text-lg font-semibold">Best Practices</h3>
+        <h3 className="mt-6 text-base sm:text-lg font-semibold">Best Practices</h3>
         <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-muted-foreground">
           <li>
             Monitor the <code className="rounded bg-muted px-1.5 py-0.5 font-mono">X-RateLimit-Remaining</code>{" "}
@@ -190,14 +237,34 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
 
       {/* Per-Minute Limits */}
       <section>
-        <h2 id="per-minute-limits" className="text-2xl font-bold">Per-Minute Rate Limits</h2>
+        <h2 id="per-minute-limits" className="text-xl sm:text-2xl font-bold">Per-Minute Rate Limits</h2>
         <p className="mt-2 text-muted-foreground">
           In addition to daily record limits, MockHero enforces per-minute request limits
           to prevent burst abuse. These are measured as total HTTP requests to any authenticated
           endpoint, not records generated.
         </p>
 
-        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
+        <ResponsiveTable
+          mobileCards={
+            <div className="mt-4 space-y-2">
+              {[
+                { plan: "Free", rpm: "10", window: "Fixed 60-second window" },
+                { plan: "Pro", rpm: "60", window: "Fixed 60-second window" },
+                { plan: "Scale", rpm: "120", window: "Fixed 60-second window" },
+              ].map((row) => (
+                <MobileCard
+                  key={row.plan}
+                  items={[
+                    { label: "Plan", value: <span className="text-xs font-medium">{row.plan}</span> },
+                    { label: "Requests / Min", value: <span className="text-xs">{row.rpm}</span> },
+                    { label: "Burst Window", value: <span className="text-xs">{row.window}</span> },
+                  ]}
+                />
+              ))}
+            </div>
+          }
+        >
+          <Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Plan</TableHead>
@@ -222,7 +289,8 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
               <TableCell>Fixed 60-second window</TableCell>
             </TableRow>
           </TableBody>
-        </Table></ResponsiveTable>
+        </Table>
+        </ResponsiveTable>
 
         <p className="mt-4 text-sm text-muted-foreground">
           Per-minute limits use a fixed window algorithm that resets every 60 seconds. If you
