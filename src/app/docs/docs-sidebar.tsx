@@ -147,37 +147,39 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-export function DocsSidebar() {
+/** Mobile: full-width sticky bar with bottom sheet trigger */
+export function DocsSidebarMobile() {
   const [open, setOpen] = useState(false)
 
   return (
-    <>
-      {/* Mobile: sticky bar with bottom sheet trigger */}
-      <div className="sticky top-20 z-30 flex items-center border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-2 md:hidden">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2 min-h-[44px] -ml-2 px-3">
-              <BookOpen className="size-4" />
-              <span className="text-sm font-medium">Docs menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent
-            side="bottom"
-            className="max-h-[70dvh] rounded-t-2xl px-6 pb-8 pt-4"
-          >
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30" />
-            <SheetTitle className="sr-only">Documentation navigation</SheetTitle>
-            <div className="overflow-y-auto overscroll-contain">
-              <SidebarNav onNavigate={() => setOpen(false)} />
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+    <div className="sticky top-20 z-30 flex items-center border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-2 md:hidden">
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="sm" className="gap-2 min-h-[44px] -ml-2 px-3">
+            <BookOpen className="size-4" />
+            <span className="text-sm font-medium">Docs menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent
+          side="bottom"
+          className="max-h-[70dvh] rounded-t-2xl px-6 pb-8 pt-4"
+        >
+          <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30" />
+          <SheetTitle className="sr-only">Documentation navigation</SheetTitle>
+          <div className="overflow-y-auto overscroll-contain">
+            <SidebarNav onNavigate={() => setOpen(false)} />
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
+  )
+}
 
-      {/* Desktop: static sidebar */}
-      <aside className="sticky top-20 hidden h-[calc(100vh-5rem)] w-60 shrink-0 overflow-y-auto border-r border-border px-4 py-8 md:block">
-        <SidebarNav />
-      </aside>
-    </>
+/** Desktop: static sidebar in flex row */
+export function DocsSidebarDesktop() {
+  return (
+    <aside className="sticky top-20 hidden h-[calc(100vh-5rem)] w-60 shrink-0 overflow-y-auto border-r border-border px-4 py-8 md:block">
+      <SidebarNav />
+    </aside>
   )
 }
