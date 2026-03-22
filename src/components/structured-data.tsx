@@ -124,7 +124,7 @@ export function StructuredData() {
     {
       question: "Is MockHero free?",
       answer:
-        "Yes. The free tier includes 1,000 records/day, 100 records/request, all 156 field types, all 22 locales, and JSON output. Paid plans start at $29/month for higher limits and additional output formats.",
+        "Yes. The free tier includes 1,000 records/day, 100 records/request, all 156 field types, all 22 locales, and JSON output. Paid plans start at $19/month for higher limits and additional output formats.",
     },
     {
       question: "What output formats does MockHero support?",

@@ -50,8 +50,8 @@ export default function RateLimitsPage() {
                   items={[
                     { label: "Limit", value: <span className="font-medium text-xs">{row.limit}</span> },
                     { label: "Free", value: <span className="text-xs">{row.free}</span> },
-                    { label: "Pro ($29)", value: <span className="text-xs">{row.pro}</span> },
-                    { label: "Scale ($79)", value: <span className="text-xs">{row.scale}</span> },
+                    { label: "Pro ($19)", value: <span className="text-xs">{row.pro}</span> },
+                    { label: "Scale ($59)", value: <span className="text-xs">{row.scale}</span> },
                   ]}
                 />
               ))}
@@ -63,8 +63,8 @@ export default function RateLimitsPage() {
             <TableRow>
               <TableHead>Limit</TableHead>
               <TableHead>Free</TableHead>
-              <TableHead>Pro ($29/mo)</TableHead>
-              <TableHead>Scale ($79/mo)</TableHead>
+              <TableHead>Pro ($19/mo)</TableHead>
+              <TableHead>Scale ($59/mo)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
