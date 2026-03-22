@@ -132,6 +132,18 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
       {/* Mobile: bottom nav layout */}
       <div className="md:hidden flex flex-col min-h-svh">
+        <header className="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4">
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="" className="h-6 w-6" />
+            <span className="font-heading text-sm font-bold tracking-tight">MockHero</span>
+          </Link>
+          <SignOutButton>
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <LogOut className="size-4" />
+              <span>Sign out</span>
+            </button>
+          </SignOutButton>
+        </header>
         <main className="flex-1">
           <div className="px-4 py-4 pb-20">
             {children}
