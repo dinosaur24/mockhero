@@ -87,12 +87,12 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <header className="sticky top-0 z-10 bg-background flex h-12 items-center gap-2 border-b border-sidebar-border px-4">
+          <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 flex h-12 items-center gap-2 border-b border-sidebar-border px-3 sm:px-4">
             <SidebarTrigger className="-ml-1" aria-label="Toggle sidebar" />
             <span className="text-xs text-muted-foreground">Dashboard</span>
           </header>
           <main className="flex-1">
-            <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
+            <div className="mx-auto max-w-4xl px-3 py-4 sm:px-6 sm:py-8">
               {children}
             </div>
           </main>

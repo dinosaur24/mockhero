@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator"
 
 export default function BillingLoading() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       {/* Header */}
       <div>
         <Skeleton className="h-5 w-24" />

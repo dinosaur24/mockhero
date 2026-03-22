@@ -45,14 +45,14 @@ export default function OverviewClient({ stats, keyPrefix }: Props) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <div>
         <h1 className="font-heading text-lg font-semibold">Overview</h1>
         <p className="text-xs text-muted-foreground mt-1">Your MockHero dashboard</p>
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card>
           <CardHeader>
             <CardDescription>Records today</CardDescription>
@@ -120,7 +120,7 @@ export default function OverviewClient({ stats, keyPrefix }: Props) {
       </Card>
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <Card className="transition-colors hover:ring-foreground/20">
           <Link href="/docs">
             <CardHeader>
