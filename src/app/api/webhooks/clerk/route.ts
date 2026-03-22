@@ -43,24 +43,26 @@ export async function POST(req: Request) {
 
     const supabase = createAdminClient();
 
-    // Create profile
-    const { error } = await supabase.from("profiles").insert({
-      id: id,
-      display_name:
-        [first_name, last_name].filter(Boolean).join(" ") || null,
-      avatar_url: image_url ?? null,
-      tier: "free",
-    });
+    // Upsert profile (insert if new, skip if exists)
+    const displayName = [first_name, last_name].filter(Boolean).join(" ") || null;
+    const { error } = await supabase.from("profiles").upsert(
+      {
+        id: id,
+        display_name: displayName,
+        avatar_url: image_url ?? null,
+        tier: "free",
+      },
+      { onConflict: "id", ignoreDuplicates: true }
+    );
 
     if (error) {
-      console.error("Failed to create profile:", error);
-      return new Response("Failed to create profile", { status: 500 });
+      console.error("Failed to upsert profile:", error);
+      // Return 200 anyway to prevent Clerk from retrying forever
     }
 
     // Send welcome email (fire-and-forget — don't block webhook response)
     if (primaryEmail) {
-      const displayName = [first_name, last_name].filter(Boolean).join(" ");
-      sendEmail({ to: primaryEmail, subject: "Welcome to MockHero", html: welcomeEmail(displayName) }).catch(() => {});
+      sendEmail({ to: primaryEmail, subject: "Welcome to MockHero", html: welcomeEmail(displayName ?? "") }).catch(() => {});
     }
   }
 
