@@ -17,20 +17,20 @@ export async function POST() {
   try {
     const { rawKey, keyPrefix } = await generateApiKey(userId)
 
-    // Send notification email (fire-and-forget)
-    clerkClient().then(async (clerk) => {
+    // Send notification email — must await before returning or Vercel kills the function
+    try {
+      const clerk = await clerkClient()
       const user = await clerk.users.getUser(userId)
       const email = user.emailAddresses?.[0]?.emailAddress
       if (email) {
         console.log("[create-key] Sending API key email to:", email)
         await sendEmail({ to: email, subject: "New API Key Created", html: apiKeyCreatedEmail(keyPrefix) })
         console.log("[create-key] Email sent successfully")
-      } else {
-        console.warn("[create-key] No email found for user:", userId)
       }
-    }).catch((err) => {
-      console.error("[create-key] Failed to send email:", err)
-    })
+    } catch (emailErr) {
+      console.error("[create-key] Email failed:", emailErr)
+      // Don't block key creation if email fails
+    }
 
     return NextResponse.json({ rawKey, keyPrefix })
   } catch (err) {
