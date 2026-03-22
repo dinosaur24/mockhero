@@ -1,13 +1,7 @@
 /**
  * POST /api/webhooks/polar
  * Handles Polar subscription lifecycle webhooks.
- * Verifies signature via Svix, then syncs subscription state to Supabase.
- *
- * Events handled:
- *   subscription.created  — new subscription activated
- *   subscription.updated  — plan changed, renewed, etc.
- *   subscription.canceled — canceled at period end
- *   subscription.revoked  — access fully removed
+ * CRITICAL: Always returns 200 to prevent Polar from disabling the endpoint.
  */
 
 import { Webhook } from "svix"
@@ -17,6 +11,10 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { TIER_LIMITS } from "@/lib/utils/constants"
 import type { Tier } from "@/lib/utils/constants"
 import { sendEmail, upgradeConfirmationEmail, downgradeConfirmationEmail } from "@/lib/email"
+
+function ok(msg = "OK") {
+  return new Response(msg, { status: 200 })
+}
 
 async function getUserEmail(userId: string): Promise<string | null> {
   try {
@@ -28,36 +26,17 @@ async function getUserEmail(userId: string): Promise<string | null> {
   }
 }
 
-interface PolarSubscription {
-  id: string
-  status: string
-  customer_id: string
-  product: {
-    id: string
-    name: string
-  }
-  current_period_end: string | null
-  cancel_at_period_end: boolean
-  metadata: {
-    user_id?: string
-    tier?: string
-  }
-}
-
-interface PolarWebhookEvent {
-  type: string
-  data: PolarSubscription
-}
-
-/** Map Polar product name → our tier. Adjust names to match your Polar products. */
-function resolveTier(event: PolarSubscription): Tier {
-  // First check metadata (set during checkout)
-  if (event.metadata?.tier === "pro" || event.metadata?.tier === "scale") {
-    return event.metadata.tier as Tier
+/** Map Polar product name → our tier */
+function resolveTier(data: Record<string, unknown>): Tier {
+  // Check metadata.tier (set during checkout)
+  const metadata = (data.metadata ?? {}) as Record<string, string>
+  if (metadata.tier === "pro" || metadata.tier === "scale") {
+    return metadata.tier as Tier
   }
 
-  // Fallback: match by product name (case-insensitive)
-  const name = event.product?.name?.toLowerCase() ?? ""
+  // Fallback: match by product name
+  const product = data.product as Record<string, unknown> | undefined
+  const name = (product?.name as string ?? "").toLowerCase()
   if (name.includes("scale")) return "scale"
   if (name.includes("pro")) return "pro"
 
@@ -66,162 +45,176 @@ function resolveTier(event: PolarSubscription): Tier {
 
 export async function POST(req: Request) {
   try {
-  return await handlePolarWebhook(req)
-  } catch (err) {
-    console.error("Polar webhook unhandled error:", err)
-    // Always return 200 to prevent Polar from disabling the webhook
-    return new Response("OK (error logged)", { status: 200 })
-  }
-}
+    // 1. Read raw body
+    const rawBody = await req.text()
+    console.log("[Polar webhook] Raw body received, length:", rawBody.length)
 
-async function handlePolarWebhook(req: Request) {
-  // 1. Verify webhook signature
-  const secret = process.env.POLAR_WEBHOOK_SECRET
-  if (!secret) {
-    console.error("POLAR_WEBHOOK_SECRET not configured")
-    return new Response("Webhook secret not configured", { status: 500 })
-  }
+    // 2. Verify signature
+    const secret = process.env.POLAR_WEBHOOK_SECRET
+    if (!secret) {
+      console.error("[Polar webhook] POLAR_WEBHOOK_SECRET not configured")
+      return ok("missing secret")
+    }
 
-  const headerPayload = await headers()
-  const svixId = headerPayload.get("svix-id")
-  const svixTimestamp = headerPayload.get("svix-timestamp")
-  const svixSignature = headerPayload.get("svix-signature")
+    const headerPayload = await headers()
+    const svixId = headerPayload.get("svix-id")
+    const svixTimestamp = headerPayload.get("svix-timestamp")
+    const svixSignature = headerPayload.get("svix-signature")
 
-  if (!svixId || !svixTimestamp || !svixSignature) {
-    return new Response("Missing svix headers", { status: 400 })
-  }
+    if (!svixId || !svixTimestamp || !svixSignature) {
+      console.error("[Polar webhook] Missing svix headers")
+      return ok("missing headers")
+    }
 
-  const payload = await req.json()
-  const body = JSON.stringify(payload)
+    let event: { type: string; data: Record<string, unknown> }
 
-  const wh = new Webhook(secret)
-  let event: PolarWebhookEvent
+    try {
+      const wh = new Webhook(secret)
+      event = wh.verify(rawBody, {
+        "svix-id": svixId,
+        "svix-timestamp": svixTimestamp,
+        "svix-signature": svixSignature,
+      }) as { type: string; data: Record<string, unknown> }
+    } catch (err) {
+      console.error("[Polar webhook] Signature verification failed:", err)
+      return ok("invalid signature")
+    }
 
-  try {
-    event = wh.verify(body, {
-      "svix-id": svixId,
-      "svix-timestamp": svixTimestamp,
-      "svix-signature": svixSignature,
-    }) as PolarWebhookEvent
-  } catch {
-    return new Response("Invalid signature", { status: 400 })
-  }
+    // 3. Log the full event for debugging
+    console.log("[Polar webhook] Event:", event.type)
+    console.log("[Polar webhook] Data:", JSON.stringify(event.data, null, 2))
 
-  // 2. Extract subscription data
-  const sub = event.data
-  console.log("Polar webhook received:", event.type, JSON.stringify(sub, null, 2))
+    const sub = event.data
 
-  // Try multiple locations for user_id — Polar may put metadata in different places
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rawData = sub as any
-  const userId: string | null =
-    sub.metadata?.user_id ??
-    rawData?.customer_metadata?.user_id ??
-    rawData?.checkout?.metadata?.user_id ??
-    null
+    // 4. Find user_id — try multiple locations
+    const metadata = (sub.metadata ?? {}) as Record<string, string>
+    const customerMetadata = (sub.customer_metadata ?? {}) as Record<string, string>
+    const checkoutMeta = ((sub.checkout as Record<string, unknown>)?.metadata ?? {}) as Record<string, string>
 
-  if (!userId) {
-    // If no user_id in metadata, try to resolve by customer email
-    console.error("Polar webhook missing user_id in metadata. Full payload:", JSON.stringify(event))
-    // Still return 200 to prevent Polar from disabling the webhook
-    return new Response("OK (no user_id, skipped)", { status: 200 })
-  }
+    const userId: string | null =
+      metadata.user_id ??
+      customerMetadata.user_id ??
+      checkoutMeta.user_id ??
+      null
 
-  const supabase = createAdminClient()
-  const tier = resolveTier(sub)
+    if (!userId) {
+      console.error("[Polar webhook] No user_id found in any metadata location")
+      return ok("no user_id")
+    }
 
-  // 3. Handle events
-  switch (event.type) {
-    case "subscription.created":
-    case "subscription.updated": {
-      // Upsert subscription record
-      const { error: subError } = await supabase
-        .from("subscriptions")
-        .upsert(
-          {
-            user_id: userId,
-            polar_subscription_id: sub.id,
-            polar_customer_id: sub.customer_id,
-            product_name: sub.product?.name ?? tier,
-            status: "active",
-            current_period_end: sub.current_period_end,
-            cancel_at_period_end: sub.cancel_at_period_end ?? false,
-          },
-          { onConflict: "polar_subscription_id" }
-        )
+    console.log("[Polar webhook] Resolved userId:", userId)
 
-      if (subError) {
-        console.error("Failed to upsert subscription:", subError)
-        // Return 200 anyway to prevent Polar from disabling the webhook
-        return new Response("OK (db error logged)", { status: 200 })
+    const supabase = createAdminClient()
+    const tier = resolveTier(sub)
+    console.log("[Polar webhook] Resolved tier:", tier)
+
+    // 5. Handle events
+    switch (event.type) {
+      case "subscription.created":
+      case "subscription.updated": {
+        const product = sub.product as Record<string, unknown> | undefined
+
+        const { error: subError } = await supabase
+          .from("subscriptions")
+          .upsert(
+            {
+              user_id: userId,
+              polar_subscription_id: sub.id as string,
+              polar_customer_id: (sub.customer_id as string) ?? (sub.customer as Record<string, unknown>)?.id ?? "",
+              product_name: (product?.name as string) ?? tier,
+              status: "active",
+              current_period_end: (sub.current_period_end as string) ?? null,
+              cancel_at_period_end: (sub.cancel_at_period_end as boolean) ?? false,
+            },
+            { onConflict: "polar_subscription_id" }
+          )
+
+        if (subError) {
+          console.error("[Polar webhook] Subscription upsert failed:", subError)
+        }
+
+        // Upgrade profile tier
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update({ tier })
+          .eq("id", userId)
+
+        if (profileError) {
+          console.error("[Polar webhook] Profile tier update failed:", profileError)
+        } else {
+          console.log("[Polar webhook] Profile updated to tier:", tier)
+        }
+
+        // Send upgrade email (fire-and-forget)
+        if (tier !== "free") {
+          getUserEmail(userId).then((email) => {
+            if (email) {
+              const dailyLimit = TIER_LIMITS[tier].dailyRecords
+              sendEmail({
+                to: email,
+                subject: `Upgraded to MockHero ${tier.charAt(0).toUpperCase() + tier.slice(1)}`,
+                html: upgradeConfirmationEmail(tier, dailyLimit),
+              }).catch(() => {})
+            }
+          }).catch(() => {})
+        }
+
+        break
       }
 
-      // Upgrade profile tier
-      await supabase
-        .from("profiles")
-        .update({ tier })
-        .eq("id", userId)
+      case "subscription.canceled": {
+        await supabase
+          .from("subscriptions")
+          .update({
+            cancel_at_period_end: true,
+            current_period_end: (sub.current_period_end as string) ?? null,
+          })
+          .eq("polar_subscription_id", sub.id as string)
 
-      // Send upgrade email (fire-and-forget)
-      if (tier !== "free") {
+        console.log("[Polar webhook] Subscription marked as canceling")
+        break
+      }
+
+      case "subscription.revoked": {
+        const { data: prevProfile } = await supabase
+          .from("profiles")
+          .select("tier")
+          .eq("id", userId)
+          .maybeSingle()
+        const previousTier = prevProfile?.tier ?? "pro"
+
+        await supabase
+          .from("subscriptions")
+          .update({ status: "canceled" })
+          .eq("polar_subscription_id", sub.id as string)
+
+        await supabase
+          .from("profiles")
+          .update({ tier: "free" })
+          .eq("id", userId)
+
+        console.log("[Polar webhook] Subscription revoked, tier set to free")
+
         getUserEmail(userId).then((email) => {
           if (email) {
-            const dailyLimit = TIER_LIMITS[tier].dailyRecords
-            sendEmail({ to: email, subject: `Upgraded to MockHero ${tier.charAt(0).toUpperCase() + tier.slice(1)}`, html: upgradeConfirmationEmail(tier, dailyLimit) }).catch(() => {})
+            sendEmail({
+              to: email,
+              subject: "Your MockHero plan has changed",
+              html: downgradeConfirmationEmail(previousTier),
+            }).catch(() => {})
           }
         }).catch(() => {})
+
+        break
       }
 
-      break
+      default:
+        console.warn("[Polar webhook] Unhandled event:", event.type)
     }
 
-    case "subscription.canceled": {
-      // Mark as canceling (still active until period end)
-      await supabase
-        .from("subscriptions")
-        .update({
-          cancel_at_period_end: true,
-          current_period_end: sub.current_period_end,
-        })
-        .eq("polar_subscription_id", sub.id)
-
-      break
-    }
-
-    case "subscription.revoked": {
-      // Get previous tier before downgrading
-      const { data: prevProfile } = await supabase
-        .from("profiles")
-        .select("tier")
-        .eq("id", userId)
-        .maybeSingle()
-      const previousTier = prevProfile?.tier ?? "pro"
-
-      // Subscription fully ended — revert to free
-      await supabase
-        .from("subscriptions")
-        .update({ status: "canceled" })
-        .eq("polar_subscription_id", sub.id)
-
-      await supabase
-        .from("profiles")
-        .update({ tier: "free" })
-        .eq("id", userId)
-
-      // Send downgrade email (fire-and-forget)
-      getUserEmail(userId).then((email) => {
-        if (email) {
-          sendEmail({ to: email, subject: "Your MockHero plan has changed", html: downgradeConfirmationEmail(previousTier) }).catch(() => {})
-        }
-      }).catch(() => {})
-
-      break
-    }
-
-    default:
-      // Unknown event — acknowledge but ignore
-      console.warn("Unhandled Polar event:", event.type)
+    return ok()
+  } catch (err) {
+    console.error("[Polar webhook] Unhandled error:", err)
+    return ok("error logged")
   }
-
-  return new Response("OK", { status: 200 })
 }
