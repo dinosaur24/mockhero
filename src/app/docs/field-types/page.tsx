@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Field Types",
@@ -20,28 +21,30 @@ function TypeTable({
   types: { name: string; description: string; params: string; example: string }[]
 }) {
   return (
-    <Table className="mt-4">
-      <TableHeader>
-        <TableRow>
-          <TableHead>Type</TableHead>
-          <TableHead>Description</TableHead>
-          <TableHead>Params</TableHead>
-          <TableHead>Example</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {types.map((t) => (
-          <TableRow key={t.name}>
-            <TableCell>
-              <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{t.name}</code>
-            </TableCell>
-            <TableCell className="whitespace-normal text-muted-foreground">{t.description}</TableCell>
-            <TableCell className="whitespace-normal">{t.params === "—" ? <span className="text-muted-foreground">—</span> : <code className="font-mono text-xs">{t.params}</code>}</TableCell>
-            <TableCell><code className="font-mono text-xs">{t.example}</code></TableCell>
+    <ResponsiveTable>
+      <Table className="mt-4 min-w-[600px]">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Type</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Params</TableHead>
+            <TableHead>Example</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {types.map((t) => (
+            <TableRow key={t.name}>
+              <TableCell>
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">{t.name}</code>
+              </TableCell>
+              <TableCell className="whitespace-normal text-muted-foreground">{t.description}</TableCell>
+              <TableCell className="whitespace-normal">{t.params === "—" ? <span className="text-muted-foreground">—</span> : <code className="font-mono text-xs">{t.params}</code>}</TableCell>
+              <TableCell><code className="font-mono text-xs">{t.example}</code></TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </ResponsiveTable>
   )
 }
 

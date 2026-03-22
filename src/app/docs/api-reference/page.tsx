@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "API Reference",
@@ -54,7 +55,7 @@ export default function ApiReferencePage() {
 
         {/* Common Parameters */}
         <h3 id="generate-common" className="mt-8 text-lg font-semibold">Common Parameters</h3>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Parameter</TableHead>
@@ -89,7 +90,7 @@ export default function ApiReferencePage() {
               <TableCell>Seed for reproducible output. Same seed + same request = same data. <Badge variant="secondary" className="ml-1">Pro</Badge></TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         {/* Schema Mode */}
         <h3 id="schema-mode" className="mt-10 text-lg font-semibold">Schema Mode</h3>
@@ -98,7 +99,7 @@ export default function ApiReferencePage() {
           with explicit field definitions for full control.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Parameter</TableHead>
@@ -151,7 +152,7 @@ export default function ApiReferencePage() {
               <TableCell>Type-specific parameters (e.g. <code className="font-mono">min</code>, <code className="font-mono">max</code>, <code className="font-mono">values</code>).</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -206,7 +207,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           the data, and returns the inferred schema alongside the results.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Parameter</TableHead>
@@ -223,7 +224,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>Natural-language description of your desired data. Max 5,000 characters.</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -275,7 +276,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           for full details on each template.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Parameter</TableHead>
@@ -298,7 +299,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>Multiplier for default record counts. Default <code className="font-mono">1</code>. Range 0.1 to 100.</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -420,7 +421,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           directly to the generate endpoint.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Parameter</TableHead>
@@ -443,7 +444,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>Sample JSON data to infer schema from.</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Request</h4>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -513,7 +514,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Limits</h4>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Property</TableHead>
@@ -538,7 +539,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>Same daily/per-minute limits as sync endpoint</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
       </section>
 
       <Separator />
@@ -573,7 +574,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
         </pre>
 
         <h4 className="mt-6 text-sm font-semibold">Job Statuses</h4>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Status</TableHead>
@@ -598,7 +599,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0`}
               <TableCell>Generation failed. <code className="font-mono">error</code> field contains the reason.</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
       </section>
 
       <Separator />
@@ -656,7 +657,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
           Each delivery is a POST to your URL with these headers:
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Header</TableHead>
@@ -677,7 +678,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>Unique delivery ID for idempotency</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h4 className="mt-6 text-sm font-semibold">Verifying Signatures</h4>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -723,7 +724,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
           Every authenticated response includes rate-limit headers so you can track usage programmatically.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Header</TableHead>
@@ -748,7 +749,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
               <TableCell><code className="font-mono">2026-03-21T00:00:00.000Z</code></TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
       </section>
 
       <Separator />
@@ -761,7 +762,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
           page for detailed examples. Here is a summary.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Status</TableHead>
@@ -806,7 +807,7 @@ function verifyWebhook(body: string, signature: string, secret: string): boolean
               <TableCell>Unexpected server error. Retry or contact support.</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <p className="mt-4 text-sm text-muted-foreground">
           All error responses follow a consistent envelope:

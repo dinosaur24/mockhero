@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Templates",
@@ -38,7 +39,7 @@ export default function TemplatesPage() {
           <code className="rounded bg-muted px-1.5 py-0.5 font-mono">scale</code>{" "}
           parameter multiplies all counts proportionally.
         </p>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Scale</TableHead>
@@ -73,7 +74,7 @@ export default function TemplatesPage() {
               <TableCell>Stress testing (subject to per-request limits)</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
       </section>
 
       <Separator />
@@ -90,7 +91,7 @@ export default function TemplatesPage() {
         </p>
 
         <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Table</TableHead>
@@ -125,7 +126,7 @@ export default function TemplatesPage() {
               <TableCell>id, customer_id (ref), product_id (ref), rating, title, body, created_at</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -222,7 +223,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Table</TableHead>
@@ -257,7 +258,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>id, post_id (ref), tag_id (ref)</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -346,7 +347,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Table</TableHead>
@@ -376,7 +377,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>id, invoice_number, subscription_id (ref), amount, currency, status, issued_at, due_date</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -471,7 +472,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         </p>
 
         <h3 className="mt-6 text-lg font-semibold">Tables and Default Counts</h3>
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Table</TableHead>
@@ -506,7 +507,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
               <TableCell>id, sender_id (ref), receiver_id (ref), body, is_read, sent_at</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h3 className="mt-6 text-lg font-semibold">Example Request</h3>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">

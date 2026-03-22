@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Error Codes",
@@ -43,7 +44,8 @@ export default function ErrorsPage() {
 }`}
         </pre>
 
-        <Table className="mt-6">
+        <ResponsiveTable>
+        <Table className="mt-6 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Field</TableHead>
@@ -69,6 +71,7 @@ export default function ErrorsPage() {
             </TableRow>
           </TableBody>
         </Table>
+        </ResponsiveTable>
       </section>
 
       <Separator />
@@ -405,7 +408,8 @@ X-Request-Id: req_8a3f2c1d7e9b
       {/* Summary Table */}
       <section>
         <h2 id="summary" className="text-2xl font-bold">Quick Reference</h2>
-        <Table className="mt-4">
+        <ResponsiveTable>
+        <Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Status</TableHead>
@@ -477,6 +481,7 @@ X-Request-Id: req_8a3f2c1d7e9b
             </TableRow>
           </TableBody>
         </Table>
+        </ResponsiveTable>
       </section>
     </div>
   )

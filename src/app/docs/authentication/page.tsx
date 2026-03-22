@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Authentication",
@@ -36,7 +37,8 @@ export default function AuthenticationPage() {
           hexadecimal characters. There is no distinction between test and production keys.
         </p>
 
-        <Table className="mt-6">
+        <ResponsiveTable>
+        <Table className="mt-6 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Prefix</TableHead>
@@ -52,6 +54,7 @@ export default function AuthenticationPage() {
             </TableRow>
           </TableBody>
         </Table>
+        </ResponsiveTable>
 
         <p className="mt-4 text-sm text-muted-foreground">
           Keys are 35 characters long including the prefix. They contain lowercase hex characters (0-9, a-f).

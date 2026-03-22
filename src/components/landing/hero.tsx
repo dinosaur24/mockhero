@@ -67,7 +67,7 @@ export function Hero() {
               </Button>
             </div>
 
-            <div className="mt-14 flex gap-12">
+            <div className="mt-14 flex flex-wrap gap-8 sm:gap-12">
               {stats.map((stat) => (
                 <div key={stat.label}>
                   <p className="text-4xl font-bold tracking-tight">{stat.value}</p>

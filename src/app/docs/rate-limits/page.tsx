@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 
 export const metadata = {
   title: "Rate Limits",
@@ -33,7 +34,7 @@ export default function RateLimitsPage() {
           All limits reset daily at midnight UTC.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Limit</TableHead>
@@ -80,7 +81,7 @@ export default function RateLimitsPage() {
               <TableCell>Yes</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
       </section>
 
       <Separator />
@@ -93,7 +94,7 @@ export default function RateLimitsPage() {
           without making extra API calls.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Header</TableHead>
@@ -123,7 +124,7 @@ export default function RateLimitsPage() {
               <TableCell>Seconds to wait before retrying. Only present on 429 responses for per-minute rate limits (not daily limits).</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <h3 className="mt-6 text-lg font-semibold">Example Headers</h3>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-4 text-sm font-mono">
@@ -196,7 +197,7 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
           endpoint, not records generated.
         </p>
 
-        <Table className="mt-4">
+        <ResponsiveTable><Table className="mt-4 min-w-[500px]">
           <TableHeader>
             <TableRow>
               <TableHead>Plan</TableHead>
@@ -221,7 +222,7 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
               <TableCell>Fixed 60-second window</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table></ResponsiveTable>
 
         <p className="mt-4 text-sm text-muted-foreground">
           Per-minute limits use a fixed window algorithm that resets every 60 seconds. If you
