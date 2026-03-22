@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -58,7 +59,26 @@ export default function RootLayout({
         geistMono.variable
       )}
     >
+      <head>
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-W46D3W37"
+        />
+        <Script
+          id="gtm-init"
+          strategy="afterInteractive"
+        >{`window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});`}</Script>
+      </head>
       <body className="min-h-full flex flex-col">
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-W46D3W37"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <ClerkProvider>
           {children}
         </ClerkProvider>
