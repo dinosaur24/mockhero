@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   description:
     "Generate realistic, relational test data with 150+ field types. JSON, CSV, and SQL output. Free tier available.",
   metadataBase: new URL("https://mockhero.dev"),
+  formatDetection: {
+    email: false,
+    telephone: false,
+    address: false,
+  },
   icons: {
     icon: "/favicon.png",
     apple: "/favicon.png",
