@@ -4,6 +4,8 @@
 
 MockHero generates realistic, relational fake data via a simple REST API. Send a JSON schema or plain English description, get back production-quality test data with proper names, valid formats, and referential integrity.
 
+> For the full API reference with request/response examples, see: https://mockhero.dev/llms-full.txt
+
 ## Key Facts
 
 - Website: https://mockhero.dev

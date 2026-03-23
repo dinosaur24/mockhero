@@ -14,6 +14,7 @@ const isPublicRoute = createRouteMatcher([
   "/refund-policy(.*)",
   "/admin(.*)",
   "/llms.txt",
+  "/llms-full.txt",
   "/sitemap.xml",
   "/robots.txt",
 ]);
