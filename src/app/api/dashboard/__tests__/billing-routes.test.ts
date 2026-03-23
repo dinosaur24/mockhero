@@ -18,6 +18,13 @@ vi.mock("@clerk/nextjs/server", () => ({
     Promise.resolve({ users: { getUser: mockClerkUsersGetUser } }),
 }));
 
+vi.mock("next/headers", () => ({
+  cookies: () =>
+    Promise.resolve({
+      get: () => undefined,
+    }),
+}));
+
 const mockCreateCheckoutSession = vi.fn();
 const mockCancelSubscription = vi.fn();
 
@@ -149,11 +156,13 @@ describe("POST /api/dashboard/checkout", () => {
 
     expect(res.status).toBe(200);
     expect(body.url).toBe("https://checkout.polar.sh/abc");
-    expect(mockCreateCheckoutSession).toHaveBeenCalledWith({
-      tier: "pro",
-      customerEmail: "test@example.com",
-      userId: "user_123",
-    });
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tier: "pro",
+        customerEmail: "test@example.com",
+        userId: "user_123",
+      })
+    );
   });
 
   it("returns 200 for scale tier as well", async () => {
@@ -171,11 +180,13 @@ describe("POST /api/dashboard/checkout", () => {
 
     expect(res.status).toBe(200);
     expect(body.url).toBe("https://checkout.polar.sh/def");
-    expect(mockCreateCheckoutSession).toHaveBeenCalledWith({
-      tier: "scale",
-      customerEmail: "scale@example.com",
-      userId: "user_456",
-    });
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tier: "scale",
+        customerEmail: "scale@example.com",
+        userId: "user_456",
+      })
+    );
   });
 
   it("returns 500 when Polar API fails", async () => {
