@@ -81,24 +81,24 @@ export async function POST(request: Request) {
         return validationError("Prompt must be 2,000 characters or fewer");
       }
 
-      // Check prompt-specific daily limit (protects against LLM cost abuse on free tier)
+      // Check prompt-specific daily limit (protects against LLM cost abuse)
       const limits = TIER_LIMITS[user.tier];
-      if (limits.promptsPerDay !== Infinity) {
-        const supabase = createAdminClient();
-        const today = new Date().toISOString().split("T")[0];
-        const { count } = await supabase
-          .from("usage_logs")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.user_id)
-          .gte("created_at", `${today}T00:00:00Z`)
-          .eq("mode", "prompt");
+      const supabasePromptCheck = createAdminClient();
+      const today = new Date().toISOString().split("T")[0];
+      const { count } = await supabasePromptCheck
+        .from("usage_logs")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.user_id)
+        .gte("created_at", `${today}T00:00:00Z`)
+        .eq("mode", "prompt");
 
-        if ((count ?? 0) >= limits.promptsPerDay) {
-          return rateLimitError(
-            `Free tier allows ${limits.promptsPerDay} plain English prompts per day. ` +
-            `Use schema mode for unlimited requests, or upgrade to Pro.`
-          );
-        }
+      if ((count ?? 0) >= limits.promptsPerDay) {
+        const tierName = user.tier.charAt(0).toUpperCase() + user.tier.slice(1);
+        return rateLimitError(
+          `${tierName} tier allows ${limits.promptsPerDay} plain English prompts per day. ` +
+          `Use schema mode for unlimited requests` +
+          (user.tier !== "scale" ? `, or upgrade for higher limits.` : `.`)
+        );
       }
 
       const conversion = await convertPromptToSchema(body.prompt);
