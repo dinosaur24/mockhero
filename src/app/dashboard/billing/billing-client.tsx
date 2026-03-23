@@ -44,6 +44,7 @@ const plans: {
       "1,000 records/day",
       "100 records/request",
       "10 requests/min",
+      "10 prompts/day (schema mode unlimited)",
       "All field types",
       "All output formats",
     ],
@@ -58,7 +59,7 @@ const plans: {
       "100,000 records/day",
       "10,000 records/request",
       "60 requests/min",
-
+      "100 prompts/day (schema mode unlimited)",
       "All field types & formats",
     ],
   },
@@ -71,7 +72,7 @@ const plans: {
       "1,000,000 records/day",
       "50,000 records/request",
       "120 requests/min",
-
+      "500 prompts/day (schema mode unlimited)",
       "All field types & formats",
     ],
   },

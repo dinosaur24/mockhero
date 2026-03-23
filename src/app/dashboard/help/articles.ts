@@ -634,6 +634,8 @@ response = requests.post(
       </ul>
 
       <p>You can combine prompt mode with <code>locale</code>, <code>seed</code>, and <code>format</code> options.</p>
+
+      <p><strong>Daily prompt limits:</strong> Prompt mode has per-day limits based on your plan &mdash; 10 prompts/day (Free), 100 prompts/day (Pro), 500 prompts/day (Scale). Schema mode and template mode are always <strong>unlimited</strong> on all plans.</p>
     `,
   },
   {
@@ -695,9 +697,10 @@ response = requests.post(
         <li><strong>Fine-grained parameters</strong> &mdash; you cannot set exact <code>min</code>, <code>max</code>, <code>precision</code>, or <code>nullRate</code> values. Prompt mode uses reasonable defaults.</li>
         <li><strong>Complex relations</strong> &mdash; deeply nested or multi-level foreign key chains may not be inferred correctly. Schema mode gives you full control.</li>
         <li><strong>Performance</strong> &mdash; prompt mode adds a small overhead for interpreting the description (typically 100&ndash;300ms).</li>
+        <li><strong>Daily limits</strong> &mdash; prompt mode has per-day limits: 10 prompts/day (Free), 100 (Pro), 500 (Scale). Schema mode and template mode are always unlimited.</li>
       </ul>
 
-      <p><strong>Recommendation:</strong> Start with prompt mode for exploration, then switch to schema mode for production use where you need exact control over the output.</p>
+      <p><strong>Recommendation:</strong> Start with prompt mode for exploration, then switch to schema mode for production use where you need exact control over the output. Schema mode has no daily prompt cap.</p>
     `,
   },
 
@@ -1303,14 +1306,16 @@ psql -d mydb -f seed.sql</code></pre>
     category: "rate-limits",
     tags: ["plan", "limits", "quota", "rate limit", "records", "requests", "per day", "per minute"],
     content: `
-      <p>Every MockHero plan has three types of limits:</p>
+      <p>Every MockHero plan has the following limits:</p>
 
       <table>
-        <thead><tr><th>Limit</th><th>Free</th><th>Pro ($29/mo)</th><th>Scale ($79/mo)</th></tr></thead>
+        <thead><tr><th>Limit</th><th>Free</th><th>Pro ($19/mo)</th><th>Scale ($59/mo)</th></tr></thead>
         <tbody>
           <tr><td><strong>Records per day</strong></td><td>1,000</td><td>100,000</td><td>1,000,000</td></tr>
           <tr><td><strong>Records per request</strong></td><td>100</td><td>10,000</td><td>50,000</td></tr>
           <tr><td><strong>Requests per minute</strong></td><td>10</td><td>60</td><td>120</td></tr>
+          <tr><td><strong>Prompt mode</strong></td><td>10/day</td><td>100/day</td><td>500/day</td></tr>
+          <tr><td><strong>Schema &amp; template mode</strong></td><td colspan="3">Unlimited on all plans</td></tr>
         </tbody>
       </table>
 
@@ -1319,6 +1324,8 @@ psql -d mydb -f seed.sql</code></pre>
       <p><strong>Records per request</strong> is the maximum total records across all tables in a single API call. For example, on the Free plan, a request with 3 tables of 40 records each (120 total) would exceed the 100-record limit.</p>
 
       <p><strong>Requests per minute</strong> is a sliding-window rate limit applied per account.</p>
+
+      <p><strong>Prompt mode limits</strong> apply only to requests using the <code>prompt</code> field (plain English mode). Schema mode and template mode are always unlimited, regardless of plan.</p>
 
       <p>Check your current usage on the <strong>Dashboard &rarr; Usage</strong> page.</p>
     `,
@@ -1410,15 +1417,15 @@ X-DailyQuota-Reset: 1711238400</code></pre>
       <p>MockHero offers three plans to fit your needs.</p>
 
       <table>
-        <thead><tr><th>Feature</th><th>Free</th><th>Pro ($29/mo)</th><th>Scale ($79/mo)</th></tr></thead>
+        <thead><tr><th>Feature</th><th>Free</th><th>Pro ($19/mo)</th><th>Scale ($59/mo)</th></tr></thead>
         <tbody>
           <tr><td>Records per day</td><td>1,000</td><td>100,000</td><td>1,000,000</td></tr>
           <tr><td>Records per request</td><td>100</td><td>10,000</td><td>50,000</td></tr>
           <tr><td>Requests per minute</td><td>10</td><td>60</td><td>120</td></tr>
+          <tr><td>Prompt mode</td><td>10/day</td><td>100/day</td><td>500/day</td></tr>
           <tr><td>Output formats</td><td>JSON</td><td>JSON, CSV, SQL</td><td>JSON, CSV, SQL</td></tr>
-          <tr><td>Schema mode</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-          <tr><td>Prompt mode</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-          <tr><td>Templates</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Schema mode</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><td>Template mode</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
           <tr><td>MCP server</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
           <tr><td>All 156 field types</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
           <tr><td>All 22 locales</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>

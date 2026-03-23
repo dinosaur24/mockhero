@@ -41,6 +41,8 @@ export default function RateLimitsPage() {
                 { limit: "Daily records", free: "1,000", pro: "100,000", scale: "1,000,000" },
                 { limit: "Per-request records", free: "100", pro: "10,000", scale: "50,000" },
                 { limit: "Requests per minute", free: "10", pro: "60", scale: "120" },
+                { limit: "Prompt mode", free: "10/day", pro: "100/day", scale: "500/day" },
+                { limit: "Schema & template mode", free: "Unlimited", pro: "Unlimited", scale: "Unlimited" },
                 { limit: "Output formats", free: "JSON", pro: "JSON, CSV, SQL", scale: "JSON, CSV, SQL" },
                 { limit: "Seed for reproducibility", free: "No", pro: "Yes", scale: "Yes" },
                 { limit: "Schema detection", free: "No", pro: "Yes", scale: "Yes" },
@@ -85,6 +87,18 @@ export default function RateLimitsPage() {
               <TableCell>10</TableCell>
               <TableCell>60</TableCell>
               <TableCell>120</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Prompt mode</TableCell>
+              <TableCell>10/day</TableCell>
+              <TableCell>100/day</TableCell>
+              <TableCell>500/day</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Schema &amp; template mode</TableCell>
+              <TableCell>Unlimited</TableCell>
+              <TableCell>Unlimited</TableCell>
+              <TableCell>Unlimited</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Output formats</TableCell>
