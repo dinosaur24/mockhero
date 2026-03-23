@@ -38,18 +38,18 @@ export const metadata: Metadata = {
     apple: "/favicon.png",
   },
   openGraph: {
-    title: "MockHero — Synthetic Test Data API",
+    title: "MockHero | Synthetic Test Data API",
     description:
       "Generate realistic, relational test data with 150+ field types. JSON, CSV, and SQL output. Free tier available.",
     url: "https://mockhero.dev",
     siteName: "MockHero",
     type: "website",
     locale: "en_US",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MockHero — Synthetic Test Data API" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MockHero | Synthetic Test Data API" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MockHero — Synthetic Test Data API",
+    title: "MockHero | Synthetic Test Data API",
     description:
       "Generate realistic, relational test data with 150+ field types. JSON, CSV, and SQL output. Free tier available.",
     images: ["/og-image.png"],
