@@ -27,8 +27,8 @@ import { deliverWebhook } from "@/lib/api/webhooks";
 import { TIER_LIMITS } from "@/lib/utils/constants";
 import { checkUsageAlerts } from "@/lib/email/usage-alerts";
 
-// Allow up to 30s for large generation requests
-export const maxDuration = 30;
+// Allow up to 60s for LLM-powered content generation (blog_post, blog_comment)
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
