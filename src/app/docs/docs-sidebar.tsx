@@ -39,6 +39,12 @@ const sidebarSections = [
     ],
   },
   {
+    title: "Integrations",
+    links: [
+      { href: "/docs/database-guides", label: "Database Guides" },
+    ],
+  },
+  {
     title: "Account",
     links: [
       { href: "/docs/rate-limits", label: "Rate Limits" },
