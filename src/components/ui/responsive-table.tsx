@@ -1,7 +1,6 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { useIsMobile } from "@/hooks/use-mobile"
 
 /**
  * Wraps a <Table> and renders it as stacked cards on mobile.

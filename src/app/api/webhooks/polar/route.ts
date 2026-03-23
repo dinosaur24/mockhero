@@ -70,35 +70,20 @@ export async function POST(req: Request) {
       return ok("missing headers")
     }
 
-    let event!: { type: string; data: Record<string, unknown> }
+    // Strip "whsec_" prefix — standardwebhooks expects raw base64
+    const encodedSecret = secret.startsWith("whsec_") ? secret.slice(6) : secret
+    const wh = new Webhook(encodedSecret)
 
-    // Try verification with multiple secret formats
-    let verified = false
-    const secretVariants = [
-      secret,
-      secret.startsWith("whsec_") ? secret.slice(6) : `whsec_${secret}`,
-    ]
-
-    for (const s of secretVariants) {
-      try {
-        const wh = new Webhook(s)
-        event = wh.verify(rawBody, {
-          "webhook-id": svixId,
-          "webhook-timestamp": svixTimestamp,
-          "webhook-signature": svixSignature,
-        }) as { type: string; data: Record<string, unknown> }
-        verified = true
-        break
-      } catch {
-        // Try next variant
-      }
-    }
-
-    if (!verified) {
-      // Skip verification — parse the body directly so billing still works
-      // TODO: Fix signature verification with correct secret format
-      console.warn("[Polar webhook] Signature verification failed, processing anyway")
-      event = JSON.parse(rawBody) as { type: string; data: Record<string, unknown> }
+    let event: { type: string; data: Record<string, unknown> }
+    try {
+      event = wh.verify(rawBody, {
+        "webhook-id": svixId,
+        "webhook-timestamp": svixTimestamp,
+        "webhook-signature": svixSignature,
+      }) as { type: string; data: Record<string, unknown> }
+    } catch (verifyErr) {
+      console.error("[Polar webhook] Signature verification failed:", verifyErr)
+      return ok("signature verification failed")
     }
 
     // 3. Log the full event for debugging

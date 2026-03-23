@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignOutButton } from "@clerk/nextjs"
@@ -35,7 +36,7 @@ function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <Link href="/" className="flex items-center gap-2 px-2 py-1">
-          <img src="/logo.png" alt="" className="h-7 w-7" />
+          <Image src="/logo.png" alt="" width={28} height={28} className="h-7 w-7" />
           <span className="font-heading text-sm font-bold tracking-tight">MockHero</span>
         </Link>
       </SidebarHeader>
@@ -135,7 +136,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       <div className="md:hidden flex flex-col min-h-svh">
         <header className="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="" className="h-6 w-6" />
+            <Image src="/logo.png" alt="" width={24} height={24} className="h-6 w-6" />
             <span className="font-heading text-sm font-bold tracking-tight">MockHero</span>
           </Link>
           <SignOutButton>

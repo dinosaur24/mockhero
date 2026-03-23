@@ -7,17 +7,17 @@ import { Modal } from "@/components/ui/modal";
 
 export function SettingsActions() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   async function handleDelete() {
-    setDeleting(true);
+    setIsDeleting(true);
     try {
       const res = await fetch("/api/dashboard/delete-account", { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
       router.push("/sign-in");
     } catch {
-      setDeleting(false);
+      setIsDeleting(false);
     }
   }
 
@@ -36,8 +36,8 @@ export function SettingsActions() {
             <Button variant="secondary" size="sm" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete}>
-              Delete Permanently
+            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? "Deleting…" : "Delete Permanently"}
             </Button>
           </>
         }

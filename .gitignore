@@ -48,3 +48,4 @@ supabase/.temp/
 
 # lockfile — using npm only
 pnpm-lock.yaml
+packages/mcp-server/.mcpregistry_*

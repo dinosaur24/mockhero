@@ -116,7 +116,6 @@ export const ssnGenerator: FieldGenerator = (_params, ctx) => {
  * Passport number. Default US format: 1 uppercase letter + 8 digits.
  */
 export const passportNumberGenerator: FieldGenerator = (params, ctx) => {
-  const _format = (params.format as string) ?? "US";
   const letter = ctx.prng.pick(UPPERCASE.split(""));
   let digits = "";
   for (let i = 0; i < 8; i++) {

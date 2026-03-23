@@ -304,8 +304,6 @@ export default function BillingClient({ tier, subscription, justUpgraded }: Prop
           {plans.map((plan) => {
             const isCurrent = plan.tier === tier
             const isUpgrade = tierRank[plan.tier] > tierRank[tier]
-            const _isDowngrade = tierRank[plan.tier] < tierRank[tier] && plan.tier !== "free"
-
             return (
               <Card
                 key={plan.tier}

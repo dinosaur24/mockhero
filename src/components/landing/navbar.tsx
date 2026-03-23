@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
@@ -34,7 +35,7 @@ export function Navbar() {
       <div className="mx-auto flex h-20 max-w-screen-xl items-center px-4 md:px-6">
         {/* Logo */}
         <Link href="/" className="mr-10 flex items-center gap-2 font-heading text-2xl font-bold tracking-tight">
-          <img src="/logo.png" alt="" className="h-11 w-11" />
+          <Image src="/logo.png" alt="" width={44} height={44} className="h-11 w-11" />
           MockHero
         </Link>
 

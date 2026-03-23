@@ -16,7 +16,7 @@ interface ApiKeyCardProps {
 
 export function ApiKeyCard({ rawKey, keyPrefix }: ApiKeyCardProps) {
   const [showRegenModal, setShowRegenModal] = useState(false);
-  const [regenerating, setRegenerating] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [currentPrefix, setCurrentPrefix] = useState(keyPrefix);
   const [currentRawKey, setCurrentRawKey] = useState(rawKey);
   const { toast } = useToast();
@@ -30,7 +30,7 @@ export function ApiKeyCard({ rawKey, keyPrefix }: ApiKeyCardProps) {
   }
 
   async function handleRegenerate() {
-    setRegenerating(true);
+    setIsRegenerating(true);
     try {
       const res = await fetch("/api/dashboard/regenerate-key", { method: "POST" });
       if (!res.ok) throw new Error("Failed to regenerate");
@@ -42,7 +42,7 @@ export function ApiKeyCard({ rawKey, keyPrefix }: ApiKeyCardProps) {
     } catch {
       toast("Failed to regenerate key", "error");
     } finally {
-      setRegenerating(false);
+      setIsRegenerating(false);
     }
   }
 
@@ -99,8 +99,8 @@ export function ApiKeyCard({ rawKey, keyPrefix }: ApiKeyCardProps) {
             <Button variant="secondary" size="sm" onClick={() => setShowRegenModal(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleRegenerate}>
-              Regenerate
+            <Button variant="destructive" size="sm" onClick={handleRegenerate} disabled={isRegenerating}>
+              {isRegenerating ? "Regenerating…" : "Regenerate"}
             </Button>
           </>
         }

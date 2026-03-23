@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function CookiePolicyPage() {
       <div className="w-full max-w-2xl">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-10">
-          <img
+          <Image
             src="/logo.png"
             alt="MockHero logo"
             width={28}

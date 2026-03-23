@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
@@ -48,7 +49,7 @@ export function AuthShell({ children, mode }: AuthShellProps) {
             href="/"
             className="flex items-center gap-2 font-heading text-xl font-bold tracking-tight text-white"
           >
-            <img src="/logo.png" alt="" className="h-8 w-8" />
+            <Image src="/logo.png" alt="" width={32} height={32} className="h-8 w-8" />
             MockHero
           </Link>
 
@@ -137,7 +138,7 @@ export function AuthShell({ children, mode }: AuthShellProps) {
                 href="/"
                 className="inline-flex items-center gap-2 font-heading text-2xl font-bold tracking-tight"
               >
-                <img src="/logo.png" alt="" className="h-9 w-9" />
+                <Image src="/logo.png" alt="" width={36} height={36} className="h-9 w-9" />
                 MockHero
               </Link>
               <p className="mt-2 text-sm text-muted-foreground">
