@@ -1,7 +1,23 @@
 import type { MetadataRoute } from "next";
+import { articles } from "./blog/articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://mockhero.dev";
+
+  const blogEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    ...articles.map((article) => ({
+      url: `${baseUrl}/blog/${article.slug}`,
+      lastModified: new Date(article.date),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
 
   return [
     {
@@ -81,5 +97,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: 0.3,
     },
+    ...blogEntries,
   ];
 }
