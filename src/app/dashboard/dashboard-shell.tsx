@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { SignOutButton } from "@clerk/nextjs"
-import { LayoutDashboard, Key, BarChart3, CreditCard, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, Key, BarChart3, CreditCard, Settings, HelpCircle, LogOut } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import {
   Sidebar,
@@ -25,6 +25,7 @@ const navItems = [
   { href: "/dashboard/usage", label: "Usage", icon: BarChart3 },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard/help", label: "Help", icon: HelpCircle },
 ]
 
 function AppSidebar() {
