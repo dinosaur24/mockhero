@@ -21,7 +21,7 @@ Specifically, this document blueprints:
 - Landing page with live playground
 - Minimal dashboard (API key display, usage stats)
 - MCP server for AI agent integration
-- Polar payment integration for Pro ($19/mo) and Scale ($49/mo) tiers
+- Polar payment integration for Pro ($29/mo) and Scale ($79/mo) tiers
 
 ### Market Differentiation
 
@@ -123,7 +123,7 @@ graph TB
 | Backend | Next.js API Routes | All API endpoints are Next.js route handlers. Data generation engine is pure TypeScript running in serverless functions. No separate backend service. |
 | Database | Supabase PostgreSQL | Manages API keys, usage logs, daily usage tracking, user accounts. Data generation is stateless and in-memory — Supabase handles persistent state for auth, billing, and rate limiting. |
 | Auth | Supabase Auth | Email/password and GitHub OAuth for developer signups. API key generation and validation for programmatic API access. Integrated with the same Supabase instance. |
-| Payments | Polar | Built for developer tools and SaaS subscriptions. Handles Pro ($19/mo) and Scale ($49/mo) tiers. Developer-friendly API. No Stripe complexity needed. |
+| Payments | Polar | Built for developer tools and SaaS subscriptions. Handles Pro ($29/mo) and Scale ($79/mo) tiers. Developer-friendly API. No Stripe complexity needed. |
 
 ### Stack Integration Guide
 
@@ -1085,7 +1085,7 @@ As Marcus, I want to receive a clear error when I hit my daily limit so that I u
 
 Acceptance Criteria:
 - [ ] Given I've used all 1,000 daily records, when I make another request, then I receive a 429 with a message stating my limit and the cost of upgrading
-- [ ] Given I'm on the free tier, when I see the rate limit error, then the message mentions "Upgrade to Pro for 100,000 records/day at $19/mo"
+- [ ] Given I'm on the free tier, when I see the rate limit error, then the message mentions "Upgrade to Pro for 100,000 records/day at $29/mo"
 
 ### Epic: AI Agent Integration
 
@@ -1117,7 +1117,7 @@ Acceptance Criteria:
 As Marcus, I want to see clear pricing tiers on the landing page so that I can decide whether the free tier is enough or if I need Pro.
 
 Acceptance Criteria:
-- [ ] Given I scroll to the pricing section, then I see three tiers (Free, Pro $19/mo, Scale $49/mo) with clear record limits and feature lists
+- [ ] Given I scroll to the pricing section, then I see three tiers (Free, Pro $29/mo, Scale $79/mo) with clear record limits and feature lists
 - [ ] Given I click "Get Free API Key," then I'm taken to the signup page
 
 ---
@@ -1887,8 +1887,8 @@ Tier resolution: On each API request, the middleware queries the `subscriptions`
 
 1. Create an organization on [polar.sh](https://polar.sh)
 2. Create two products:
-   - **MockHero Pro** — $19/month recurring
-   - **MockHero Scale** — $49/month recurring
+   - **MockHero Pro** — $29/month recurring
+   - **MockHero Scale** — $79/month recurring
 3. Note the Product IDs for each
 4. Configure webhook endpoint: `https://mockhero.dev/api/webhooks/polar`
 5. Enable webhook events: `subscription.created`, `subscription.updated`, `subscription.canceled`, `subscription.revoked`
@@ -1910,8 +1910,8 @@ export const polar = new Polar({
 | Tier | Monthly Price | Daily Records | Per-Request Limit | Requests/Min |
 |------|-------------|---------------|-------------------|-------------|
 | Free | $0 | 1,000 | 100 | 10 |
-| Pro | $19 | 100,000 | 10,000 | 60 |
-| Scale | $49 | 1,000,000 | 50,000 | 120 |
+| Pro | $29 | 100,000 | 10,000 | 60 |
+| Scale | $79 | 1,000,000 | 50,000 | 120 |
 
 Tier limits are defined in `src/lib/utils/constants.ts`:
 

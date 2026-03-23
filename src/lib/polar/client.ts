@@ -3,8 +3,8 @@
  *
  * Required env vars:
  *   POLAR_ACCESS_TOKEN       — Polar API access token
- *   POLAR_PRO_PRODUCT_ID     — Product ID for Pro plan ($19/mo)
- *   POLAR_SCALE_PRODUCT_ID   — Product ID for Scale plan ($59/mo)
+ *   POLAR_PRO_PRODUCT_ID     — Product ID for Pro plan ($29/mo)
+ *   POLAR_SCALE_PRODUCT_ID   — Product ID for Scale plan ($79/mo)
  *   POLAR_WEBHOOK_SECRET     — Webhook signing secret (Svix)
  *   NEXT_PUBLIC_APP_URL      — Base URL for redirects (e.g. https://mockhero.dev)
  *   POLAR_SANDBOX            — Set to "true" to use sandbox API

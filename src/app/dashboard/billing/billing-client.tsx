@@ -52,7 +52,7 @@ const plans: {
   {
     tier: "pro",
     name: "Pro",
-    price: "$19",
+    price: "$29",
     priceNote: "/month",
     highlight: true,
     features: [
@@ -66,7 +66,7 @@ const plans: {
   {
     tier: "scale",
     name: "Scale",
-    price: "$59",
+    price: "$79",
     priceNote: "/month",
     features: [
       "1,000,000 records/day",

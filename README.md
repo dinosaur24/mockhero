@@ -83,7 +83,7 @@ See [@mockherodev/mcp-server](./packages/mcp-server) for setup instructions.
 |---|---|---|---|
 | Daily records | 1,000 | 50,000 | 500,000 |
 | Requests/min | 10 | 60 | 200 |
-| Price | $0 | $19/mo | $59/mo |
+| Price | $0 | $29/mo | $79/mo |
 
 ## Tech stack
 

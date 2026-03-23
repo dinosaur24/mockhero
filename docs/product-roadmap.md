@@ -259,7 +259,7 @@
 
 - [ ] **TASK-044** — Build the Pricing section
   Files: `src/components/landing/pricing.tsx`
-  Notes: Three-column pricing comparison (stacked on mobile). Free: $0/mo — 1,000 records/day, 100 per request, 5 locales, all formats, "Get Free API Key" button. Pro: $19/mo — 100,000 records/day, 10,000 per request, everything in Free + priority support, "Start Pro Trial" button (links to Polar checkout, disabled until Phase 5 — show "Coming Soon" for now). Scale: $49/mo — 1,000,000 records/day, 50,000 per request, everything in Pro + dedicated support, "Contact Us" or "Start Scale" button. Highlight Pro as "Most Popular" with a badge. Per US-013 and PRD § Data Model tier limits. Verify: Pricing section renders all 3 tiers with correct limits, "Most Popular" badge on Pro, responsive layout.
+  Notes: Three-column pricing comparison (stacked on mobile). Free: $0/mo — 1,000 records/day, 100 per request, 5 locales, all formats, "Get Free API Key" button. Pro: $29/mo — 100,000 records/day, 10,000 per request, everything in Free + priority support, "Start Pro Trial" button (links to Polar checkout, disabled until Phase 5 — show "Coming Soon" for now). Scale: $79/mo — 1,000,000 records/day, 50,000 per request, everything in Pro + dedicated support, "Contact Us" or "Start Scale" button. Highlight Pro as "Most Popular" with a badge. Per US-013 and PRD § Data Model tier limits. Verify: Pricing section renders all 3 tiers with correct limits, "Most Popular" badge on Pro, responsive layout.
 
 - [ ] **TASK-045** — Build the Footer
   Files: `src/components/landing/footer.tsx`
@@ -341,7 +341,7 @@
 
 - [ ] **TASK-061** — Final pre-launch checklist
   Files: `package.json`, `next.config.ts`
-  Notes: Run through this checklist: (1) `npm run build` — no errors or warnings. (2) `npx vitest run` — all tests pass. (3) Lighthouse score: Performance >90, Accessibility >90, SEO >90. (4) All environment variables set in Vercel. (5) Supabase migration applied to production project. (6) Polar products created (Pro $19/mo, Scale $49/mo) with correct webhook URL. (7) OG image renders correctly when shared on Twitter/X (test with card validator). (8) Custom domain configured (mockhero.dev if purchased). (9) Error monitoring: Vercel logs show no unhandled errors. (10) Rate limiting works: free tier capped at 1,000 records/day. Verify: All 10 items checked. The product is ready for the GTM launch plan in docs/gtm.md § Launch Week Plan.
+  Notes: Run through this checklist: (1) `npm run build` — no errors or warnings. (2) `npx vitest run` — all tests pass. (3) Lighthouse score: Performance >90, Accessibility >90, SEO >90. (4) All environment variables set in Vercel. (5) Supabase migration applied to production project. (6) Polar products created (Pro $29/mo, Scale $79/mo) with correct webhook URL. (7) OG image renders correctly when shared on Twitter/X (test with card validator). (8) Custom domain configured (mockhero.dev if purchased). (9) Error monitoring: Vercel logs show no unhandled errors. (10) Rate limiting works: free tier capped at 1,000 records/day. Verify: All 10 items checked. The product is ready for the GTM launch plan in docs/gtm.md § Launch Week Plan.
 
 - [ ] **TASK-062** — Prepare launch assets
   Files: None (content creation)

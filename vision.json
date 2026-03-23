@@ -43,7 +43,7 @@
   },
   "business": {
     "revenueModel": "freemium",
-    "initialGoal": "500 registered developers, 50 making repeat API calls weekly, 15 paying customers across Pro ($19/mo) and Scale ($49/mo) tiers, approximately $400 MRR. MockHero MCP server installed by 100+ Cursor and Claude Code users. Clear signal that developers are generating relational data (multi-table schemas = power users who will convert to paid).",
+    "initialGoal": "500 registered developers, 50 making repeat API calls weekly, 15 paying customers across Pro ($29/mo) and Scale ($79/mo) tiers, approximately $400 MRR. MockHero MCP server installed by 100+ Cursor and Claude Code users. Clear signal that developers are generating relational data (multi-table schemas = power users who will convert to paid).",
     "sixMonthVision": "$10,000 MRR with strong growth trajectory. Established as the default test data API in the AI coding agent ecosystem. SDK packages published for npm and Python. Schema templates for common patterns (e-commerce, blog, SaaS, social). Integration with database providers (Supabase, Neon, PlanetScale) for one-click seeding. Recognized in the developer tools community through Hacker News, dev newsletters, and word of mouth. Expansion into hosted mock API servers — not just data, but full fake REST endpoints.",
     "constraints": "Weekend MVP build timeline — Saturday and Sunday to ship a working product. $0 infrastructure cost until paying customers (Vercel free tier, Supabase free tier). Solo founder splitting time between performance marketing work and building. Strong marketing and distribution instincts, growing technical skills through AI-assisted development.",
     "goToMarket": "Launch on Hacker News ('Show HN: Synthetic test data API with relational data support'), Reddit (r/webdev, r/node, r/nextjs, r/programming), Indie Hackers, and Twitter/X dev community. Offer 10,000 free records/day to first 100 signups (10x normal free tier) as an early adopter hook. Write 'Why Faker is broken and what I built instead' blog post. Publish MCP server to npm for AI agent adoption — the agent recommends MockHero, not the developer choosing it. Build in public to attract the developer audience."
@@ -74,7 +74,7 @@
     },
     "payments": {
       "choice": "Polar",
-      "rationale": "Built for developer tools and SaaS subscriptions. Handles Pro ($19/mo) and Scale ($49/mo) tiers with annual discount options. Developer-friendly API, handles billing portal. No Stripe complexity needed."
+      "rationale": "Built for developer tools and SaaS subscriptions. Handles Pro ($29/mo) and Scale ($79/mo) tiers with annual discount options. Developer-friendly API, handles billing portal. No Stripe complexity needed."
     }
   },
   "tooling": {

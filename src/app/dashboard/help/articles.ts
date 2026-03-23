@@ -1309,7 +1309,7 @@ psql -d mydb -f seed.sql</code></pre>
       <p>Every MockHero plan has the following limits:</p>
 
       <table>
-        <thead><tr><th>Limit</th><th>Free</th><th>Pro ($19/mo)</th><th>Scale ($59/mo)</th></tr></thead>
+        <thead><tr><th>Limit</th><th>Free</th><th>Pro ($29/mo)</th><th>Scale ($79/mo)</th></tr></thead>
         <tbody>
           <tr><td><strong>Records per day</strong></td><td>1,000</td><td>100,000</td><td>1,000,000</td></tr>
           <tr><td><strong>Records per request</strong></td><td>100</td><td>10,000</td><td>50,000</td></tr>
@@ -1417,7 +1417,7 @@ X-DailyQuota-Reset: 1711238400</code></pre>
       <p>MockHero offers three plans to fit your needs.</p>
 
       <table>
-        <thead><tr><th>Feature</th><th>Free</th><th>Pro ($19/mo)</th><th>Scale ($59/mo)</th></tr></thead>
+        <thead><tr><th>Feature</th><th>Free</th><th>Pro ($29/mo)</th><th>Scale ($79/mo)</th></tr></thead>
         <tbody>
           <tr><td>Records per day</td><td>1,000</td><td>100,000</td><td>1,000,000</td></tr>
           <tr><td>Records per request</td><td>100</td><td>10,000</td><td>50,000</td></tr>

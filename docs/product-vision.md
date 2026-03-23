@@ -54,7 +54,7 @@ In 12 months, MockHero is the default answer to "how do I get test data?" in the
 
 Marcus's test data problem hits him at least twice a week. He creates a new database table, writes the migration, builds the UI — then realizes he needs 200 realistic records to test pagination, search, and edge cases. He opens a seed script, writes 50 lines of Faker.js calls that produce "Jane Doe, jane.doe@example.com, 555-0123" and calls it good enough. The demo to his product manager shows obviously fake data. The search test misses a bug because all his test names are Western English. His AI agent generates a beautiful data table component but the screenshot looks ridiculous because every user is named "John Smith."
 
-He's not looking for a tool. He doesn't think "test data generation" is a category. He just wants the pain to stop — and he'll pay $19/month for something that makes his seed script 10x better in 10 seconds.
+He's not looking for a tool. He doesn't think "test data generation" is a category. He just wants the pain to stop — and he'll pay $29/month for something that makes his seed script 10x better in 10 seconds.
 
 ### Secondary Personas
 
@@ -108,7 +108,7 @@ He's not looking for a tool. He doesn't think "test data generation" is a catego
 
 ### Key Assumptions to Validate
 
-**1. "Developers will pay for test data generation."** We assume developers value their time at >$19/month for this specific problem. To validate: track free-to-paid conversion rate. If <2% convert after 30 days of active use, the pain isn't severe enough to pay for.
+**1. "Developers will pay for test data generation."** We assume developers value their time at >$29/month for this specific problem. To validate: track free-to-paid conversion rate. If <2% convert after 30 days of active use, the pain isn't severe enough to pay for.
 
 **2. "AI coding agents will drive significant API usage."** We assume MCP integration will generate meaningful traffic as agents call MockHero automatically. To validate: measure API calls from MCP user agents vs direct API calls in the first month. If MCP <10% of traffic, the agent distribution thesis needs rethinking.
 
@@ -134,7 +134,7 @@ He's not looking for a tool. He doesn't think "test data generation" is a catego
 
 **Magic moment:** Marcus defines a 4-table schema — users, products, orders, reviews — all with ref fields linking them together. He hits the API. In 200ms, he gets back 1,000 records across all 4 tables, every foreign key valid, realistic distribution (some users have 15 orders, most have 2-3). He runs his JOIN queries. They all work. He shows the demo to his PM. The PM doesn't comment on the data because it looks real. This is the moment Marcus becomes a regular user.
 
-**Habit formation:** Marcus installs the MCP server in Cursor. Now every time he creates a new table, his AI agent automatically generates test data via MockHero. He never writes a seed script again. He hits the free tier limit on a busy day and upgrades to Pro without hesitation — $19/month is nothing compared to the time he saves.
+**Habit formation:** Marcus installs the MCP server in Cursor. Now every time he creates a new table, his AI agent automatically generates test data via MockHero. He never writes a seed script again. He hits the free tier limit on a busy day and upgrades to Pro without hesitation — $29/month is nothing compared to the time he saves.
 
 **Advocacy:** Marcus tells his team about MockHero. He mentions it in a code review: "Just use MockHero for test data instead of that seed script." Two teammates sign up. He tweets about it: "This tool replaced my entire seed script infrastructure. Send a schema, get back production-quality data. @MockHero is the real deal." The cycle begins again with new developers.
 
@@ -369,7 +369,7 @@ The personality is modern developer culture: direct, slightly irreverent, techni
 | **Empty states** | "No API calls yet. Grab the cURL example from the docs and make your first request." | "It's quiet here! Why not explore our features?" |
 | **Success messages** | "Generated 1,247 records across 4 tables in 89ms." | "Awesome job! Your data has been successfully generated! 🎉" |
 | **Marketing copy** | "Stop seeding your database with 'John Doe.' Send a schema, get back Maximilian Bergmann." | "MockHero leverages advanced algorithms to generate realistic synthetic data solutions." |
-| **Pricing** | "Free: 1,000 records/day. Pro: 100K records/day, $19/mo. That's it." | "Unlock premium features with our affordable subscription plans!" |
+| **Pricing** | "Free: 1,000 records/day. Pro: 100K records/day, $29/mo. That's it." | "Unlock premium features with our affordable subscription plans!" |
 | **Documentation** | "The `ref` type links tables together. Here's a 3-table example:" | "In this section, we will explore the functionality of the referential data type..." |
 
 ### Messaging Framework
@@ -407,7 +407,7 @@ MockHero fixes this with a single API endpoint. Send a JSON schema defining your
 
 The timing is perfect because AI coding agents are exploding — Cursor, Claude Code, Copilot, Lovable, Bolt. Every one of these agents needs to populate databases to test the code they generate. MockHero includes an MCP server so these agents can call the API natively. The developer never visits our website — their AI agent recommends us.
 
-Free tier is 1,000 records/day. Pro is $19/month for 100K. We're live, the API works, and we're looking for developers who are tired of seed script hell."
+Free tier is 1,000 records/day. Pro is $29/month for 100K. We're live, the API works, and we're looking for developers who are tired of seed script hell."
 
 ### Competitive Differentiation Narrative
 
