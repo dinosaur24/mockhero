@@ -4,7 +4,7 @@
  * CRITICAL: Always returns 200 to prevent Polar from disabling the endpoint.
  */
 
-import { Webhook } from "standardwebhooks"
+import { createHmac } from "crypto"
 import { headers } from "next/headers"
 import { clerkClient } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/admin"
@@ -70,20 +70,34 @@ export async function POST(req: Request) {
       return ok("missing headers")
     }
 
-    // Strip "whsec_" prefix — standardwebhooks expects raw base64
-    const encodedSecret = secret.startsWith("whsec_") ? secret.slice(6) : secret
-    const wh = new Webhook(encodedSecret)
+    // Manual HMAC-SHA256 verification (Standard Webhooks spec)
+    // 1. Decode the secret (strip whsec_ prefix, base64-decode)
+    const rawSecret = secret.startsWith("whsec_") ? secret.slice(6) : secret
+    const secretBytes = Buffer.from(rawSecret, "base64")
+
+    // 2. Build signed content: "{webhook-id}.{webhook-timestamp}.{body}"
+    const signedContent = `${svixId}.${svixTimestamp}.${rawBody}`
+
+    // 3. Compute HMAC-SHA256
+    const computedSig = createHmac("sha256", secretBytes)
+      .update(signedContent)
+      .digest("base64")
+
+    // 4. Compare with provided signatures (format: "v1,{base64sig} v1,{base64sig}")
+    const providedSigs = svixSignature.split(" ").map(s => s.replace(/^v1,/, ""))
+    const isValid = providedSigs.some(sig => sig === computedSig)
 
     let event: { type: string; data: Record<string, unknown> }
-    try {
-      event = wh.verify(rawBody, {
-        "webhook-id": svixId,
-        "webhook-timestamp": svixTimestamp,
-        "webhook-signature": svixSignature,
-      }) as { type: string; data: Record<string, unknown> }
-    } catch (verifyErr) {
-      console.error("[Polar webhook] Signature verification failed:", verifyErr)
+    if (!isValid) {
+      console.error("[Polar webhook] Signature mismatch. Expected:", computedSig, "Got:", providedSigs)
       return ok("signature verification failed")
+    }
+
+    try {
+      event = JSON.parse(rawBody) as { type: string; data: Record<string, unknown> }
+    } catch {
+      console.error("[Polar webhook] Failed to parse body as JSON")
+      return ok("invalid json")
     }
 
     // 3. Log the full event for debugging
