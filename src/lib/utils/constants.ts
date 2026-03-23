@@ -7,16 +7,19 @@ export const TIER_LIMITS = {
     dailyRecords: 1_000,
     perRequest: 100,
     perMinute: 10,
+    promptsPerDay: 10,
   },
   pro: {
     dailyRecords: 100_000,
     perRequest: 10_000,
     perMinute: 60,
+    promptsPerDay: Infinity,
   },
   scale: {
     dailyRecords: 1_000_000,
     perRequest: 50_000,
     perMinute: 120,
+    promptsPerDay: Infinity,
   },
 } as const;
 

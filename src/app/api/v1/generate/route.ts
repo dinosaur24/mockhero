@@ -55,9 +55,11 @@ export async function POST(request: Request) {
     //    Mode 2: Prompt — { "prompt": "50 users and 200 orders" }
     //    Mode 3: Structured — { "tables": [...] }
     let parsed: ReturnType<typeof parseSchema> extends infer R ? R : never;
+    let requestMode: "schema" | "prompt" | "template" = "schema";
 
     if (typeof body.template === "string") {
       // Mode 1: Template mode
+      requestMode = "template";
       try {
         const templateRequest = generateFromTemplate({
           template: body.template,
@@ -74,9 +76,31 @@ export async function POST(request: Request) {
       }
     } else if (typeof body.prompt === "string" && !body.tables) {
       // Mode 2: Prompt mode (plain English → schema conversion)
+      requestMode = "prompt";
       if (body.prompt.length > 2000) {
         return validationError("Prompt must be 2,000 characters or fewer");
       }
+
+      // Check prompt-specific daily limit (protects against LLM cost abuse on free tier)
+      const limits = TIER_LIMITS[user.tier];
+      if (limits.promptsPerDay !== Infinity) {
+        const supabase = createAdminClient();
+        const today = new Date().toISOString().split("T")[0];
+        const { count } = await supabase
+          .from("usage_logs")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.user_id)
+          .gte("created_at", `${today}T00:00:00Z`)
+          .eq("mode", "prompt");
+
+        if ((count ?? 0) >= limits.promptsPerDay) {
+          return rateLimitError(
+            `Free tier allows ${limits.promptsPerDay} plain English prompts per day. ` +
+            `Use schema mode for unlimited requests, or upgrade to Pro.`
+          );
+        }
+      }
+
       const conversion = await convertPromptToSchema(body.prompt);
 
       if (!conversion.success) {
@@ -195,7 +219,7 @@ export async function POST(request: Request) {
     }
 
     // 9. Log detailed usage (fire-and-forget — daily count already reserved)
-    logUsage(user, totalRecords, parsed.data).catch((err) => {
+    logUsage(user, totalRecords, parsed.data, requestMode).catch((err) => {
       console.error("Usage logging failed:", err);
     });
 
@@ -222,7 +246,8 @@ export async function POST(request: Request) {
 async function logUsage(
   user: { user_id: string; api_key_id: string },
   totalRecords: number,
-  request: { tables: { name: string }[]; format?: string; locale?: string }
+  request: { tables: { name: string }[]; format?: string; locale?: string },
+  mode: "schema" | "prompt" | "template" = "schema"
 ) {
   const supabase = createAdminClient();
 
@@ -233,5 +258,6 @@ async function logUsage(
     tables_count: request.tables.length,
     format: request.format ?? "json",
     locale: request.locale ?? "en",
+    mode,
   });
 }
