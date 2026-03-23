@@ -39,7 +39,7 @@ import {
 import {
   sentenceGenerator, paragraphGenerator, titleGenerator, slugGenerator,
   tagGenerator, reviewGenerator, imageUrlGenerator, filePathGenerator,
-  jsonGenerator, arrayGenerator,
+  jsonGenerator, arrayGenerator, catchPhraseGenerator,
 } from "./content";
 
 import {
@@ -212,6 +212,7 @@ export const GENERATOR_REGISTRY: Record<FieldType, FieldGenerator> = {
 
   // ── Content ────────────────────────────────────────────
   sentence: sentenceGenerator,
+  catch_phrase: catchPhraseGenerator,
   paragraph: paragraphGenerator,
   title: titleGenerator,
   slug: slugGenerator,

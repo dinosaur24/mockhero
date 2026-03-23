@@ -4,60 +4,66 @@
 
 import type { FieldGenerator } from "../types";
 
-// Realistic word bank — not lorem ipsum
-const SUBJECTS = [
-  "The team", "Our platform", "The new feature", "This approach", "The system",
-  "Performance", "The dashboard", "User feedback", "The API", "Testing",
-  "The database", "Our customers", "The deployment", "This update", "Security",
-  "The workflow", "Analytics", "The integration", "Our infrastructure", "The service",
+// Realistic sentence templates — no stacked connectors
+const SENTENCE_TEMPLATES = [
+  "The {adj} {noun} {verb} the {noun2} {result}.",
+  "We {verb} the {noun} to {goal}.",
+  "After {gerund} the {noun}, {outcome}.",
+  "The {noun} now {verb2} {amount} {comparative} than before.",
+  "{person} {verb} the {adj} {noun} {timeframe}.",
+  "Our {noun} {verb} {amount} {noun2} {timeframe}.",
+  "The {adj} {noun} was {verb_past} to {goal}.",
+  "By {gerund} the {noun}, we {verb} {result}.",
 ];
 
-const VERBS = [
-  "improved", "enabled", "streamlined", "reduced", "optimized",
-  "simplified", "enhanced", "delivered", "resolved", "accelerated",
-  "automated", "scaled", "validated", "transformed", "supported",
-  "achieved", "generated", "configured", "monitored", "deployed",
-];
-
-const OBJECTS = [
-  "response times by 40%", "the onboarding experience", "data processing speed",
-  "developer productivity", "customer satisfaction scores", "deployment frequency",
-  "error rates significantly", "resource utilization", "the authentication flow",
-  "cross-team collaboration", "real-time monitoring", "automated testing coverage",
-  "the migration process", "API reliability", "user engagement metrics",
-  "code quality standards", "the review process", "load balancing efficiency",
-  "database query performance", "the notification system",
-];
-
-const CONNECTORS = [
-  "Additionally,", "Furthermore,", "As a result,", "Meanwhile,",
-  "In particular,", "Notably,", "Consequently,", "Similarly,",
-  "On the other hand,", "In contrast,", "Moreover,", "However,",
-];
+const SENT_PARTS: Record<string, string[]> = {
+  adj: ["new", "updated", "core", "main", "primary", "automated", "internal", "custom", "shared", "critical"],
+  noun: ["system", "platform", "service", "module", "pipeline", "workflow", "dashboard", "API", "database", "feature", "integration", "process", "interface", "report", "configuration"],
+  noun2: ["performance", "reliability", "throughput", "latency", "accuracy", "efficiency", "coverage", "uptime", "capacity", "response time"],
+  verb: ["improved", "optimized", "rebuilt", "launched", "deployed", "migrated", "scaled", "refactored", "configured", "updated"],
+  verb2: ["handles", "processes", "supports", "delivers", "achieves", "maintains", "generates", "completes", "serves", "resolves"],
+  verb_past: ["redesigned", "refactored", "upgraded", "consolidated", "streamlined", "reconfigured", "replaced", "restructured"],
+  gerund: ["optimizing", "migrating", "upgrading", "rebuilding", "testing", "deploying", "analyzing", "monitoring", "consolidating", "refactoring"],
+  goal: ["improve throughput", "reduce latency", "increase reliability", "simplify maintenance", "enable scaling", "support growth", "reduce costs", "improve security"],
+  result: ["by 35%", "across all regions", "for enterprise clients", "in production", "during peak hours", "without downtime", "ahead of schedule"],
+  outcome: ["performance improved significantly", "error rates dropped to near zero", "the team shipped on schedule", "deployment time was cut in half", "customer satisfaction increased", "costs were reduced by a third"],
+  amount: ["3x more", "50% fewer", "twice as many", "significantly more", "10x faster", "far fewer"],
+  comparative: ["faster", "more efficiently", "more reliably", "with fewer errors", "with higher throughput"],
+  person: ["The team", "Engineering", "The backend team", "Our DevOps team", "The platform team"],
+  timeframe: ["last quarter", "this sprint", "in two weeks", "over the weekend", "during the migration", "ahead of the deadline"],
+};
 
 export const sentenceGenerator: FieldGenerator = (params, ctx) => {
-  const minWords = (params.min_words as number) ?? 8;
-  const maxWords = (params.max_words as number) ?? 16;
+  const template = ctx.prng.pick(SENTENCE_TEMPLATES);
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    const options = SENT_PARTS[key];
+    return options ? ctx.prng.pick(options) : key;
+  });
+};
 
-  // Generate a coherent sentence from templates
-  const subject = ctx.prng.pick(SUBJECTS);
-  const verb = ctx.prng.pick(VERBS);
-  const object = ctx.prng.pick(OBJECTS);
-  let sentence = `${subject} ${verb} ${object}.`;
+// Business-oriented short phrases for deal names, project titles, etc.
+const CATCH_PHRASE_TEMPLATES = [
+  "{action} {target}",
+  "{target} {action2}",
+  "Q{q} {action} {target}",
+  "{adj2} {target} {action2}",
+  "Annual {target} {action2}",
+];
 
-  // Pad if too short
-  while (sentence.split(" ").length < minWords) {
-    sentence = `${ctx.prng.pick(CONNECTORS)} ${sentence.charAt(0).toLowerCase() + sentence.slice(1)}`;
-  }
+const CATCH_PARTS: Record<string, string[]> = {
+  action: ["Enterprise", "Cloud", "Platform", "Infrastructure", "Digital", "Global", "Strategic", "Core", "Premium", "Custom"],
+  action2: ["Renewal", "Migration", "Upgrade", "Expansion", "Implementation", "Onboarding", "Deployment", "Integration", "Consolidation", "Optimization"],
+  target: ["License", "Support Contract", "Data Platform", "Security Suite", "Analytics Package", "API Access", "Storage Plan", "Compute Cluster", "SaaS Bundle", "DevOps Tooling"],
+  adj2: ["Extended", "Priority", "Multi-Year", "Full-Stack", "Cross-Region", "High-Availability", "Enterprise-Grade", "Dedicated"],
+  q: ["1", "2", "3", "4"],
+};
 
-  // Trim if too long
-  const words = sentence.split(" ");
-  if (words.length > maxWords) {
-    sentence = words.slice(0, maxWords).join(" ");
-    if (!sentence.endsWith(".")) sentence += ".";
-  }
-
-  return sentence;
+export const catchPhraseGenerator: FieldGenerator = (_params, ctx) => {
+  const template = ctx.prng.pick(CATCH_PHRASE_TEMPLATES);
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    const options = CATCH_PARTS[key];
+    return options ? ctx.prng.pick(options) : key;
+  });
 };
 
 export const paragraphGenerator: FieldGenerator = (params, ctx) => {

@@ -56,7 +56,7 @@ export const FIELD_TYPES = [
   "database_engine", "semver", "api_key", "commit_sha", "hash_md5", "hash_sha256",
   "port_number", "http_status_code", "file_size", "docker_image",
   // Content
-  "sentence", "paragraph", "title", "slug", "tag", "rating", "review", "markdown",
+  "sentence", "catch_phrase", "paragraph", "title", "slug", "tag", "rating", "review", "markdown",
   "emoji", "hashtag", "message", "notification_text",
   // Social
   "social_platform", "reaction", "github_username", "twitter_handle",
