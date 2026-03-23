@@ -139,6 +139,66 @@ GET /api/v1/health — Health check (public)
 POST /api/v1/schema/detect — Detect schema from SQL CREATE TABLE (auth required, Pro+)
 POST /api/v1/generate/async — Async bulk generation (auth required, Scale only)
 
+## Inserting Data into Databases
+
+After generating data, users need to insert it. Here are the most common patterns and gotchas:
+
+### Insertion Order (CRITICAL)
+Tables must be inserted in dependency order (parent before child). If you have users → orders → order_items, insert users first, then orders, then order_items. MockHero's response already returns tables in the correct order.
+
+### Supabase
+- Use the SERVICE ROLE KEY (not anon key) for seed scripts — anon key is blocked by Row Level Security (RLS)
+- The service role key bypasses RLS entirely
+- If the app reads data with anon key, add RLS policies:
+  CREATE POLICY "Allow public read" ON table_name FOR SELECT USING (true);
+- Client: createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+- Insert: supabase.from("users").insert(data.users)
+
+### Neon / PostgreSQL
+- Use MockHero's SQL output mode to get raw INSERT statements:
+  { "tables": [...], "format": "sql", "sql_dialect": "postgres" }
+- Pipe directly: curl ... | psql $DATABASE_URL
+- Or use @neondatabase/serverless driver with JSON mode and insert row by row
+
+### Prisma
+- Map MockHero JSON response directly to prisma.tableName.createMany({ data: response.data.tableName })
+- Insert parent tables first (FK ordering)
+- For large datasets, use transactions: prisma.$transaction([...])
+
+### Drizzle ORM
+- Use db.insert(tableName).values(response.data.tableName)
+- Same FK ordering applies
+
+### Firebase Firestore
+- Firestore has no FK constraints, but ref fields still useful for app-level joins
+- Use batch writes: const batch = db.batch(); data.users.forEach(u => batch.set(doc(db, "users", u.id), u))
+- Batch limit is 500 operations per commit
+
+### Convex
+- Convex uses mutations, not direct inserts. Create a seed mutation:
+  export const seed = mutation(async ({ db }, { users }) => { for (const u of users) await db.insert("users", u) })
+- Call from a script: const client = new ConvexHttpClient(CONVEX_URL); await client.mutation("seed", { users: data.users })
+- Convex auto-generates _id fields — you may need to map MockHero's "id" to a custom field
+- No FK constraints at DB level, but ref fields are useful for application-level references
+- Insert parent documents first if your app logic depends on references existing
+
+### MongoDB
+- Use insertMany: db.collection("users").insertMany(data.users)
+- No FK constraints at DB level, but ref fields maintain referential integrity for app logic
+
+### Raw SQL (any database)
+- Set format: "sql" and sql_dialect: "postgres" | "mysql" | "sqlite"
+- Response contains raw INSERT statements you can execute directly
+- Example: curl -X POST .../generate -d '{"tables":[...],"format":"sql","sql_dialect":"postgres"}' | psql
+
+### Common Gotchas
+1. RLS (Supabase): Use service role key for seeding, not anon key
+2. FK ordering: Always insert parent tables before child tables
+3. Batch limits: Supabase limits inserts to ~1000 rows per call, split if needed
+4. Connection pooling: For serverless (Neon, Supabase), use connection pooler URL, not direct connection
+5. UUID columns: MockHero generates valid UUIDs — make sure your DB column type is uuid, not text
+6. Timestamps: MockHero generates ISO 8601 strings — most ORMs handle this automatically
+
 ## Rate Limits
 Free: 1,000 records/day, 100/request, 10 req/min
 Pro ($29/mo): 100,000 records/day, 10,000/request, 60 req/min
