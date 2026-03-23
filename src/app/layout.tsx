@@ -21,7 +21,10 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "MockHero — Synthetic Test Data API",
+  title: {
+    default: "MockHero — Synthetic Test Data API",
+    template: "%s — MockHero",
+  },
   description:
     "Generate realistic, relational test data with 150+ field types. JSON, CSV, and SQL output. Free tier available.",
   metadataBase: new URL("https://mockhero.dev"),

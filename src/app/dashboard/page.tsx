@@ -4,6 +4,8 @@ import { getDashboardStats } from "@/lib/api/dashboard-queries"
 import { getActiveKeyPrefix } from "@/lib/api/keys"
 import OverviewClient from "./overview-client"
 
+export const metadata = { title: "Dashboard" }
+
 export default async function DashboardOverview() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")

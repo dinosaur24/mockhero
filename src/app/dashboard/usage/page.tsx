@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { getUsageData } from "@/lib/api/dashboard-queries"
 import UsageClient from "./usage-client"
 
+export const metadata = { title: "Usage" }
+
 export default async function UsagePage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")

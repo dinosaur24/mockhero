@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { getUserProfile, getUserSubscription } from "@/lib/api/dashboard-queries"
 import BillingClient from "./billing-client"
 
+export const metadata = { title: "Billing" }
+
 export default async function BillingPage({
   searchParams,
 }: {

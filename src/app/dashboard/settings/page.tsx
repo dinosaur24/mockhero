@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { getUserProfile } from "@/lib/api/dashboard-queries"
 import SettingsClient from "./settings-client"
 
+export const metadata = { title: "Settings" }
+
 export default async function SettingsPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")

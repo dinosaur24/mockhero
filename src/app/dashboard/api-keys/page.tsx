@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { getUserApiKeys } from "@/lib/api/dashboard-queries"
 import ApiKeysClient from "./api-keys-client"
 
+export const metadata = { title: "API Keys" }
+
 export default async function ApiKeysPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
