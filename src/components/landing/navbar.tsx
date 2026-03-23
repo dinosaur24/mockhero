@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#playground", label: "Playground" },
+  { href: "#compare", label: "Compare" },
   { href: "#pricing", label: "Pricing" },
   { href: "/docs", label: "Docs" },
 ]
