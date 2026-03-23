@@ -43,6 +43,10 @@ import {
 } from "./content";
 
 import {
+  blogPostGenerator, blogCommentGenerator,
+} from "./llm-content";
+
+import {
   booleanGenerator, enumGenerator, integerGenerator,
   refGenerator, sequenceGenerator, constantGenerator,
 } from "./logic";
@@ -230,6 +234,8 @@ export const GENERATOR_REGISTRY: Record<FieldType, FieldGenerator> = {
   hashtag: hashtagGenerator,
   message: messageGenerator,
   notification_text: notificationTextGenerator,
+  blog_post: blogPostGenerator,
+  blog_comment: blogCommentGenerator,
 
   // ── Social ─────────────────────────────────────────────
   social_platform: socialPlatformGenerator,

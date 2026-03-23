@@ -105,7 +105,7 @@ export async function generate(request: GenerateRequest): Promise<EngineResult> 
           }
 
           try {
-            record[field.name] = generator(field.params ?? {}, context);
+            record[field.name] = await generator(field.params ?? {}, context);
           } catch {
             record[field.name] = null;
           }
@@ -143,7 +143,7 @@ export async function generate(request: GenerateRequest): Promise<EngineResult> 
         }
 
         try {
-          record[field.name] = generator(field.params ?? {}, context);
+          record[field.name] = await generator(field.params ?? {}, context);
         } catch (err) {
           console.error(`Generator error for ${table.name}.${field.name}:`, err);
           record[field.name] = null;

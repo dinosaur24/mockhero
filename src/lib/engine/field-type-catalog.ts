@@ -63,7 +63,7 @@ export const FIELD_TYPE_CATALOG = {
   },
   content: {
     sentence: { description: "Realistic sentence (not lorem ipsum)", params: { min_words: "number", max_words: "number" }, example: "The team improved API reliability." },
-    paragraph: { description: "Multiple realistic sentences", params: { min: "number (sentences)", max: "number (sentences)" }, example: "The team improved..." },
+    paragraph: { description: "Multiple realistic sentences (default 5-8)", params: { min: "number (sentences, default 5)", max: "number (sentences, default 8)", sentences: "number (exact count, overrides min/max)" }, example: "The team improved..." },
     title: { description: "Article/blog-style title", params: {}, example: "Complete Guide to API Design" },
     slug: { description: "URL-friendly slug from title", params: {}, example: "complete-guide-to-api-design" },
     tag: { description: "Realistic tag/category", params: {}, example: "typescript" },
@@ -71,6 +71,8 @@ export const FIELD_TYPE_CATALOG = {
     image_url: { description: "Placeholder image URL", params: { width: "number", height: "number" }, example: "https://picsum.photos/seed/42/640/480" },
     file_path: { description: "Realistic file path", params: {}, example: "/documents/report-q4-2024.pdf" },
     markdown: { description: "Realistic Markdown content with headers, lists, code blocks", params: { length: "string (short, medium, long)" }, example: "## Getting Started\n\nThis guide walks you through..." },
+    blog_post: { description: "LLM-generated blog post (700-1000 words). Falls back to paragraph content if no API key.", params: {}, example: "The future of web development is evolving rapidly..." },
+    blog_comment: { description: "LLM-generated blog comment (1-3 sentences, conversational). Falls back to sentence content if no API key.", params: {}, example: "Great article! I especially liked the section about testing strategies." },
   },
   logic: {
     boolean: { description: "True/false with configurable probability", params: { probability: "number (0-1, probability of true)" }, example: true },

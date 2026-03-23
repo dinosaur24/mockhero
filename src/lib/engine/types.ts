@@ -57,7 +57,7 @@ export const FIELD_TYPES = [
   "port_number", "http_status_code", "file_size", "docker_image",
   // Content
   "sentence", "catch_phrase", "paragraph", "title", "slug", "tag", "rating", "review", "markdown",
-  "emoji", "hashtag", "message", "notification_text",
+  "emoji", "hashtag", "message", "notification_text", "blog_post", "blog_comment",
   // Social
   "social_platform", "reaction", "github_username", "twitter_handle",
   // HR & Organization
@@ -176,7 +176,7 @@ export interface LocaleData {
 export type FieldGenerator = (
   params: Record<string, unknown>,
   context: GeneratorContext
-) => unknown;
+) => unknown | Promise<unknown>;
 
 // ── Validation Errors ────────────────────────────────────
 

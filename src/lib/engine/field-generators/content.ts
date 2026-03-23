@@ -67,9 +67,13 @@ export const catchPhraseGenerator: FieldGenerator = (_params, ctx) => {
 };
 
 export const paragraphGenerator: FieldGenerator = (params, ctx) => {
-  const minSentences = (params.min as number) ?? 3;
-  const maxSentences = (params.max as number) ?? 5;
-  const count = ctx.prng.nextInt(minSentences, maxSentences);
+  // If exact sentence count is specified via params.sentences, use that
+  const exactCount = params.sentences as number | undefined;
+  const minSentences = exactCount ?? (params.min as number) ?? 5;
+  const maxSentences = exactCount ?? (params.max as number) ?? 8;
+  const count = minSentences === maxSentences
+    ? minSentences
+    : ctx.prng.nextInt(minSentences, maxSentences);
 
   const sentences: string[] = [];
   for (let i = 0; i < count; i++) {
