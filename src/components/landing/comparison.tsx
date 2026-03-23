@@ -138,6 +138,22 @@ export function Comparison() {
           </p>
         </div>
 
+        {/* Legend */}
+        <div className="flex items-center gap-6 mb-6 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <CellIcon value="yes" />
+            <span>Supported</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CellIcon value="partial" />
+            <span>Limited</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CellIcon value="no" />
+            <span>Not supported</span>
+          </div>
+        </div>
+
         {/* Desktop table */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
