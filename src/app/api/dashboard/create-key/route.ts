@@ -10,12 +10,21 @@ import { generateApiKey } from "@/lib/api/keys"
 import { unauthorizedError, internalError } from "@/lib/api/errors"
 import { sendEmail, apiKeyCreatedEmail } from "@/lib/email"
 
-export async function POST() {
+export async function POST(request: Request) {
   const { userId } = await auth()
   if (!userId) return unauthorizedError()
 
   try {
-    const { rawKey, keyPrefix } = await generateApiKey(userId)
+    // Name is optional
+    let name: string | undefined
+    try {
+      const body = await request.json()
+      name = body?.name
+    } catch {
+      // No body or invalid JSON — that's fine, name is optional
+    }
+
+    const { rawKey, keyPrefix } = await generateApiKey(userId, name)
 
     // Send notification email — must await before returning or Vercel kills the function
     try {

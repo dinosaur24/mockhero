@@ -83,7 +83,7 @@ describe("POST /api/dashboard/create-key", () => {
   it("returns 401 when not authenticated", async () => {
     mockAuth.mockResolvedValue({ userId: null });
 
-    const res = await createKeyPOST();
+    const res = await createKeyPOST(jsonRequest({}));
     const body = await res.json();
 
     expect(res.status).toBe(401);
@@ -97,20 +97,20 @@ describe("POST /api/dashboard/create-key", () => {
       keyPrefix: "mh_testrawap",
     });
 
-    const res = await createKeyPOST();
+    const res = await createKeyPOST(jsonRequest({}));
     const body = await res.json();
 
     expect(res.status).toBe(200);
     expect(body.rawKey).toBe("mh_testrawapikey1234567890abcdef");
     expect(body.keyPrefix).toBe("mh_testrawap");
-    expect(mockGenerateApiKey).toHaveBeenCalledWith("user_123");
+    expect(mockGenerateApiKey).toHaveBeenCalledWith("user_123", undefined);
   });
 
   it("returns 500 when key generation fails", async () => {
     mockAuth.mockResolvedValue({ userId: "user_123" });
     mockGenerateApiKey.mockRejectedValue(new Error("DB insert failed"));
 
-    const res = await createKeyPOST();
+    const res = await createKeyPOST(jsonRequest({}));
     const body = await res.json();
 
     expect(res.status).toBe(500);

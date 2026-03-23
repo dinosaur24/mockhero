@@ -39,6 +39,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
 
 export interface ApiKeyRow {
   id: string
+  name: string | null
   key_prefix: string
   is_active: boolean
   created_at: string
@@ -49,7 +50,7 @@ export async function getUserApiKeys(userId: string): Promise<ApiKeyRow[]> {
   const supabase = createAdminClient()
   const { data } = await supabase
     .from("api_keys")
-    .select("id, key_prefix, is_active, created_at, last_used_at")
+    .select("id, name, key_prefix, is_active, created_at, last_used_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
   return (data ?? []) as ApiKeyRow[]

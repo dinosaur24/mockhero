@@ -32,7 +32,8 @@ async function sha256(input: string): Promise<string> {
  * Returns the raw key (show once to user) and the prefix (for display).
  */
 export async function generateApiKey(
-  userId: string
+  userId: string,
+  name?: string
 ): Promise<{ rawKey: string; keyPrefix: string }> {
   const rawKey = `${API_KEY_PREFIX}${randomHex(32)}`;
   const keyHash = await sha256(rawKey);
@@ -45,6 +46,7 @@ export async function generateApiKey(
     key_hash: keyHash,
     key_prefix: keyPrefix,
     is_active: true,
+    ...(name ? { name: name.trim().slice(0, 100) } : {}),
   });
 
   if (error) throw new Error(`Failed to create API key: ${error.message}`);

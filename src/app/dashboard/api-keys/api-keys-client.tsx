@@ -6,6 +6,7 @@ import { Copy, Check, Plus, Key, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -43,6 +44,8 @@ interface Props {
 export default function ApiKeysClient({ initialKeys }: Props) {
   const router = useRouter()
   const [keys, setKeys] = useState(initialKeys)
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [keyName, setKeyName] = useState("")
   const [creating, setCreating] = useState(false)
   const [newRawKey, setNewRawKey] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -51,11 +54,17 @@ export default function ApiKeysClient({ initialKeys }: Props) {
   const handleCreate = async () => {
     setCreating(true)
     try {
-      const res = await fetch("/api/dashboard/create-key", { method: "POST" })
+      const res = await fetch("/api/dashboard/create-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: keyName.trim() || undefined }),
+      })
       if (!res.ok) throw new Error("Failed to create key")
       const { rawKey } = await res.json()
       setNewRawKey(rawKey)
-      router.refresh() // re-fetch server data to update key list
+      setShowCreateForm(false)
+      setKeyName("")
+      router.refresh()
     } catch (err) {
       console.error(err)
     } finally {
@@ -113,15 +122,39 @@ export default function ApiKeysClient({ initialKeys }: Props) {
           <h1 className="font-heading text-lg font-semibold">API Keys</h1>
           <p className="text-xs text-muted-foreground mt-1">Manage your API keys</p>
         </div>
-        <Button onClick={handleCreate} disabled={creating}>
-          {creating ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Plus className="size-3.5" />
-          )}
+        <Button onClick={() => setShowCreateForm(true)} disabled={showCreateForm}>
+          <Plus className="size-3.5" />
           Create Key
         </Button>
       </div>
+
+      {/* Create key form */}
+      {showCreateForm && (
+        <Card>
+          <CardContent className="pt-4">
+            <p className="text-sm font-medium mb-3">Name your API key</p>
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="e.g. Production, CI/CD, Local dev..."
+                value={keyName}
+                onChange={(e) => setKeyName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+                maxLength={100}
+                autoFocus
+                className="flex-1"
+              />
+              <Button onClick={handleCreate} disabled={creating}>
+                {creating ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                Create
+              </Button>
+              <Button variant="ghost" onClick={() => { setShowCreateForm(false); setKeyName("") }}>
+                Cancel
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Optional — helps you identify keys later.</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* New key banner — shown once after creation */}
       {newRawKey && (
@@ -162,14 +195,15 @@ export default function ApiKeysClient({ initialKeys }: Props) {
             {keys.map((key) => (
               <Card key={key.id} className={!key.is_active ? "opacity-50" : ""}>
                 <CardContent className="pt-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <code className="font-mono text-xs text-muted-foreground">
-                      {key.key_prefix}...
-                    </code>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">{key.name || "Unnamed key"}</span>
                     <Badge variant={key.is_active ? "secondary" : "destructive"}>
                       {key.is_active ? "Active" : "Revoked"}
                     </Badge>
                   </div>
+                  <code className="font-mono text-xs text-muted-foreground">
+                    {key.key_prefix}...
+                  </code>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
                     <span>Created {formatDate(key.created_at)}</span>
                     <span suppressHydrationWarning>Used {formatLastUsed(key.last_used_at)}</span>
@@ -206,6 +240,7 @@ export default function ApiKeysClient({ initialKeys }: Props) {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Name</TableHead>
                     <TableHead>Key</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead>Last Used</TableHead>
@@ -219,6 +254,9 @@ export default function ApiKeysClient({ initialKeys }: Props) {
                       key={key.id}
                       className={!key.is_active ? "opacity-50" : ""}
                     >
+                      <TableCell className="font-medium">
+                        {key.name || <span className="text-muted-foreground">Unnamed</span>}
+                      </TableCell>
                       <TableCell className="font-mono text-muted-foreground">
                         {key.key_prefix}...
                       </TableCell>
