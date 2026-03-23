@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/landing/navbar";
 import { Hero } from "@/components/landing/hero";
+import { WorksWith } from "@/components/landing/works-with";
 import { Features } from "@/components/landing/features";
 import { AutoLocaleShowcase } from "@/components/landing/auto-locale-showcase";
 import { RelationalDataShowcase } from "@/components/landing/relational-data-showcase";
@@ -17,6 +18,7 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <Hero />
+        <WorksWith />
         <Features />
         <AutoLocaleShowcase />
         <RelationalDataShowcase />
