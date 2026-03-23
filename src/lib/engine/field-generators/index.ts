@@ -148,6 +148,8 @@ export const GENERATOR_REGISTRY: Record<FieldType, FieldGenerator> = {
   price: priceGenerator,
   amount: amountGenerator,
   decimal: decimalGenerator,
+  float: decimalGenerator,
+  number: decimalGenerator,
   currency: currencyGenerator,
   rating: ratingGenerator,
   sku: skuGenerator,

@@ -40,7 +40,7 @@ export const FIELD_TYPES = [
   "address", "city", "state_province", "country", "postal_code", "latitude", "longitude",
   "timezone", "country_code", "neighborhood", "street_address", "address_line_2", "locale_code",
   // Financial
-  "company_name", "job_title", "department", "product_name", "price", "amount", "decimal",
+  "company_name", "job_title", "department", "product_name", "price", "amount", "decimal", "float", "number",
   "currency", "iban", "vat_number", "sku", "credit_card_number", "tracking_number",
   "bank_name", "payment_method", "discount_code", "credit_card_expiry", "credit_card_cvv",
   "invoice_number", "swift_code", "tax_id", "stock_ticker", "wallet_address",
