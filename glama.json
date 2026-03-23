@@ -1,0 +1,7 @@
+{
+  "name": "mockhero",
+  "description": "Generate realistic relational test data with 156 field types and 22 locales",
+  "author": "dinosaur24",
+  "website": "https://mockhero.dev",
+  "tags": ["test-data", "synthetic-data", "database", "developer-tools"]
+}
