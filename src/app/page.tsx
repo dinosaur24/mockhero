@@ -7,6 +7,7 @@ import { FieldTypesShowcase } from "@/components/landing/field-types-showcase";
 import { TemplatesShowcase } from "@/components/landing/templates-showcase";
 import { Playground } from "@/components/landing/playground";
 import { CodeExamples } from "@/components/landing/code-examples";
+import { Comparison } from "@/components/landing/comparison";
 import { Pricing } from "@/components/landing/pricing";
 import { Footer } from "@/components/landing/footer";
 
@@ -23,6 +24,7 @@ export default function LandingPage() {
         <TemplatesShowcase />
         <Playground />
         <CodeExamples />
+        <Comparison />
         <Pricing />
       </main>
       <Footer />
