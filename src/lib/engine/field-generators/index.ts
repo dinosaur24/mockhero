@@ -111,6 +111,7 @@ export const GENERATOR_REGISTRY: Record<FieldType, FieldGenerator> = {
   username: usernameGenerator,
   phone: phoneGenerator,
   avatar_url: avatarUrlGenerator,
+  avatar: avatarUrlGenerator,
   gender: genderGenerator,
   date_of_birth: dateOfBirthGenerator,
   name_prefix: namePrefixGenerator,

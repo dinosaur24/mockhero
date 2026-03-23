@@ -14,6 +14,7 @@ export const FIELD_TYPE_CATALOG = {
     username: { description: "Username derived from name", params: {}, example: "mbergmann42" },
     phone: { description: "Country-formatted phone number", params: { locale: "string" }, example: "+49 151 2345 6789" },
     avatar_url: { description: "URL to DiceBear avatar", params: {}, example: "https://api.dicebear.com/7.x/avataaars/svg?seed=42" },
+    avatar: { description: "Alias for avatar_url", params: {}, example: "https://api.dicebear.com/7.x/avataaars/svg?seed=42" },
     gender: { description: "Gender with configurable values and weights", params: { values: "string[] (default: male, female, non-binary, prefer_not_to_say)", weights: "number[]" }, example: "female" },
     date_of_birth: { description: "Realistic date of birth with age range constraints", params: { min_age: "number (default 18)", max_age: "number (default 80)" }, example: "1994-07-12" },
   },

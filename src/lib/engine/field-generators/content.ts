@@ -99,15 +99,38 @@ export const titleGenerator: FieldGenerator = (_params, ctx) => {
   return `${adj} ${topic}`;
 };
 
+// Track seen slugs per generation batch to guarantee uniqueness.
+// Keyed by the tableData reference (unique per generate() call).
+const _slugSeen = new WeakMap<object, Set<string>>();
+
 export const slugGenerator: FieldGenerator = (_params, ctx) => {
+  // Get or create the seen-set for this generation batch
+  let seen = _slugSeen.get(ctx.tableData);
+  if (!seen) {
+    seen = new Set<string>();
+    _slugSeen.set(ctx.tableData, seen);
+  }
+
   const title = titleGenerator({}, ctx) as string;
-  return title
+  let slug = title
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+
+  // Deduplicate: append -2, -3, etc. if slug already exists in this batch
+  if (seen.has(slug)) {
+    let suffix = 2;
+    while (seen.has(`${slug}-${suffix}`)) {
+      suffix++;
+    }
+    slug = `${slug}-${suffix}`;
+  }
+
+  seen.add(slug);
+  return slug;
 };
 
 const TAGS = [

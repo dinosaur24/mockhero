@@ -33,7 +33,7 @@ export type SqlDialect = (typeof SUPPORTED_SQL_DIALECTS)[number];
 
 export const FIELD_TYPES = [
   // Identity
-  "first_name", "last_name", "full_name", "email", "username", "phone", "avatar_url",
+  "first_name", "last_name", "full_name", "email", "username", "phone", "avatar_url", "avatar",
   "gender", "date_of_birth", "name_prefix", "name_suffix", "nickname", "marital_status",
   "nationality", "blood_type", "pronoun_set", "bio", "ssn", "passport_number", "phone_e164",
   // Location
