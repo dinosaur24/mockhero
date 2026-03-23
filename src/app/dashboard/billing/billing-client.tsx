@@ -228,7 +228,7 @@ export default function BillingClient({ tier, subscription, justUpgraded }: Prop
               <span className="text-muted-foreground">{currentPlan.priceNote}</span>
             </span>
           </div>
-          {subscription && (
+          {subscription && tier !== "free" && (
             <>
               <Separator />
               <div className="flex items-center justify-between py-3">
