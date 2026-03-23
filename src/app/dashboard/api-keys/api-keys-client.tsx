@@ -48,7 +48,6 @@ export default function ApiKeysClient({ initialKeys }: Props) {
   const [keyName, setKeyName] = useState("")
   const [creating, setCreating] = useState(false)
   const [newRawKey, setNewRawKey] = useState<string | null>(null)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
   const [copiedNew, setCopiedNew] = useState(false)
 
   const handleCreate = async () => {
@@ -91,16 +90,6 @@ export default function ApiKeysClient({ initialKeys }: Props) {
       setKeys(keys.map((k) => (k.id === id ? { ...k, is_active: false } : k)))
     } catch (err) {
       console.error(err)
-    }
-  }
-
-  const handleCopy = async (id: string, prefix: string) => {
-    try {
-      await navigator.clipboard.writeText(`${prefix}...`)
-      setCopiedId(id)
-      setTimeout(() => setCopiedId(null), 2000)
-    } catch {
-      // Clipboard API may fail on HTTP or without user gesture
     }
   }
 
@@ -213,15 +202,6 @@ export default function ApiKeysClient({ initialKeys }: Props) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="min-h-[44px] flex-1"
-                        onClick={() => handleCopy(key.id, key.key_prefix)}
-                      >
-                        {copiedId === key.id ? <Check className="size-3" /> : <Copy className="size-3" />}
-                        {copiedId === key.id ? "Copied" : "Copy"}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
                         className="min-h-[44px] flex-1 text-muted-foreground hover:text-destructive"
                         onClick={() => handleRevoke(key.id)}
                       >
@@ -273,28 +253,14 @@ export default function ApiKeysClient({ initialKeys }: Props) {
                       </TableCell>
                       <TableCell className="text-right">
                         {key.is_active && (
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleCopy(key.id, key.key_prefix)}
-                            >
-                              {copiedId === key.id ? (
-                                <Check className="size-3" />
-                              ) : (
-                                <Copy className="size-3" />
-                              )}
-                              {copiedId === key.id ? "Copied" : "Copy"}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-muted-foreground hover:text-destructive"
-                              onClick={() => handleRevoke(key.id)}
-                            >
-                              Revoke
-                            </Button>
-                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-muted-foreground hover:text-destructive"
+                            onClick={() => handleRevoke(key.id)}
+                          >
+                            Revoke
+                          </Button>
                         )}
                       </TableCell>
                     </TableRow>
