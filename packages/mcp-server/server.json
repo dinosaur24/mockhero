@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.dinosaur24/mockhero",
+  "description": "Generate realistic relational test data. 156 field types, 22 locales, JSON/CSV/SQL.",
+  "repository": {
+    "url": "https://github.com/dinosaur24/mockhero",
+    "source": "github",
+    "subfolder": "packages/mcp-server"
+  },
+  "version": "0.1.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@mockherodev/mcp-server",
+      "version": "0.1.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Your MockHero API key (get one free at https://mockhero.dev)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "MOCKHERO_API_KEY"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@mockherodev/mcp-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server for MockHero — generate realistic test data from Claude Desktop, Cursor, and other AI agents",
   "type": "module",
   "bin": {
@@ -29,6 +29,7 @@
     "cursor",
     "claude"
   ],
+  "mcpName": "io.github.dinosaur24/mockhero",
   "author": "MockHero",
   "license": "MIT",
   "dependencies": {
