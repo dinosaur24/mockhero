@@ -4,7 +4,7 @@
  * CRITICAL: Always returns 200 to prevent Polar from disabling the endpoint.
  */
 
-import { createHmac } from "crypto"
+import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks"
 import { headers } from "next/headers"
 import { clerkClient } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/admin"
@@ -56,48 +56,21 @@ export async function POST(req: Request) {
       return ok("missing secret")
     }
 
+    // Verify using Polar's official SDK
     const headerPayload = await headers()
-    // Polar/Svix may use either "svix-*" or "webhook-*" header prefixes
-    const svixId = headerPayload.get("svix-id") ?? headerPayload.get("webhook-id")
-    const svixTimestamp = headerPayload.get("svix-timestamp") ?? headerPayload.get("webhook-timestamp")
-    const svixSignature = headerPayload.get("svix-signature") ?? headerPayload.get("webhook-signature")
-
-    if (!svixId || !svixTimestamp || !svixSignature) {
-      // Log all headers for debugging
-      const allHeaders: Record<string, string> = {}
-      headerPayload.forEach((value, key) => { allHeaders[key] = value })
-      console.error("[Polar webhook] Missing headers. Available:", JSON.stringify(allHeaders))
-      return ok("missing headers")
-    }
-
-    // Manual HMAC-SHA256 verification (Standard Webhooks spec)
-    // 1. Decode the secret (strip whsec_ prefix, base64-decode)
-    const rawSecret = secret.startsWith("whsec_") ? secret.slice(6) : secret
-    const secretBytes = Buffer.from(rawSecret, "base64")
-
-    // 2. Build signed content: "{webhook-id}.{webhook-timestamp}.{body}"
-    const signedContent = `${svixId}.${svixTimestamp}.${rawBody}`
-
-    // 3. Compute HMAC-SHA256
-    const computedSig = createHmac("sha256", secretBytes)
-      .update(signedContent)
-      .digest("base64")
-
-    // 4. Compare with provided signatures (format: "v1,{base64sig} v1,{base64sig}")
-    const providedSigs = svixSignature.split(" ").map(s => s.replace(/^v1,/, ""))
-    const isValid = providedSigs.some(sig => sig === computedSig)
+    const headersObj: Record<string, string> = {}
+    headerPayload.forEach((value, key) => { headersObj[key] = value })
 
     let event: { type: string; data: Record<string, unknown> }
-    if (!isValid) {
-      console.error("[Polar webhook] Signature mismatch. Expected:", computedSig, "Got:", providedSigs)
-      return ok("signature verification failed")
-    }
-
     try {
-      event = JSON.parse(rawBody) as { type: string; data: Record<string, unknown> }
-    } catch {
-      console.error("[Polar webhook] Failed to parse body as JSON")
-      return ok("invalid json")
+      event = validateEvent(rawBody, headersObj, secret) as { type: string; data: Record<string, unknown> }
+    } catch (err) {
+      if (err instanceof WebhookVerificationError) {
+        console.error("[Polar webhook] Signature verification failed:", err.message)
+      } else {
+        console.error("[Polar webhook] Verification error:", err)
+      }
+      return ok("signature verification failed")
     }
 
     // 3. Log the full event for debugging
