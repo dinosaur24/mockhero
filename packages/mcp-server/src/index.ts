@@ -33,7 +33,7 @@ import { z } from "zod";
 // Config
 // ---------------------------------------------------------------------------
 
-const API_BASE = process.env.MOCKHERO_API_URL ?? "https://api.mockhero.dev";
+const API_BASE = process.env.MOCKHERO_API_URL ?? "https://mockhero.dev";
 const API_KEY = process.env.MOCKHERO_API_KEY ?? "";
 
 // ---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ async function apiCall(
   };
 
   if (API_KEY) {
-    headers["Authorization"] = `Bearer ${API_KEY}`;
+    headers["x-api-key"] = API_KEY;
   }
 
   const res = await fetch(`${API_BASE}${path}`, {
