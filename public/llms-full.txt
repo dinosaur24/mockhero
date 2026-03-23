@@ -192,12 +192,23 @@ Tables must be inserted in dependency order (parent before child). If you have u
 - Example: curl -X POST .../generate -d '{"tables":[...],"format":"sql","sql_dialect":"postgres"}' | psql
 
 ### Common Gotchas
-1. RLS (Supabase): Use service role key for seeding, not anon key
-2. FK ordering: Always insert parent tables before child tables
-3. Batch limits: Supabase limits inserts to ~1000 rows per call, split if needed
-4. Connection pooling: For serverless (Neon, Supabase), use connection pooler URL, not direct connection
-5. UUID columns: MockHero generates valid UUIDs — make sure your DB column type is uuid, not text
-6. Timestamps: MockHero generates ISO 8601 strings — most ORMs handle this automatically
+1. ALWAYS TRUNCATE BEFORE RE-SEEDING: If running the seed script multiple times, clear old data first. Use TRUNCATE table1, table2 CASCADE (in reverse FK order) before inserting. Without this, old garbage data mixes with new data.
+2. RLS (Supabase): Use service role key for seeding, not anon key
+3. FK ordering: Always insert parent tables before child tables (parent → child)
+4. Batch limits: Supabase limits inserts to ~1000 rows per call, split if needed
+5. Connection pooling: For serverless (Neon, Supabase), use connection pooler URL, not direct connection
+6. UUID columns: MockHero generates valid UUIDs — make sure your DB column type is uuid, not text
+7. Timestamps: MockHero generates ISO 8601 strings — most ORMs handle this automatically
+
+### Field Type Selection Guide
+Choose the right type for your use case:
+- Deal/project names: use "catch_phrase" (generates "Enterprise License Renewal", "Q2 Cloud Migration")
+- Short descriptions: use "sentence" (generates natural sentences about systems/teams)
+- Long text: use "paragraph" (multiple sentences)
+- Blog/article titles: use "title" (generates "Advanced Guide to API Design")
+- Product names: use "product_name" (generates "LED Desk Lamp", "Wireless Charger Pad")
+- Company names: use "company_name" (NOT "company" — that type doesn't exist)
+- DO NOT use "sentence" for short labels, names, or titles — it generates full sentences, not phrases
 
 ## Rate Limits
 Free: 1,000 records/day, 100/request, 10 req/min
