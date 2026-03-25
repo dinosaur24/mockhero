@@ -99,6 +99,37 @@ function AdminSidebar() {
   )
 }
 
+function AdminBottomBar() {
+  const pathname = usePathname()
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background md:hidden">
+      <div className="flex items-center justify-around py-2">
+        {navItems.map((item) => {
+          const isActive =
+            item.href === "/admin"
+              ? pathname === "/admin"
+              : pathname.startsWith(item.href)
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 text-xs ${
+                isActive
+                  ? "text-primary"
+                  : "text-muted-foreground"
+              }`}
+            >
+              <item.icon className="h-5 w-5" />
+              <span>{item.label}</span>
+            </Link>
+          )
+        })}
+      </div>
+    </nav>
+  )
+}
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <TooltipProvider>
@@ -106,11 +137,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <AdminSidebar />
         <SidebarInset>
           <main className="flex-1">
-            <div className="mx-auto max-w-6xl px-6 py-8">
+            <div className="mx-auto max-w-6xl px-6 py-8 pb-20 md:pb-8">
               {children}
             </div>
           </main>
         </SidebarInset>
+        <AdminBottomBar />
       </SidebarProvider>
     </TooltipProvider>
   )
