@@ -1,4 +1,4 @@
-export type ArticleCategory = "Database" | "Framework" | "Use Case";
+export type ArticleCategory = "Database" | "Framework" | "Use Case" | "AI";
 
 export interface Article {
   slug: string;
@@ -1880,6 +1880,1622 @@ Post.first.user.name</code></pre>
 
 <h2>Get Started</h2>
 <p>Free tier, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and test your app with truly international data.</p>
+`,
+  },
+
+  // AI / AGENT TEST DATA
+  {
+    slug: "how-to-generate-test-data-with-ai",
+    title: "AI-Powered Test Data Generation: The Complete Guide",
+    description:
+      "Learn how AI is transforming test data generation. Discover why combining LLMs with structured APIs like MockHero produces better, faster, and more realistic synthetic data than manual approaches.",
+    category: "AI",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Generating realistic test data has always been one of the most tedious parts of software development. You need data that looks real, follows business rules, maintains referential integrity across tables, and covers edge cases. Traditional approaches fall into two camps: writing seed scripts by hand (slow and brittle) or using libraries like Faker.js (better, but you still handle relationships yourself).</p>
+<p>AI and large language models have changed expectations. Developers now expect to describe what they want in natural language and get working code back. But asking an LLM to generate test data directly has its own problems: the output is inconsistent, the data often violates constraints, and there is no reproducibility between runs.</p>
+
+<h2>The Solution: AI + Structured API</h2>
+<p>The sweet spot is combining AI intelligence with a structured, deterministic API. MockHero gives you a schema-driven API with 156+ field types and built-in relational integrity. AI agents can generate the perfect MockHero schema for your use case, then the API handles the actual data generation with guaranteed consistency.</p>
+<p>This means you get the best of both worlds: the creativity and context-awareness of AI for schema design, plus the reliability and determinism of a purpose-built data generation engine.</p>
+
+<h2>Quick Setup</h2>
+<p>Ask any AI assistant to help you generate a MockHero schema, then call the API:</p>
+<pre><code># AI generates this schema based on your description
+curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "patients",
+      "count": 50,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "full_name", "type": "full_name" },
+        { "name": "date_of_birth", "type": "date" },
+        { "name": "email", "type": "email" },
+        { "name": "blood_type", "type": "enum", "params": { "values": ["A+","A-","B+","B-","O+","O-","AB+","AB-"] } }
+      ]
+    },
+    {
+      "name": "appointments",
+      "count": 200,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "patient_id", "type": "ref", "params": { "ref": "patients.id" } },
+        { "name": "scheduled_at", "type": "datetime" },
+        { "name": "type", "type": "enum", "params": { "values": ["checkup","follow-up","emergency","consultation"] } },
+        { "name": "notes", "type": "sentence" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Describe your data needs to an AI assistant</h3>
+<p>Tell your AI coding assistant what kind of application you are building and what tables you need. For example: "I'm building a healthcare scheduling app. I need patients with demographics and appointments linked to them."</p>
+
+<h3>2. Let the AI generate the MockHero schema</h3>
+<p>The AI assistant will produce a JSON schema using MockHero's field types. Review it to make sure the tables, counts, and field types match your requirements.</p>
+
+<h3>3. Call the MockHero API</h3>
+<p>Use the generated schema in a <code>curl</code> command or integrate it into your seed script. MockHero handles relational consistency automatically through <code>ref</code> fields.</p>
+
+<h3>4. Use the data in your application</h3>
+<p>The API returns JSON (or SQL/CSV) that you can pipe directly into your database, use in your frontend during development, or feed into your test suite.</p>
+
+<h3>5. Iterate with AI assistance</h3>
+<p>Need more tables? Different distributions? Edge cases? Ask the AI to modify the schema and regenerate. The feedback loop is measured in seconds, not hours.</p>
+
+<h2>Why MockHero vs Raw AI Data Generation</h2>
+<ul>
+<li><strong>Deterministic output</strong> &mdash; pass a <code>seed</code> parameter and get identical data every run, unlike raw LLM output which varies each time.</li>
+<li><strong>Referential integrity</strong> &mdash; <code>ref</code> fields guarantee valid foreign keys across all tables automatically.</li>
+<li><strong>Scale</strong> &mdash; generate thousands of rows instantly. LLMs struggle with more than a few dozen records and often hallucinate duplicates.</li>
+<li><strong>Cost</strong> &mdash; a single API call replaces thousands of LLM tokens. MockHero's free tier gives you 1,000 rows per month.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Combine the power of AI with the reliability of MockHero. <a href="https://mockhero.dev/sign-up">Sign up free</a> and start generating production-quality test data in seconds. No credit card required.</p>
+`,
+  },
+  {
+    slug: "mcp-server-test-data-for-ai-agents",
+    title: "Using MCP Server to Generate Test Data in AI Coding Agents",
+    description:
+      "Learn how MockHero's MCP (Model Context Protocol) server lets AI coding agents like Cursor, Claude Code, and Windsurf generate realistic test data directly from your IDE.",
+    category: "AI",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>AI coding agents are getting smarter, but they still struggle with test data. When you ask an agent to scaffold a project or write tests, it typically hardcodes a handful of records with names like "John Doe" and emails like "test@test.com". The data is unrealistic, there are no relationships between tables, and the same five records get copy-pasted everywhere.</p>
+<p>Even when agents try to use Faker.js, they have to generate the code, install dependencies, run it, and parse the output. It is a multi-step process that breaks the flow of AI-assisted development.</p>
+
+<h2>The Solution: MockHero MCP Server</h2>
+<p>The Model Context Protocol (MCP) is an open standard that lets AI agents call external tools directly. MockHero provides an MCP server that any compatible agent can use to generate realistic, relational test data without leaving the IDE. The agent describes the schema, MockHero returns the data, and the agent inserts it into your code or database.</p>
+<p>No npm installs. No seed scripts. The agent handles everything through a single tool call.</p>
+
+<h2>Quick Setup</h2>
+<p>Add MockHero's MCP server to your agent's configuration:</p>
+<pre><code>{
+  "mcpServers": {
+    "mockhero": {
+      "command": "npx",
+      "args": ["-y", "@mockhero/mcp-server"],
+      "env": {
+        "MOCKHERO_API_KEY": "mh_your_api_key"
+      }
+    }
+  }
+}</code></pre>
+
+<p>Once configured, your AI agent can call MockHero directly. For example, tell the agent:</p>
+<pre><code>"Generate 20 users and 50 orders with realistic data for my e-commerce project"</code></pre>
+<p>The agent translates this into a MockHero API call behind the scenes and gives you production-quality data instantly.</p>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Install the MCP server</h3>
+<p>The MockHero MCP server runs via <code>npx</code>, so there is nothing to install globally. Just add the configuration block above to your AI agent's MCP settings file.</p>
+
+<h3>2. Get your API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key from the dashboard.</p>
+
+<h3>3. Configure your agent</h3>
+<p>Each agent stores MCP configuration differently. For Cursor, add it to <code>.cursor/mcp.json</code>. For Claude Code, add it to <code>.claude/mcp.json</code>. For Windsurf, add it to your MCP settings. The server configuration is identical across all agents.</p>
+
+<h3>4. Ask the agent to generate data</h3>
+<p>Use natural language. The agent will automatically use the MockHero MCP tool when it recognizes a test data request. Examples:</p>
+<ul>
+<li>"Seed my database with 100 users and their related posts"</li>
+<li>"Generate test data for my healthcare scheduling app"</li>
+<li>"Create realistic e-commerce data with products, customers, and orders"</li>
+</ul>
+
+<h3>5. Use the generated data</h3>
+<p>The agent will insert the data directly into your seed files, test fixtures, or database migration scripts. No manual copy-pasting required.</p>
+
+<h2>Why MockHero MCP vs Manual Data Generation</h2>
+<ul>
+<li><strong>Zero friction</strong> &mdash; the agent generates data in-context, without leaving your IDE or switching tools.</li>
+<li><strong>Schema-aware</strong> &mdash; 156+ field types mean the agent can request exactly the right data shape for your use case.</li>
+<li><strong>Relational integrity</strong> &mdash; foreign keys just work. No manual ID wiring needed.</li>
+<li><strong>Agent-native</strong> &mdash; MCP is the standard protocol for tool use in AI agents. MockHero speaks it natively.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Add MockHero's MCP server to your AI coding agent in under a minute. <a href="https://mockhero.dev/sign-up">Sign up free</a> and give your agent the power to generate realistic test data on demand.</p>
+`,
+  },
+  {
+    slug: "cursor-ide-test-data-with-mockhero",
+    title: "Generate Test Data in Cursor IDE with MockHero MCP",
+    description:
+      "Set up MockHero's MCP server in Cursor IDE to generate realistic test data directly from your AI-powered editor. Step-by-step configuration guide included.",
+    category: "AI",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Cursor IDE has become the go-to editor for AI-assisted development. Its built-in agent can write code, refactor files, and debug issues. But when it comes to test data, Cursor's agent falls back on hardcoded values or basic Faker snippets. You end up with <code>{ name: "Test User", email: "test@example.com" }</code> scattered across your project.</p>
+<p>What you really need is realistic, relational data that matches your actual schema. But generating that data usually means leaving Cursor, setting up a separate seed script, and running it manually. That context switch kills the flow that makes Cursor productive in the first place.</p>
+
+<h2>The Solution: MockHero MCP in Cursor</h2>
+<p>Cursor supports the Model Context Protocol (MCP), which lets the agent call external tools directly. By adding MockHero as an MCP server, you give Cursor's agent the ability to generate realistic test data without leaving your editor. Just describe what you need in natural language, and the agent handles the rest.</p>
+
+<h2>Quick Setup</h2>
+<p>Create or edit <code>.cursor/mcp.json</code> in your project root:</p>
+<pre><code>{
+  "mcpServers": {
+    "mockhero": {
+      "command": "npx",
+      "args": ["-y", "@mockhero/mcp-server"],
+      "env": {
+        "MOCKHERO_API_KEY": "mh_your_api_key"
+      }
+    }
+  }
+}</code></pre>
+<p>Restart Cursor, and the MockHero tool will appear in the agent's available tools list.</p>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key from the dashboard.</p>
+
+<h3>2. Create the MCP configuration</h3>
+<p>In your project root, create a <code>.cursor</code> directory if it does not exist, then add <code>mcp.json</code> with the configuration shown above. Replace <code>mh_your_api_key</code> with your actual key.</p>
+
+<h3>3. Restart Cursor</h3>
+<p>Cursor reads MCP configuration on startup. After saving the file, restart the editor to pick up the new server.</p>
+
+<h3>4. Ask the agent to generate data</h3>
+<p>Open the Cursor agent panel and type a request like:</p>
+<pre><code>"Generate a seed script for my Prisma database with 30 users,
+100 posts, and 200 comments. Use realistic data."</code></pre>
+<p>The agent will use MockHero's MCP tool to generate the data and write the seed script directly into your project.</p>
+
+<h3>5. Run the seed script</h3>
+<p>The agent can also run the script for you, or you can execute it from the terminal:</p>
+<pre><code>npx tsx prisma/seed.ts</code></pre>
+
+<h2>Why MockHero MCP in Cursor vs Alternatives</h2>
+<ul>
+<li><strong>In-editor experience</strong> &mdash; no context switching. Data generation happens inside your normal Cursor workflow.</li>
+<li><strong>Natural language</strong> &mdash; describe your schema in plain English. The agent maps it to MockHero's 156+ field types.</li>
+<li><strong>Relational data</strong> &mdash; the agent automatically sets up <code>ref</code> fields so foreign keys are valid across all tables.</li>
+<li><strong>Deterministic</strong> &mdash; pass a <code>seed</code> value for reproducible data in CI/CD pipelines.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Add MockHero to Cursor in under a minute. <a href="https://mockhero.dev/sign-up">Sign up free</a>, drop in the MCP config, and let your AI agent handle test data generation.</p>
+`,
+  },
+  {
+    slug: "claude-code-test-data-generation",
+    title: "Test Data Generation with Claude Code and MockHero",
+    description:
+      "Configure MockHero's MCP server in Claude Code to generate realistic, relational test data from your terminal. Complete setup walkthrough with examples.",
+    category: "AI",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Claude Code is a powerful terminal-based AI agent that can navigate codebases, edit files, and run commands. But when it needs to generate test data, it typically writes inline JSON or uses Faker.js snippets. The results are functional but shallow: a handful of flat records with no relationships and generic-looking values.</p>
+<p>For any real project, you need hundreds or thousands of records across multiple tables with valid foreign keys. Asking Claude Code to generate all that data inline leads to bloated responses, token waste, and inconsistent results between sessions.</p>
+
+<h2>The Solution: MockHero MCP in Claude Code</h2>
+<p>Claude Code supports MCP servers as external tools. By registering MockHero's MCP server, Claude Code can generate arbitrarily large datasets with relational integrity in a single tool call. You describe what you need, and Claude Code calls MockHero, gets the data, and writes it wherever you need it.</p>
+
+<h2>Quick Setup</h2>
+<p>Add MockHero to your Claude Code MCP configuration. Create or edit <code>.claude/mcp.json</code> in your project root:</p>
+<pre><code>{
+  "mcpServers": {
+    "mockhero": {
+      "command": "npx",
+      "args": ["-y", "@mockhero/mcp-server"],
+      "env": {
+        "MOCKHERO_API_KEY": "mh_your_api_key"
+      }
+    }
+  }
+}</code></pre>
+<p>Next time you start a Claude Code session in that project, it will automatically load the MockHero tool.</p>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>2. Add the MCP configuration</h3>
+<p>Place <code>.claude/mcp.json</code> in your project root with the configuration above. You can also add it to <code>~/.claude/mcp.json</code> for global access across all projects.</p>
+
+<h3>3. Start a Claude Code session</h3>
+<p>Run <code>claude</code> in your project directory. Claude Code will detect the MCP server and load it automatically.</p>
+
+<h3>4. Request test data</h3>
+<p>Ask Claude Code to generate data naturally:</p>
+<pre><code>"Create a seed script for my Next.js app with Drizzle ORM. I need
+50 organizations, 200 users belonging to those orgs, and 500 tasks
+assigned to users. Make the data realistic."</code></pre>
+<p>Claude Code will call MockHero's MCP server, receive the generated data, and write a complete seed script for your project.</p>
+
+<h3>5. Run and verify</h3>
+<p>Claude Code can run the seed script directly in the terminal. Verify the data in your database to confirm foreign keys are correct and the data looks realistic.</p>
+
+<h2>Why MockHero MCP in Claude Code vs Inline Generation</h2>
+<ul>
+<li><strong>Token-efficient</strong> &mdash; instead of generating data inline (burning thousands of tokens), Claude Code makes a single MCP call.</li>
+<li><strong>Scalable</strong> &mdash; generate 10 rows or 10,000 rows with the same call. Inline generation tops out at a few dozen.</li>
+<li><strong>Consistent</strong> &mdash; MockHero returns the same structure every time. No hallucinated field names or broken relationships.</li>
+<li><strong>Terminal-native</strong> &mdash; works seamlessly in Claude Code's terminal workflow. No browser or GUI needed.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Give Claude Code the superpower of realistic test data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a>, add the MCP config, and start generating production-quality data from your terminal.</p>
+`,
+  },
+  {
+    slug: "windsurf-test-data-with-mcp",
+    title: "Generate Test Data in Windsurf with MockHero MCP",
+    description:
+      "Set up MockHero's MCP server in Windsurf IDE for seamless test data generation. Let Windsurf's Cascade agent create realistic, relational data while you code.",
+    category: "AI",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Windsurf's Cascade agent excels at understanding your entire codebase and making multi-file edits. But when it generates test data, the results are often shallow. You get a few hardcoded records that are enough to make the code compile but not enough to test real-world scenarios like pagination, search filtering, or edge cases in business logic.</p>
+<p>Building a proper seed script manually defeats the purpose of using an AI-powered editor. You want the agent to handle the boring parts, including generating realistic data that actually exercises your application.</p>
+
+<h2>The Solution: MockHero MCP in Windsurf</h2>
+<p>Windsurf supports MCP tool servers, allowing Cascade to call external services. By adding MockHero as an MCP server, Cascade can generate realistic, relationally-consistent test data directly within your workflow. Describe your data needs in the chat, and Cascade does the rest.</p>
+
+<h2>Quick Setup</h2>
+<p>Add MockHero to your Windsurf MCP configuration:</p>
+<pre><code>{
+  "mcpServers": {
+    "mockhero": {
+      "command": "npx",
+      "args": ["-y", "@mockhero/mcp-server"],
+      "env": {
+        "MOCKHERO_API_KEY": "mh_your_api_key"
+      }
+    }
+  }
+}</code></pre>
+<p>Save the configuration and restart Windsurf. Cascade will detect the MockHero tool automatically.</p>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key from the dashboard.</p>
+
+<h3>2. Configure MCP in Windsurf</h3>
+<p>Open Windsurf's MCP settings and add the MockHero server configuration shown above. The server runs via <code>npx</code> so there are no global installations needed.</p>
+
+<h3>3. Restart and verify</h3>
+<p>Restart Windsurf and open the Cascade panel. You should see MockHero listed as an available tool. If it does not appear, check that your API key is set correctly.</p>
+
+<h3>4. Ask Cascade to generate data</h3>
+<p>Use natural language in the Cascade chat:</p>
+<pre><code>"I need a seed script for my SaaS app. Generate 10 organizations,
+50 users across those orgs, and 200 projects with realistic names
+and descriptions. Use my Supabase database."</code></pre>
+<p>Cascade will call MockHero, receive the data, and write a seed script tailored to your project's database setup.</p>
+
+<h3>5. Execute and test</h3>
+<p>Cascade can run the seed script from Windsurf's terminal. Open your database GUI to verify the data and its relationships.</p>
+
+<h2>Why MockHero MCP in Windsurf vs Alternatives</h2>
+<ul>
+<li><strong>Cascade-native</strong> &mdash; works within Windsurf's agentic workflow. No context switching to external tools.</li>
+<li><strong>Codebase-aware</strong> &mdash; Cascade understands your schema files and can generate MockHero requests that match your actual tables.</li>
+<li><strong>Production-realistic</strong> &mdash; 156+ field types produce data that looks like a real production database, not placeholder text.</li>
+<li><strong>Multi-table</strong> &mdash; generate complex schemas with multiple related tables in a single request.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Give Windsurf's Cascade the ability to generate real test data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a>, add the MCP config, and let your AI agent handle test data while you focus on building features.</p>
+`,
+  },
+
+  // DATABASE SEEDING (continued)
+  {
+    slug: "how-to-seed-turso-with-test-data",
+    title: "How to Seed Turso (LibSQL) with Realistic Test Data",
+    description:
+      "Populate your Turso embedded replicas with realistic relational test data using the MockHero API. Full Node.js seed script with the @libsql/client driver.",
+    category: "Database",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Turso brings SQLite to the edge with embedded replicas and global distribution. But edge databases start empty, and seeding them with realistic data is not straightforward. You cannot just dump a SQL file into a Turso database like you would with local SQLite. The LibSQL client requires programmatic inserts, and you need data that respects your schema's foreign keys and constraints.</p>
+<p>Faker.js can produce random values, but you are still responsible for generating parent records first, collecting their IDs, and wiring child records manually. For an edge-first database like Turso, you want seeding to be fast and reproducible across replicas.</p>
+
+<h2>The Solution: MockHero API</h2>
+<p>MockHero generates relationally-consistent test data in a single API call. Define your tables with <code>ref</code> fields for foreign keys, and get back JSON you can insert directly using the LibSQL client. No ORM required, no manual ID management.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "authors",
+      "count": 10,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "full_name" },
+        { "name": "bio", "type": "sentence" },
+        { "name": "email", "type": "email" }
+      ]
+    },
+    {
+      "name": "articles",
+      "count": 40,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "author_id", "type": "ref", "params": { "ref": "authors.id" } },
+        { "name": "title", "type": "sentence" },
+        { "name": "body", "type": "paragraphs" },
+        { "name": "published_at", "type": "datetime" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Install dependencies</h3>
+<pre><code>npm install @libsql/client</code></pre>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Write the seed script</h3>
+<p>Create <code>seed.mjs</code>:</p>
+<pre><code>import { createClient } from "@libsql/client";
+
+const db = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      {
+        name: "authors",
+        count: 10,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "name", type: "full_name" },
+          { name: "bio", type: "sentence" },
+          { name: "email", type: "email" },
+        ],
+      },
+      {
+        name: "articles",
+        count: 40,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "author_id", type: "ref", params: { ref: "authors.id" } },
+          { name: "title", type: "sentence" },
+          { name: "body", type: "paragraphs" },
+          { name: "published_at", type: "datetime" },
+        ],
+      },
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+
+for (const a of data.authors) {
+  await db.execute({
+    sql: "INSERT INTO authors (id, name, bio, email) VALUES (?, ?, ?, ?)",
+    args: [a.id, a.name, a.bio, a.email],
+  });
+}
+
+for (const art of data.articles) {
+  await db.execute({
+    sql: "INSERT INTO articles (id, author_id, title, body, published_at) VALUES (?, ?, ?, ?, ?)",
+    args: [art.id, art.author_id, art.title, art.body, art.published_at],
+  });
+}
+
+console.log("Seeded", data.authors.length, "authors and", data.articles.length, "articles");</code></pre>
+
+<h3>4. Run the script</h3>
+<pre><code>node seed.mjs</code></pre>
+
+<h3>5. Verify in the Turso CLI</h3>
+<p>Use <code>turso db shell your-db-name</code> and run <code>SELECT * FROM articles LIMIT 5;</code> to confirm the data is in place with valid foreign keys.</p>
+
+<h2>Why MockHero vs Faker / Manual Seeds</h2>
+<ul>
+<li><strong>Edge-friendly</strong> &mdash; generate data once, seed all replicas. The JSON response works with any LibSQL client.</li>
+<li><strong>Relational integrity</strong> &mdash; every <code>author_id</code> in articles references a real author record.</li>
+<li><strong>SQLite-native types</strong> &mdash; MockHero's output maps cleanly to SQLite column types.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Seed your Turso database with realistic data in minutes. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month, no credit card required.</p>
+`,
+  },
+  {
+    slug: "how-to-seed-planetscale-with-test-data",
+    title: "How to Seed PlanetScale with Realistic Test Data",
+    description:
+      "Learn how to populate your PlanetScale MySQL database with realistic relational test data using the MockHero API. Includes a complete seed script with the PlanetScale serverless driver.",
+    category: "Database",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>PlanetScale provides serverless MySQL with branching and non-blocking schema changes. But its branching model means you regularly create new database branches that start empty or with only schema, no data. Development branches need realistic data to test queries, UI components, and business logic. Manually writing INSERT statements for every branch is a waste of engineering time.</p>
+<p>Making things harder, PlanetScale's foreign key constraints work differently from traditional MySQL. You cannot use standard foreign key references, so your seed data needs to maintain referential integrity at the application level. Libraries like Faker.js generate random values but leave the relationship problem entirely to you.</p>
+
+<h2>The Solution: MockHero API</h2>
+<p>MockHero generates relationally-consistent data where <code>ref</code> fields guarantee that child records always reference valid parent IDs. The output works perfectly with PlanetScale's application-level referential integrity model. Request JSON and insert with the serverless driver, or request SQL and pipe it through the MySQL CLI.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "teams",
+      "count": 5,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "company_name" },
+        { "name": "plan", "type": "enum", "params": { "values": ["free","pro","enterprise"] } },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    },
+    {
+      "name": "members",
+      "count": 25,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "team_id", "type": "ref", "params": { "ref": "teams.id" } },
+        { "name": "full_name", "type": "full_name" },
+        { "name": "email", "type": "email" },
+        { "name": "role", "type": "enum", "params": { "values": ["owner","admin","member","viewer"] } }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Install dependencies</h3>
+<pre><code>npm install @planetscale/database</code></pre>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and grab your key from the dashboard.</p>
+
+<h3>3. Write the seed script</h3>
+<p>Create <code>seed.mjs</code>:</p>
+<pre><code>import { connect } from "@planetscale/database";
+
+const conn = connect({
+  host: process.env.DATABASE_HOST,
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+});
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      {
+        name: "teams",
+        count: 5,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "name", type: "company_name" },
+          { name: "plan", type: "enum", params: { values: ["free","pro","enterprise"] } },
+          { name: "created_at", type: "datetime" },
+        ],
+      },
+      {
+        name: "members",
+        count: 25,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "team_id", type: "ref", params: { ref: "teams.id" } },
+          { name: "full_name", type: "full_name" },
+          { name: "email", type: "email" },
+          { name: "role", type: "enum", params: { values: ["owner","admin","member","viewer"] } },
+        ],
+      },
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+
+for (const t of data.teams) {
+  await conn.execute(
+    "INSERT INTO teams (id, name, plan, created_at) VALUES (?, ?, ?, ?)",
+    [t.id, t.name, t.plan, t.created_at]
+  );
+}
+
+for (const m of data.members) {
+  await conn.execute(
+    "INSERT INTO members (id, team_id, full_name, email, role) VALUES (?, ?, ?, ?, ?)",
+    [m.id, m.team_id, m.full_name, m.email, m.role]
+  );
+}
+
+console.log("Seeded", data.teams.length, "teams and", data.members.length, "members");</code></pre>
+
+<h3>4. Run the script</h3>
+<pre><code>node seed.mjs</code></pre>
+
+<h3>5. Verify in the PlanetScale console</h3>
+<p>Open the Console tab in your PlanetScale dashboard and run <code>SELECT m.full_name, t.name FROM members m JOIN teams t ON m.team_id = t.id LIMIT 10;</code> to verify relationships.</p>
+
+<h2>Why MockHero vs Faker / Manual Seeds</h2>
+<ul>
+<li><strong>Branch-ready</strong> &mdash; run the same seed script against any PlanetScale branch for instant realistic data.</li>
+<li><strong>Application-level FK integrity</strong> &mdash; MockHero's <code>ref</code> fields handle relationships at the data level, matching PlanetScale's model.</li>
+<li><strong>MySQL-compatible output</strong> &mdash; request <code>format: "sql"</code> to get MySQL-flavored INSERT statements directly.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Seed every PlanetScale branch with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+`,
+  },
+  {
+    slug: "how-to-seed-sqlite-with-test-data",
+    title: "How to Seed SQLite with Realistic Test Data",
+    description:
+      "Populate your SQLite database with realistic test data using the MockHero API. Works with better-sqlite3, sql.js, and the sqlite3 driver. Full seed script included.",
+    category: "Database",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>SQLite is everywhere: local development databases, mobile apps, embedded systems, Electron apps, and edge runtimes. But seeding a SQLite database with realistic data often gets skipped because it feels like overkill for a "simple" database. Developers end up inserting three rows of garbage data and testing against that, missing bugs that only surface with real-world volumes and variety.</p>
+<p>The irony is that SQLite is often the database closest to your users (it literally runs on their devices), yet it gets the least realistic test data. Faker libraries can generate values, but you still need to handle table creation, insertion order, and foreign key enforcement with <code>PRAGMA foreign_keys = ON</code>.</p>
+
+<h2>The Solution: MockHero API</h2>
+<p>MockHero generates realistic, relationally-consistent data and returns it as JSON or raw SQL. For SQLite, you can either insert records programmatically with a driver like <code>better-sqlite3</code>, or request SQL output and pipe it directly into the SQLite CLI. Foreign keys are always valid because MockHero resolves <code>ref</code> fields server-side.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "categories",
+      "count": 8,
+      "fields": [
+        { "name": "id", "type": "integer_id" },
+        { "name": "name", "type": "enum", "params": { "values": ["Electronics","Clothing","Books","Home","Sports","Food","Toys","Health"] } },
+        { "name": "slug", "type": "slug" }
+      ]
+    },
+    {
+      "name": "products",
+      "count": 50,
+      "fields": [
+        { "name": "id", "type": "integer_id" },
+        { "name": "category_id", "type": "ref", "params": { "ref": "categories.id" } },
+        { "name": "name", "type": "product_name" },
+        { "name": "price_cents", "type": "integer", "params": { "min": 99, "max": 99999 } },
+        { "name": "in_stock", "type": "boolean" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Install dependencies</h3>
+<pre><code>npm install better-sqlite3</code></pre>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Write the seed script</h3>
+<p>Create <code>seed.mjs</code>:</p>
+<pre><code>import Database from "better-sqlite3";
+
+const db = new Database("./dev.db");
+db.pragma("journal_mode = WAL");
+db.pragma("foreign_keys = ON");
+
+// Create tables
+db.exec(\`
+  CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
+    category_id INTEGER NOT NULL REFERENCES categories(id),
+    name TEXT NOT NULL,
+    price_cents INTEGER NOT NULL,
+    in_stock INTEGER NOT NULL DEFAULT 1
+  );
+\`);
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      {
+        name: "categories",
+        count: 8,
+        fields: [
+          { name: "id", type: "integer_id" },
+          { name: "name", type: "enum", params: { values: ["Electronics","Clothing","Books","Home","Sports","Food","Toys","Health"] } },
+          { name: "slug", type: "slug" },
+        ],
+      },
+      {
+        name: "products",
+        count: 50,
+        fields: [
+          { name: "id", type: "integer_id" },
+          { name: "category_id", type: "ref", params: { ref: "categories.id" } },
+          { name: "name", type: "product_name" },
+          { name: "price_cents", type: "integer", params: { min: 99, max: 99999 } },
+          { name: "in_stock", type: "boolean" },
+        ],
+      },
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+
+const insertCategory = db.prepare(
+  "INSERT INTO categories (id, name, slug) VALUES (?, ?, ?)"
+);
+const insertProduct = db.prepare(
+  "INSERT INTO products (id, category_id, name, price_cents, in_stock) VALUES (?, ?, ?, ?, ?)"
+);
+
+const seedAll = db.transaction(() => {
+  for (const c of data.categories) {
+    insertCategory.run(c.id, c.name, c.slug);
+  }
+  for (const p of data.products) {
+    insertProduct.run(p.id, p.category_id, p.name, p.price_cents, p.in_stock ? 1 : 0);
+  }
+});
+
+seedAll();
+console.log("Seeded", data.categories.length, "categories and", data.products.length, "products");</code></pre>
+
+<h3>4. Run the script</h3>
+<pre><code>node seed.mjs</code></pre>
+
+<h3>5. Verify with the SQLite CLI</h3>
+<pre><code>sqlite3 dev.db "SELECT p.name, c.name FROM products p JOIN categories c ON p.category_id = c.id LIMIT 10;"</code></pre>
+
+<h2>Why MockHero vs Faker / Manual Seeds</h2>
+<ul>
+<li><strong>Transaction-friendly</strong> &mdash; insert all MockHero data in a single SQLite transaction for maximum speed.</li>
+<li><strong>Foreign key safe</strong> &mdash; <code>ref</code> fields ensure every child record references a valid parent, so <code>PRAGMA foreign_keys</code> never complains.</li>
+<li><strong>Works everywhere</strong> &mdash; the JSON output is driver-agnostic. Use <code>better-sqlite3</code>, <code>sql.js</code>, or <code>@libsql/client</code>.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Seed your SQLite database in seconds. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month, no credit card required.</p>
+`,
+  },
+  {
+    slug: "how-to-seed-redis-with-test-data",
+    title: "How to Seed Redis with Realistic Mock Data",
+    description:
+      "Populate your Redis instance with realistic test data using the MockHero API. Covers hashes, sorted sets, and JSON structures with a complete Node.js script.",
+    category: "Database",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Redis is a key-value store, not a relational database, so seeding it feels fundamentally different. There are no tables to INSERT into, no SQL files to import. Instead, you have to decide on key naming conventions, choose the right data structures (hashes, sorted sets, JSON), and write custom scripts to populate them. Most developers skip this step entirely and test against an empty Redis, missing caching bugs, leaderboard edge cases, and session handling issues.</p>
+<p>When you do try to seed Redis, you end up writing dozens of <code>HSET</code> and <code>ZADD</code> commands with fake data that does not reflect your actual application's patterns.</p>
+
+<h2>The Solution: MockHero API + Redis Pipeline</h2>
+<p>Use MockHero to generate realistic structured data, then map it to your Redis data structures. MockHero does not know about Redis, but it does not need to: it generates the data, you decide how to store it. The combination of MockHero's realistic data with Redis pipelines gives you a fast, repeatable seeding process.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "users",
+      "count": 100,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "username", "type": "username" },
+        { "name": "email", "type": "email" },
+        { "name": "score", "type": "integer", "params": { "min": 0, "max": 10000 } },
+        { "name": "last_active", "type": "datetime" }
+      ]
+    },
+    {
+      "name": "sessions",
+      "count": 100,
+      "fields": [
+        { "name": "session_id", "type": "uuid" },
+        { "name": "user_id", "type": "ref", "params": { "ref": "users.id" } },
+        { "name": "ip_address", "type": "ipv4" },
+        { "name": "user_agent", "type": "user_agent" },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Install dependencies</h3>
+<pre><code>npm install redis</code></pre>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Write the seed script</h3>
+<p>Create <code>seed-redis.mjs</code>:</p>
+<pre><code>import { createClient } from "redis";
+
+const redis = createClient({ url: process.env.REDIS_URL });
+await redis.connect();
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      {
+        name: "users",
+        count: 100,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "username", type: "username" },
+          { name: "email", type: "email" },
+          { name: "score", type: "integer", params: { min: 0, max: 10000 } },
+          { name: "last_active", type: "datetime" },
+        ],
+      },
+      {
+        name: "sessions",
+        count: 100,
+        fields: [
+          { name: "session_id", type: "uuid" },
+          { name: "user_id", type: "ref", params: { ref: "users.id" } },
+          { name: "ip_address", type: "ipv4" },
+          { name: "user_agent", type: "user_agent" },
+          { name: "created_at", type: "datetime" },
+        ],
+      },
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+
+// Store users as hashes and build a leaderboard sorted set
+const pipeline = redis.multi();
+for (const u of data.users) {
+  pipeline.hSet(\`user:\${u.id}\`, {
+    username: u.username,
+    email: u.email,
+    score: String(u.score),
+    last_active: u.last_active,
+  });
+  pipeline.zAdd("leaderboard", { score: u.score, value: u.id });
+}
+
+// Store sessions as hashes with TTL
+for (const s of data.sessions) {
+  pipeline.hSet(\`session:\${s.session_id}\`, {
+    user_id: s.user_id,
+    ip_address: s.ip_address,
+    user_agent: s.user_agent,
+    created_at: s.created_at,
+  });
+  pipeline.expire(\`session:\${s.session_id}\`, 86400);
+}
+
+await pipeline.exec();
+console.log("Seeded", data.users.length, "users and", data.sessions.length, "sessions into Redis");
+await redis.quit();</code></pre>
+
+<h3>4. Run the script</h3>
+<pre><code>node seed-redis.mjs</code></pre>
+
+<h3>5. Verify with the Redis CLI</h3>
+<pre><code>redis-cli ZREVRANGE leaderboard 0 9 WITHSCORES
+redis-cli HGETALL user:&lt;some-uuid&gt;</code></pre>
+
+<h2>Why MockHero vs Manual Redis Seeding</h2>
+<ul>
+<li><strong>Structured generation, flexible storage</strong> &mdash; MockHero generates the data shape you need; you decide the Redis data structures.</li>
+<li><strong>Pipeline-friendly</strong> &mdash; batch all inserts into a single Redis pipeline for near-instant seeding.</li>
+<li><strong>Realistic variety</strong> &mdash; 100 unique usernames, emails, and scores instead of <code>user1</code>, <code>user2</code>, <code>user3</code>.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Seed your Redis instance with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+`,
+  },
+  {
+    slug: "how-to-seed-cockroachdb-with-test-data",
+    title: "How to Seed CockroachDB with Realistic Test Data",
+    description:
+      "Populate your CockroachDB cluster with realistic relational test data using the MockHero API. Includes a complete seed script using the pg driver.",
+    category: "Database",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>CockroachDB gives you distributed SQL with horizontal scalability and strong consistency. But testing distributed behavior requires realistic data volumes. Three rows in your users table will not reveal issues with range splits, query distribution, or multi-region latency. You need hundreds or thousands of records with realistic distributions across your schema.</p>
+<p>CockroachDB is wire-compatible with PostgreSQL, so most Postgres tools work. But building seed scripts that generate enough realistic data with proper foreign key relationships is still a manual chore. Faker.js helps with field values, but you handle the relational wiring yourself.</p>
+
+<h2>The Solution: MockHero API</h2>
+<p>MockHero generates relationally-consistent data that you can insert directly into CockroachDB using any Postgres-compatible driver. Define your tables with <code>ref</code> fields, request JSON or SQL, and seed your cluster in seconds. Because CockroachDB uses the Postgres wire protocol, the seed script is nearly identical to a standard Postgres seeding workflow.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "regions",
+      "count": 5,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "enum", "params": { "values": ["us-east","us-west","eu-west","ap-south","ap-east"] } },
+        { "name": "active", "type": "boolean" }
+      ]
+    },
+    {
+      "name": "warehouses",
+      "count": 20,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "region_id", "type": "ref", "params": { "ref": "regions.id" } },
+        { "name": "name", "type": "company_name" },
+        { "name": "address", "type": "street_address" },
+        { "name": "capacity", "type": "integer", "params": { "min": 1000, "max": 50000 } }
+      ]
+    },
+    {
+      "name": "inventory_items",
+      "count": 200,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "warehouse_id", "type": "ref", "params": { "ref": "warehouses.id" } },
+        { "name": "sku", "type": "uuid" },
+        { "name": "product_name", "type": "product_name" },
+        { "name": "quantity", "type": "integer", "params": { "min": 0, "max": 500 } }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Install dependencies</h3>
+<pre><code>npm install pg</code></pre>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Write the seed script</h3>
+<p>Create <code>seed.mjs</code>:</p>
+<pre><code>import pg from "pg";
+const { Client } = pg;
+
+const client = new Client({ connectionString: process.env.COCKROACH_URL });
+await client.connect();
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      {
+        name: "regions",
+        count: 5,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "name", type: "enum", params: { values: ["us-east","us-west","eu-west","ap-south","ap-east"] } },
+          { name: "active", type: "boolean" },
+        ],
+      },
+      {
+        name: "warehouses",
+        count: 20,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "region_id", type: "ref", params: { ref: "regions.id" } },
+          { name: "name", type: "company_name" },
+          { name: "address", type: "street_address" },
+          { name: "capacity", type: "integer", params: { min: 1000, max: 50000 } },
+        ],
+      },
+      {
+        name: "inventory_items",
+        count: 200,
+        fields: [
+          { name: "id", type: "uuid" },
+          { name: "warehouse_id", type: "ref", params: { ref: "warehouses.id" } },
+          { name: "sku", type: "uuid" },
+          { name: "product_name", type: "product_name" },
+          { name: "quantity", type: "integer", params: { min: 0, max: 500 } },
+        ],
+      },
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+
+for (const r of data.regions) {
+  await client.query(
+    "INSERT INTO regions (id, name, active) VALUES ($1, $2, $3)",
+    [r.id, r.name, r.active]
+  );
+}
+for (const w of data.warehouses) {
+  await client.query(
+    "INSERT INTO warehouses (id, region_id, name, address, capacity) VALUES ($1, $2, $3, $4, $5)",
+    [w.id, w.region_id, w.name, w.address, w.capacity]
+  );
+}
+for (const item of data.inventory_items) {
+  await client.query(
+    "INSERT INTO inventory_items (id, warehouse_id, sku, product_name, quantity) VALUES ($1, $2, $3, $4, $5)",
+    [item.id, item.warehouse_id, item.sku, item.product_name, item.quantity]
+  );
+}
+
+console.log(
+  "Seeded", data.regions.length, "regions,",
+  data.warehouses.length, "warehouses, and",
+  data.inventory_items.length, "inventory items"
+);
+await client.end();</code></pre>
+
+<h3>4. Run the script</h3>
+<pre><code>node seed.mjs</code></pre>
+
+<h3>5. Verify in the CockroachDB SQL shell</h3>
+<pre><code>cockroach sql --url "$COCKROACH_URL" -e "SELECT w.name, r.name AS region FROM warehouses w JOIN regions r ON w.region_id = r.id LIMIT 10;"</code></pre>
+
+<h2>Why MockHero vs Faker / Manual Seeds</h2>
+<ul>
+<li><strong>Distributed-ready volumes</strong> &mdash; easily generate hundreds or thousands of rows to test range splits and multi-node behavior.</li>
+<li><strong>Postgres-compatible</strong> &mdash; CockroachDB uses the Postgres wire protocol, so MockHero's output works with any <code>pg</code> driver.</li>
+<li><strong>Multi-table relationships</strong> &mdash; regions, warehouses, and inventory items are all linked automatically via <code>ref</code> fields.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Seed your CockroachDB cluster with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month, no credit card required.</p>
+`,
+  },
+
+  // USE CASE ARTICLES (continued)
+  {
+    slug: "generate-healthcare-test-data",
+    title: "Generate Healthcare Test Data (HIPAA-Safe Synthetic Data)",
+    description:
+      "Create realistic but completely synthetic healthcare test data for development and QA. MockHero generates patient records, appointments, and medical data with zero HIPAA risk.",
+    category: "Use Case",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Healthcare software needs realistic test data, but using real patient records is a non-starter. HIPAA regulations impose severe penalties for unauthorized use of Protected Health Information (PHI), even in development environments. De-identification is complex and error-prone: you have to strip 18 different identifier types and there is always a risk of re-identification.</p>
+<p>Most teams resort to absurdly simple test data: five patients named "Test Patient 1" through "Test Patient 5" with identical birth dates. This data does not test date-of-birth validation, insurance eligibility calculations, appointment scheduling logic, or any of the complex business rules that healthcare software depends on.</p>
+
+<h2>The Solution: MockHero Synthetic Healthcare Data</h2>
+<p>MockHero generates completely synthetic data that looks realistic but has zero connection to real individuals. Every name, date of birth, insurance number, and medical record is fabricated from scratch. There is no HIPAA risk because no PHI was ever involved. You get the realism needed for thorough testing without the compliance burden.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "patients",
+      "count": 100,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "mrn", "type": "integer", "params": { "min": 100000, "max": 999999 } },
+        { "name": "first_name", "type": "first_name" },
+        { "name": "last_name", "type": "last_name" },
+        { "name": "date_of_birth", "type": "date" },
+        { "name": "gender", "type": "enum", "params": { "values": ["Male","Female","Non-binary","Prefer not to say"] } },
+        { "name": "blood_type", "type": "enum", "params": { "values": ["A+","A-","B+","B-","O+","O-","AB+","AB-"] } },
+        { "name": "insurance_id", "type": "uuid" },
+        { "name": "phone", "type": "phone" },
+        { "name": "email", "type": "email" }
+      ]
+    },
+    {
+      "name": "providers",
+      "count": 15,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "full_name", "type": "full_name" },
+        { "name": "specialty", "type": "enum", "params": { "values": ["Cardiology","Dermatology","Endocrinology","Gastroenterology","Neurology","Oncology","Orthopedics","Pediatrics","Psychiatry","Radiology"] } },
+        { "name": "npi", "type": "integer", "params": { "min": 1000000000, "max": 1999999999 } },
+        { "name": "email", "type": "email" }
+      ]
+    },
+    {
+      "name": "appointments",
+      "count": 500,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "patient_id", "type": "ref", "params": { "ref": "patients.id" } },
+        { "name": "provider_id", "type": "ref", "params": { "ref": "providers.id" } },
+        { "name": "scheduled_at", "type": "datetime" },
+        { "name": "type", "type": "enum", "params": { "values": ["initial_consult","follow_up","physical","lab_work","imaging","procedure","telehealth"] } },
+        { "name": "status", "type": "enum", "params": { "values": ["scheduled","checked_in","in_progress","completed","cancelled","no_show"] } },
+        { "name": "notes", "type": "sentence" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Define your healthcare schema</h3>
+<p>Map your application's patient, provider, and encounter models to MockHero tables. Use <code>enum</code> fields for coded values like blood types, specialties, and appointment statuses to match your real application's constraints.</p>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Generate the data</h3>
+<p>Call the MockHero API with your schema. The response includes patients, providers, and appointments with valid referential links between them.</p>
+
+<h3>4. Load into your database</h3>
+<p>Use your preferred database driver or ORM to insert the data. MockHero's JSON output works with any database. For Postgres:</p>
+<pre><code>import pg from "pg";
+const { Client } = pg;
+const client = new Client({ connectionString: process.env.DATABASE_URL });
+await client.connect();
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ /* schema from above */ }),
+});
+const { data } = await res.json();
+
+for (const p of data.patients) {
+  await client.query(
+    "INSERT INTO patients (id, mrn, first_name, last_name, date_of_birth, gender, blood_type, insurance_id, phone, email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+    [p.id, p.mrn, p.first_name, p.last_name, p.date_of_birth, p.gender, p.blood_type, p.insurance_id, p.phone, p.email]
+  );
+}
+// ... insert providers and appointments similarly</code></pre>
+
+<h3>5. Run compliance checks</h3>
+<p>Verify that none of the generated data matches real individuals. Because MockHero creates data from scratch (not by modifying real records), there is no risk of accidental PHI exposure.</p>
+
+<h2>Why MockHero vs De-Identified Production Data</h2>
+<ul>
+<li><strong>Zero HIPAA risk</strong> &mdash; synthetic data has no connection to real patients. No BAA needed for test environments.</li>
+<li><strong>Complete control</strong> &mdash; choose exactly which fields, distributions, and volumes you need for testing.</li>
+<li><strong>Reproducible</strong> &mdash; pass a <code>seed</code> parameter to get identical data every run, perfect for regression testing.</li>
+<li><strong>Fast</strong> &mdash; generate 500 appointments in seconds, not hours of data masking and review.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Generate HIPAA-safe healthcare test data today. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+`,
+  },
+  {
+    slug: "generate-fintech-test-data",
+    title: "Generate Fintech and Banking Test Data with MockHero",
+    description:
+      "Create realistic transaction data, account records, and financial test data for fintech applications. MockHero generates synthetic banking data with proper distributions and referential integrity.",
+    category: "Use Case",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Fintech applications deal with money, and testing with unrealistic data is dangerous. A payment processing system tested with five transactions will not surface rounding errors, currency conversion bugs, or race conditions that only appear under realistic load. But using real financial data in test environments is a compliance nightmare involving PCI-DSS, SOX, and banking regulations.</p>
+<p>Building test data for fintech is also structurally complex. You need accounts that belong to customers, transactions that reference both source and destination accounts, balances that make mathematical sense, and statuses that reflect real-world payment processing flows.</p>
+
+<h2>The Solution: MockHero Synthetic Financial Data</h2>
+<p>MockHero generates realistic financial test data with proper referential integrity across customers, accounts, and transactions. Use <code>ref</code> fields to link records, <code>integer</code> fields for amounts in cents (avoiding floating point issues), and <code>enum</code> fields for statuses and transaction types. The data is completely synthetic, so there are no compliance concerns.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "customers",
+      "count": 50,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "full_name", "type": "full_name" },
+        { "name": "email", "type": "email" },
+        { "name": "phone", "type": "phone" },
+        { "name": "kyc_status", "type": "enum", "params": { "values": ["pending","verified","rejected","expired"] } },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    },
+    {
+      "name": "accounts",
+      "count": 80,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "customer_id", "type": "ref", "params": { "ref": "customers.id" } },
+        { "name": "account_type", "type": "enum", "params": { "values": ["checking","savings","investment","credit"] } },
+        { "name": "currency", "type": "enum", "params": { "values": ["USD","EUR","GBP","CAD","AUD"] } },
+        { "name": "balance_cents", "type": "integer", "params": { "min": 0, "max": 5000000 } },
+        { "name": "status", "type": "enum", "params": { "values": ["active","frozen","closed"] } }
+      ]
+    },
+    {
+      "name": "transactions",
+      "count": 1000,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "account_id", "type": "ref", "params": { "ref": "accounts.id" } },
+        { "name": "amount_cents", "type": "integer", "params": { "min": -500000, "max": 500000 } },
+        { "name": "type", "type": "enum", "params": { "values": ["deposit","withdrawal","transfer","payment","refund","fee","interest"] } },
+        { "name": "status", "type": "enum", "params": { "values": ["pending","processing","completed","failed","reversed"] } },
+        { "name": "description", "type": "sentence" },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Map your financial domain model</h3>
+<p>Identify the core entities in your fintech app: customers, accounts, transactions, payments, transfers. Map each to a MockHero table with the right field types. Use <code>integer</code> for monetary amounts (always in cents to avoid floating point) and <code>enum</code> for statuses and types.</p>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Generate and insert the data</h3>
+<pre><code>const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      // ... schema from above
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+// Insert customers first, then accounts, then transactions
+// Foreign keys are guaranteed valid by MockHero's ref fields</code></pre>
+
+<h3>4. Test financial logic</h3>
+<p>With 1,000 transactions across 80 accounts, you can test balance calculations, transaction filtering, statement generation, and reporting dashboards with realistic data volumes.</p>
+
+<h3>5. Use deterministic seeds for regression tests</h3>
+<p>Add a <code>"seed": 42</code> parameter to your MockHero request to get identical data every run. This makes your financial test assertions stable and reproducible.</p>
+
+<h2>Why MockHero vs Manual Financial Test Data</h2>
+<ul>
+<li><strong>Compliance-safe</strong> &mdash; completely synthetic data means no PCI-DSS, SOX, or banking regulation concerns in test environments.</li>
+<li><strong>Integer arithmetic</strong> &mdash; amounts in cents avoid the floating-point bugs that plague financial systems using decimals.</li>
+<li><strong>Realistic distributions</strong> &mdash; transaction types and statuses span the full range of your enum values, testing edge cases automatically.</li>
+<li><strong>Referential integrity</strong> &mdash; every transaction references a valid account, every account references a valid customer.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Build your fintech test suite on realistic synthetic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and generate 1,000 rows per month.</p>
+`,
+  },
+  {
+    slug: "generate-saas-test-data",
+    title: "Generate SaaS Multi-Tenant Test Data with MockHero",
+    description:
+      "Create realistic multi-tenant test data for SaaS applications. MockHero generates organizations, users, roles, and resources with proper tenant isolation built in.",
+    category: "Use Case",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Multi-tenant SaaS applications have the most complex data models in software. Every record belongs to a tenant (organization), users have roles within tenants, resources are scoped by tenant, and permissions cross-cut everything. Testing this requires data that spans multiple organizations with overlapping user patterns, and the most critical bugs are tenant isolation failures: when one tenant can see another tenant's data.</p>
+<p>Building this test data manually is a nightmare. You need multiple organizations, users in each org with different roles, resources owned by each org, and you need to verify that queries never leak data across tenant boundaries. Most developers test with a single tenant and hope for the best.</p>
+
+<h2>The Solution: MockHero Multi-Tenant Data</h2>
+<p>MockHero's <code>ref</code> fields naturally model multi-tenant relationships. Define organizations, then reference them from users, projects, and any other tenant-scoped entity. MockHero ensures every child record belongs to a valid parent organization, giving you the data structure needed to test tenant isolation thoroughly.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "organizations",
+      "count": 10,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "company_name" },
+        { "name": "slug", "type": "slug" },
+        { "name": "plan", "type": "enum", "params": { "values": ["free","starter","pro","enterprise"] } },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    },
+    {
+      "name": "users",
+      "count": 60,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "org_id", "type": "ref", "params": { "ref": "organizations.id" } },
+        { "name": "full_name", "type": "full_name" },
+        { "name": "email", "type": "email" },
+        { "name": "role", "type": "enum", "params": { "values": ["owner","admin","member","viewer","billing"] } },
+        { "name": "invited_at", "type": "datetime" }
+      ]
+    },
+    {
+      "name": "projects",
+      "count": 100,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "org_id", "type": "ref", "params": { "ref": "organizations.id" } },
+        { "name": "created_by", "type": "ref", "params": { "ref": "users.id" } },
+        { "name": "name", "type": "sentence" },
+        { "name": "description", "type": "paragraphs" },
+        { "name": "status", "type": "enum", "params": { "values": ["active","archived","paused"] } }
+      ]
+    },
+    {
+      "name": "api_keys",
+      "count": 30,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "org_id", "type": "ref", "params": { "ref": "organizations.id" } },
+        { "name": "name", "type": "sentence" },
+        { "name": "prefix", "type": "uuid" },
+        { "name": "last_used_at", "type": "datetime" },
+        { "name": "revoked", "type": "boolean" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Model your tenant hierarchy</h3>
+<p>Start with your organization table, then add every entity that is tenant-scoped. Use <code>ref</code> fields pointing to <code>organizations.id</code> for every table that belongs to a tenant. This mirrors how you would design RLS (Row Level Security) policies in production.</p>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Generate the multi-tenant dataset</h3>
+<pre><code>const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "x-api-key": process.env.MOCKHERO_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    tables: [
+      // organizations, users, projects, api_keys schema from above
+    ],
+    format: "json",
+  }),
+});
+
+const { data } = await res.json();
+// data.organizations - 10 tenants
+// data.users - 60 users spread across tenants
+// data.projects - 100 projects scoped to tenants
+// data.api_keys - 30 keys scoped to tenants</code></pre>
+
+<h3>4. Test tenant isolation</h3>
+<p>With data spread across 10 organizations, you can write tests that authenticate as a user in org A and verify they cannot access projects belonging to org B. This is the most critical security test for any SaaS application.</p>
+
+<h3>5. Test role-based access</h3>
+<p>MockHero's enum fields distribute users across all five roles (owner, admin, member, viewer, billing). Test that each role can only perform its permitted actions within the correct tenant.</p>
+
+<h2>Why MockHero vs Manual Multi-Tenant Seeds</h2>
+<ul>
+<li><strong>Multi-level relationships</strong> &mdash; organizations own users, projects, and API keys. All foreign keys are valid out of the box.</li>
+<li><strong>Isolation testing</strong> &mdash; 10 tenants with distributed data makes it easy to verify that RLS policies and authorization checks work correctly.</li>
+<li><strong>Role distribution</strong> &mdash; enum fields ensure all role types are represented, so you test every permission path.</li>
+<li><strong>Scalable</strong> &mdash; increase counts to test with 100 tenants and 10,000 users for load testing multi-tenant systems.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Test your SaaS app with realistic multi-tenant data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+`,
+  },
+  {
+    slug: "mock-data-for-load-testing",
+    title: "Using MockHero for Load Testing and Performance Benchmarks",
+    description:
+      "Generate large volumes of realistic test data for load testing with k6, Artillery, or JMeter. MockHero produces thousands of unique records to prevent caching artifacts in your benchmarks.",
+    category: "Use Case",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>Load testing with unrealistic data produces unrealistic results. When every simulated request uses the same five test accounts, your database caches aggressively, indexes stay hot, and the benchmark looks great. In production, thousands of unique users with different data patterns hit cold paths, trigger cache misses, and expose performance bottlenecks that your load test completely missed.</p>
+<p>The other problem is volume. Load tests need thousands or millions of unique records, but generating that data is a project in itself. Faker.js can produce the values, but you need to handle uniqueness (no duplicate emails), relational consistency (valid foreign keys), and realistic distributions. By the time you have built the data generator, you have spent more time on test setup than on the test itself.</p>
+
+<h2>The Solution: MockHero for Load Test Data</h2>
+<p>MockHero generates large volumes of unique, relationally-consistent data in a single API call. Every email is unique, every foreign key is valid, and the data looks like a real production database. Pipe the output into your database before a load test, and your benchmarks will reflect real-world performance.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "users",
+      "count": 5000,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "email", "type": "email" },
+        { "name": "username", "type": "username" },
+        { "name": "password_hash", "type": "uuid" },
+        { "name": "plan", "type": "enum", "params": { "values": ["free","basic","pro","enterprise"] } },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    },
+    {
+      "name": "api_requests",
+      "count": 50000,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "ref", "params": { "ref": "users.id" } },
+        { "name": "method", "type": "enum", "params": { "values": ["GET","POST","PUT","DELETE","PATCH"] } },
+        { "name": "path", "type": "slug" },
+        { "name": "status_code", "type": "enum", "params": { "values": ["200","201","400","401","403","404","500"] } },
+        { "name": "latency_ms", "type": "integer", "params": { "min": 5, "max": 2000 } },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Determine your data volume needs</h3>
+<p>A good rule of thumb: your test database should have at least as many records as you expect in production. If you have 10,000 users in production, generate at least 10,000 for your load test. This ensures indexes, query plans, and cache behavior match reality.</p>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a>. For load testing volumes, you may want a paid plan that supports higher row counts.</p>
+
+<h3>3. Generate and seed the data</h3>
+<p>Use MockHero's SQL output format for fastest insertion:</p>
+<pre><code># Generate SQL and pipe directly to your database
+curl -s -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "tables": [...], "format": "sql" }' \\
+  | psql $DATABASE_URL</code></pre>
+
+<h3>4. Configure your load test tool</h3>
+<p>Use the generated user IDs in your load test scripts. Here is a k6 example:</p>
+<pre><code>import http from "k6/http";
+import { check } from "k6";
+
+// Pre-loaded user IDs from MockHero data
+const userIds = JSON.parse(open("./user-ids.json"));
+
+export const options = {
+  stages: [
+    { duration: "1m", target: 100 },
+    { duration: "5m", target: 500 },
+    { duration: "1m", target: 0 },
+  ],
+};
+
+export default function () {
+  const userId = userIds[Math.floor(Math.random() * userIds.length)];
+  const res = http.get(\`http://localhost:3000/api/users/\${userId}\`);
+  check(res, { "status is 200": (r) => r.status === 200 });
+}</code></pre>
+
+<h3>5. Run the benchmark and analyze</h3>
+<p>Because every request hits a different user record, your load test exercises the full range of database and cache behavior. Compare results against benchmarks with small datasets to see the true performance difference.</p>
+
+<h2>Why MockHero vs Faker for Load Testing</h2>
+<ul>
+<li><strong>Unique records</strong> &mdash; every email, username, and ID is guaranteed unique. No duplicate key errors during seeding.</li>
+<li><strong>Volume</strong> &mdash; generate thousands of rows in a single API call. No local script to run and debug.</li>
+<li><strong>Realistic distributions</strong> &mdash; data that mimics real-world patterns, so your benchmarks reflect actual production behavior.</li>
+<li><strong>SQL output</strong> &mdash; pipe INSERT statements directly into your database for fastest possible seeding.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Make your load tests trustworthy with realistic data volumes. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and generate the test data your benchmarks deserve.</p>
+`,
+  },
+  {
+    slug: "api-prototype-with-mock-data",
+    title: "Rapid API Prototyping with Synthetic Data from MockHero",
+    description:
+      "Ship API prototypes faster by generating realistic response data with MockHero. Build frontend demos, client presentations, and proof-of-concepts without waiting for a real backend.",
+    category: "Use Case",
+    date: "2026-03-26",
+    author: "MockHero Team",
+    content: `
+<h2>The Problem</h2>
+<p>You need to demo an API to a client, present a proof-of-concept to stakeholders, or build a frontend while the backend team is still designing the schema. In all these cases, you need realistic API responses <em>now</em>, but the real API does not exist yet. The usual workaround is to hardcode JSON files with three or four records, which looks unconvincing and does not test pagination, filtering, or error handling.</p>
+<p>Mock servers like JSON Server or MSW solve the routing problem but not the data problem. You still need to create the data yourself, and hardcoded fixtures do not scale when you want to demonstrate search, sorting, or paginated lists with hundreds of results.</p>
+
+<h2>The Solution: MockHero as Your Prototype Data Layer</h2>
+<p>MockHero generates large, realistic datasets that you can use as mock API responses. Define your API's data shape as a MockHero schema, generate the data, and serve it through a simple static server or integrate it into your mock server. The result is an API prototype that looks and feels like a production system.</p>
+
+<h2>Quick Setup</h2>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "tables": [
+    {
+      "name": "products",
+      "count": 200,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "name", "type": "product_name" },
+        { "name": "description", "type": "paragraphs" },
+        { "name": "price", "type": "integer", "params": { "min": 499, "max": 29999 } },
+        { "name": "category", "type": "enum", "params": { "values": ["electronics","clothing","home","sports","books"] } },
+        { "name": "image_url", "type": "avatar_url" },
+        { "name": "rating", "type": "integer", "params": { "min": 1, "max": 5 } },
+        { "name": "in_stock", "type": "boolean" }
+      ]
+    },
+    {
+      "name": "reviews",
+      "count": 800,
+      "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "product_id", "type": "ref", "params": { "ref": "products.id" } },
+        { "name": "author", "type": "full_name" },
+        { "name": "rating", "type": "integer", "params": { "min": 1, "max": 5 } },
+        { "name": "comment", "type": "paragraphs" },
+        { "name": "created_at", "type": "datetime" }
+      ]
+    }
+  ],
+  "format": "json"
+}'</code></pre>
+
+<h2>Step-by-Step Guide</h2>
+<h3>1. Define your API shape</h3>
+<p>Start with the API endpoints you need to prototype. For each endpoint, map the response body to a MockHero table. If an endpoint returns nested data (products with reviews), use <code>ref</code> fields to link the tables.</p>
+
+<h3>2. Get your MockHero API key</h3>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key.</p>
+
+<h3>3. Generate the data and save locally</h3>
+<pre><code># Save to a JSON file for your mock server
+curl -s -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{ ... }' > mock-data.json</code></pre>
+
+<h3>4. Serve through a mock API</h3>
+<p>Use Express to create a quick mock API:</p>
+<pre><code>import express from "express";
+import { readFileSync } from "fs";
+
+const app = express();
+const data = JSON.parse(readFileSync("./mock-data.json", "utf-8")).data;
+
+app.get("/api/products", (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const start = (page - 1) * limit;
+  res.json({
+    data: data.products.slice(start, start + limit),
+    total: data.products.length,
+    page,
+    pages: Math.ceil(data.products.length / limit),
+  });
+});
+
+app.get("/api/products/:id", (req, res) => {
+  const product = data.products.find(p => p.id === req.params.id);
+  if (!product) return res.status(404).json({ error: "Not found" });
+  const reviews = data.reviews.filter(r => r.product_id === product.id);
+  res.json({ ...product, reviews });
+});
+
+app.listen(3001, () => console.log("Mock API running on port 3001"));</code></pre>
+
+<h3>5. Build your frontend against the mock API</h3>
+<p>Your frontend can now fetch paginated product lists, display product details with reviews, and handle empty states. When the real backend is ready, just swap the base URL. The data shapes are already correct.</p>
+
+<h2>Why MockHero vs Hardcoded Fixtures</h2>
+<ul>
+<li><strong>Volume</strong> &mdash; 200 products and 800 reviews make pagination, search, and filtering feel real. Five hardcoded records do not.</li>
+<li><strong>Realistic content</strong> &mdash; product names, descriptions, and reviews look like real data, which makes demos and presentations convincing.</li>
+<li><strong>Relational</strong> &mdash; reviews are properly linked to products. Your frontend can display review counts and average ratings correctly.</li>
+<li><strong>Fast iteration</strong> &mdash; change the schema, regenerate, and your prototype has new data in seconds.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Ship your API prototype in hours, not weeks. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and generate the realistic data your prototype deserves.</p>
 `,
   },
 ];

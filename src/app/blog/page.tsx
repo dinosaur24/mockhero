@@ -26,6 +26,8 @@ const categoryColors: Record<ArticleCategory, string> = {
     "bg-purple-100 text-purple-800 border-purple-200",
   "Use Case":
     "bg-amber-100 text-amber-800 border-amber-200",
+  AI:
+    "bg-emerald-100 text-emerald-800 border-emerald-200",
 }
 
 export default async function BlogIndexPage({
