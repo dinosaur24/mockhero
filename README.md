@@ -2,6 +2,8 @@
 
 Synthetic test data API. Generate realistic, relational data for any database schema.
 
+[![mockhero MCP server](https://glama.ai/mcp/servers/dinosaur24/mockhero/badges/card.svg)](https://glama.ai/mcp/servers/dinosaur24/mockhero)
+
 ## What it does
 
 - **156 field types** across 15+ categories (identity, location, financial, temporal, and more)
