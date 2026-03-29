@@ -195,13 +195,13 @@ export function Pricing() {
           </>
         ) : (
           <>
-            <div className="max-w-2xl mx-auto mb-8 text-center">
+            <div className="mb-8 text-center">
               <p className="text-muted-foreground">
                 One-time purchases. No subscription required. Credits never expire and are used automatically when you generate data.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
               {creditPacks.map((pack) => (
                 <Card
                   key={pack.key}

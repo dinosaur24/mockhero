@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Check, Loader2, ExternalLink, CheckCircle2 } from "lucide-react"
+import { Check, Loader2, ExternalLink, CheckCircle2, Coins } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -19,13 +19,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import type { Tier } from "@/lib/utils/constants"
+import { CREDIT_PACKS } from "@/lib/utils/constants"
+import { cn } from "@/lib/utils"
 import type { UserSubscription } from "@/lib/api/dashboard-queries"
 
 interface Props {
   tier: Tier
+  credits: number
   subscription: UserSubscription | null
   justUpgraded?: boolean
 }
+
+const creditPacks = Object.entries(CREDIT_PACKS).map(([key, pack]) => ({
+  key,
+  ...pack,
+  perRecord: `$${(pack.price / pack.credits * 1000).toFixed(1)}/1K`,
+  popular: key === "builder",
+}))
 
 const plans: {
   tier: Tier
@@ -80,13 +90,14 @@ const plans: {
 
 const tierRank: Record<Tier, number> = { free: 0, pro: 1, scale: 2 }
 
-export default function BillingClient({ tier, subscription, justUpgraded }: Props) {
+export default function BillingClient({ tier, credits, subscription, justUpgraded }: Props) {
   const router = useRouter()
   const [loadingTier, setLoadingTier] = useState<Tier | null>(null)
   const [canceling, setCanceling] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false)
   const [polling, setPolling] = useState(justUpgraded && tier === "free")
+  const [tab, setTab] = useState<"plans" | "credits">("plans")
 
   // After returning from checkout, poll until tier updates, then show success
   useEffect(() => {
@@ -297,78 +308,174 @@ export default function BillingClient({ tier, subscription, justUpgraded }: Prop
         </CardContent>
       </Card>
 
-      {/* Plan Comparison */}
+      {/* Tab Switcher */}
       <div>
-        <h2 className="font-heading text-sm font-semibold mb-4">All Plans</h2>
-        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {plans.map((plan) => {
-            const isCurrent = plan.tier === tier
-            const isUpgrade = tierRank[plan.tier] > tierRank[tier]
-            return (
+        <div className="flex items-center justify-between mb-4">
+          <div className="inline-flex rounded-lg bg-muted p-1">
+            <button
+              onClick={() => setTab("plans")}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                tab === "plans"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Monthly Plans
+            </button>
+            <button
+              onClick={() => setTab("credits")}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors flex items-center gap-1.5",
+                tab === "credits"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Coins className="size-3" />
+              Credit Packs
+            </button>
+          </div>
+          {credits > 0 && (
+            <span className="text-xs text-muted-foreground">
+              <Coins className="size-3 inline mr-1" />
+              {credits.toLocaleString()} credits
+            </span>
+          )}
+        </div>
+
+        {tab === "plans" ? (
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            {plans.map((plan) => {
+              const isCurrent = plan.tier === tier
+              const isUpgrade = tierRank[plan.tier] > tierRank[tier]
+              return (
+                <Card
+                  key={plan.tier}
+                  className={cn(
+                    "flex flex-col",
+                    plan.highlight && !isCurrent
+                      ? "ring-2 ring-primary"
+                      : isCurrent
+                        ? "ring-2 ring-primary/50 bg-primary/[0.02]"
+                        : ""
+                  )}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-sm">{plan.name}</CardTitle>
+                      {isCurrent && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          Current
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="mt-2">
+                      <span className="text-2xl font-bold">{plan.price}</span>
+                      <span className="text-xs text-muted-foreground">{plan.priceNote}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col space-y-4">
+                    <ul className="flex-1 space-y-2">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2 text-xs">
+                          <Check className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {isCurrent ? (
+                      <Button variant="outline" size="sm" className="w-full min-h-[44px]" disabled>
+                        Current plan
+                      </Button>
+                    ) : plan.tier === "free" ? (
+                      <Button variant="outline" size="sm" className="w-full min-h-[44px]" disabled>
+                        {tier === "free" ? "Current plan" : "Cancel to downgrade"}
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="w-full min-h-[44px]"
+                        variant={isUpgrade ? "default" : "outline"}
+                        onClick={() => handleCheckout(plan.tier)}
+                        disabled={loadingTier !== null}
+                      >
+                        {loadingTier === plan.tier ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                        )}
+                        {getButtonLabel(plan.tier)}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            {creditPacks.map((pack) => (
               <Card
-                key={plan.tier}
-                className={
-                  plan.highlight && !isCurrent
-                    ? "ring-2 ring-primary"
-                    : isCurrent
-                      ? "ring-2 ring-primary/50 bg-primary/[0.02]"
-                      : ""
-                }
+                key={pack.key}
+                className={cn(
+                  "flex flex-col",
+                  pack.popular && "ring-2 ring-primary"
+                )}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm">{plan.name}</CardTitle>
-                    {isCurrent && (
-                      <Badge variant="secondary" className="text-[10px]">
-                        Current
-                      </Badge>
+                    <CardTitle className="text-sm">{pack.label}</CardTitle>
+                    {pack.popular && (
+                      <Badge className="text-[10px]">Best Value</Badge>
                     )}
                   </div>
+                  <CardDescription className="text-xs">{pack.credits.toLocaleString()} credits</CardDescription>
                   <div className="mt-2">
-                    <span className="text-2xl font-bold">{plan.price}</span>
-                    <span className="text-xs text-muted-foreground">{plan.priceNote}</span>
+                    <span className="text-2xl font-bold">${pack.price}</span>
+                    <span className="text-xs text-muted-foreground"> one-time</span>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2 text-xs">
-                        <Check className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
+                <CardContent className="flex-1 flex flex-col space-y-4">
+                  <ul className="flex-1 space-y-2">
+                    <li className="flex items-start gap-2 text-xs">
+                      <Check className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                      <span>{pack.perRecord} records</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-xs">
+                      <Check className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                      <span>Never expires</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-xs">
+                      <Check className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                      <span>Works with any plan</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-xs">
+                      <Check className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
+                      <span>Used before daily limits</span>
+                    </li>
                   </ul>
 
-                  {isCurrent ? (
-                    <Button variant="outline" size="sm" className="w-full min-h-[44px]" disabled>
-                      Current plan
-                    </Button>
-                  ) : plan.tier === "free" ? (
-                    // Can't "downgrade" to free via checkout — canceling handles that
-                    <Button variant="outline" size="sm" className="w-full min-h-[44px]" disabled>
-                      {tier === "free" ? "Current plan" : "Cancel to downgrade"}
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      className="w-full min-h-[44px]"
-                      variant={isUpgrade ? "default" : "outline"}
-                      onClick={() => handleCheckout(plan.tier)}
-                      disabled={loadingTier !== null}
-                    >
-                      {loadingTier === plan.tier ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                      )}
-                      {getButtonLabel(plan.tier)}
-                    </Button>
-                  )}
+                  <Button
+                    size="sm"
+                    className="w-full min-h-[44px]"
+                    variant={pack.popular ? "default" : "outline"}
+                    onClick={() => handleCheckout(pack.key as Tier)}
+                    disabled={loadingTier !== null}
+                  >
+                    {loadingTier === pack.key ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Coins className="mr-2 h-3.5 w-3.5" />
+                    )}
+                    Buy {pack.label}
+                  </Button>
                 </CardContent>
               </Card>
-            )
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* FAQ */}

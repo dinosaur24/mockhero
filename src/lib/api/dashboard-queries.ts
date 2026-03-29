@@ -154,16 +154,18 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
 
 export interface UserProfile {
   tier: Tier
+  credits: number
 }
 
 export async function getUserProfile(userId: string): Promise<UserProfile> {
   const supabase = createAdminClient()
   const { data } = await supabase
     .from("profiles")
-    .select("tier")
+    .select("tier, credits")
     .eq("id", userId)
     .single()
   return {
     tier: (data?.tier ?? "free") as Tier,
+    credits: data?.credits ?? 0,
   }
 }
