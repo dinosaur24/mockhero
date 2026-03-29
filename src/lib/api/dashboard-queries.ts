@@ -13,6 +13,7 @@ export interface DashboardStats {
   recordsLimit: number
   requestsToday: number
   activeKeys: number
+  credits: number
 }
 
 export async function getDashboardStats(userId: string): Promise<DashboardStats> {
@@ -20,7 +21,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
   const today = new Date().toISOString().slice(0, 10)
 
   const [profileRes, usageRes, keysRes] = await Promise.all([
-    supabase.from("profiles").select("tier").eq("id", userId).single(),
+    supabase.from("profiles").select("tier, credits").eq("id", userId).single(),
     supabase.from("daily_usage").select("records_used, requests_count").eq("user_id", userId).eq("date", today).maybeSingle(),
     supabase.from("api_keys").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("is_active", true),
   ])
@@ -32,6 +33,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
     recordsLimit: TIER_LIMITS[tier].dailyRecords,
     requestsToday: usageRes.data?.requests_count ?? 0,
     activeKeys: keysRes.count ?? 0,
+    credits: profileRes.data?.credits ?? 0,
   }
 }
 

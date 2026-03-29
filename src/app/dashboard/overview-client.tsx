@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { Copy, Check, ArrowRight } from "lucide-react"
+import { Copy, Check, ArrowRight, Coins } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { DashboardStats } from "@/lib/api/dashboard-queries"
@@ -60,7 +60,7 @@ export default function OverviewClient({ stats, keyPrefix }: Props) {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader>
             <CardDescription>Records today</CardDescription>
@@ -87,6 +87,25 @@ export default function OverviewClient({ stats, keyPrefix }: Props) {
               {stats.activeKeys.toLocaleString()}
             </CardTitle>
           </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardDescription className="flex items-center gap-1">
+              <Coins className="size-3" /> Credits
+            </CardDescription>
+            <CardTitle className="text-2xl font-bold tabular-nums">
+              {stats.credits.toLocaleString()}
+            </CardTitle>
+          </CardHeader>
+          {stats.credits === 0 && (
+            <CardContent className="pt-0">
+              <Link href="/pricing#credits">
+                <Button variant="outline" size="sm" className="w-full text-xs">
+                  Buy Credits
+                </Button>
+              </Link>
+            </CardContent>
+          )}
         </Card>
       </div>
 

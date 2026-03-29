@@ -51,7 +51,10 @@ export function unauthorizedError(message = "Invalid or missing API key") {
 }
 
 export function rateLimitError(message: string, details?: ErrorDetail[]) {
-  return errorResponse(429, "RATE_LIMIT_EXCEEDED", message, details);
+  return errorResponse(429, "RATE_LIMIT_EXCEEDED", message, [
+    ...(details ?? []),
+    { message: "Upgrade your plan or buy credits at https://mockhero.dev/pricing#credits" },
+  ]);
 }
 
 export function payloadTooLargeError(message = "Request body too large. Maximum 1MB.") {

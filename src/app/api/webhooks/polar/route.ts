@@ -8,8 +8,8 @@ import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks"
 import { headers } from "next/headers"
 import { clerkClient } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { TIER_LIMITS } from "@/lib/utils/constants"
-import type { Tier } from "@/lib/utils/constants"
+import { TIER_LIMITS, CREDIT_PACKS } from "@/lib/utils/constants"
+import type { Tier, CreditPack } from "@/lib/utils/constants"
 import { sendEmail, upgradeConfirmationEmail, downgradeConfirmationEmail } from "@/lib/email"
 
 function ok(msg = "OK") {
@@ -24,6 +24,20 @@ async function getUserEmail(userId: string): Promise<string | null> {
   } catch {
     return null
   }
+}
+
+/** Map Polar product name/metadata → credit pack */
+function resolveCreditPack(data: Record<string, unknown>): CreditPack | null {
+  const metadata = (data.metadata ?? {}) as Record<string, string>
+  if (metadata.credit_pack && metadata.credit_pack in CREDIT_PACKS) {
+    return metadata.credit_pack as CreditPack
+  }
+  const product = data.product as Record<string, unknown> | undefined
+  const name = (product?.name as string ?? "").toLowerCase()
+  if (name.includes("scale") && name.includes("credit")) return "scale"
+  if (name.includes("builder")) return "builder"
+  if (name.includes("starter") && name.includes("credit")) return "starter"
+  return null
 }
 
 /** Map Polar product name → our tier */
@@ -194,6 +208,38 @@ export async function POST(req: Request) {
               to: email,
               subject: "Your MockHero plan has changed",
               html: downgradeConfirmationEmail(previousTier),
+            }).catch(() => {})
+          }
+        }).catch(() => {})
+
+        break
+      }
+
+      case "order.paid": {
+        const creditPack = resolveCreditPack(sub)
+        if (!creditPack) {
+          console.log("[Polar webhook] order.paid but not a credit pack — ignoring")
+          break
+        }
+
+        const credits = CREDIT_PACKS[creditPack].credits
+        const { data: newBalance, error: creditError } = await supabase.rpc("add_credits", {
+          p_user_id: userId,
+          p_amount: credits,
+        })
+
+        if (creditError) {
+          console.error("[Polar webhook] Credit addition failed:", creditError)
+        } else {
+          console.log(`[Polar webhook] Added ${credits} credits (${creditPack} pack). New balance: ${newBalance}`)
+        }
+
+        getUserEmail(userId).then((email) => {
+          if (email) {
+            sendEmail({
+              to: email,
+              subject: `${credits.toLocaleString()} credits added to your MockHero account`,
+              html: `<p>Your <strong>${CREDIT_PACKS[creditPack].label}</strong> credit pack (${credits.toLocaleString()} credits) has been added to your account.</p><p>Credits never expire and are used automatically when you generate data.</p>`,
             }).catch(() => {})
           }
         }).catch(() => {})

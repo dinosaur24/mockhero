@@ -175,14 +175,14 @@ export async function POST(request: Request) {
     try {
       result = await generate(parsed.data);
     } catch (err) {
-      releaseReservedRecords(user.user_id, totalRecords).catch(() => {});
+      releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
       console.error("Generate endpoint error (generation):", err);
       return internalError("Data generation failed");
     }
 
     if (!result.success) {
       // Release reserved records since generation failed
-      releaseReservedRecords(user.user_id, totalRecords).catch(() => {});
+      releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
 
       if ("cycle" in result) {
         return dependencyCycleError(result.cycle);
@@ -203,7 +203,7 @@ export async function POST(request: Request) {
         parsed.data.sql_dialect
       );
     } catch (err) {
-      releaseReservedRecords(user.user_id, totalRecords).catch(() => {});
+      releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
       console.error("Generate endpoint error (formatting):", err);
       return internalError("Output formatting failed");
     }

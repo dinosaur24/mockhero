@@ -27,3 +27,16 @@ export const TIER_LIMITS = {
 export const API_KEY_PREFIX = "mh_";
 
 export type Tier = keyof typeof TIER_LIMITS;
+
+/**
+ * Credit packs — one-time purchases via Polar.
+ * 1 credit = 1 record generated.
+ * Credits never expire; used before daily tier limits.
+ */
+export const CREDIT_PACKS = {
+  starter: { credits: 5_000, price: 9, label: "Starter" },
+  builder: { credits: 25_000, price: 29, label: "Builder" },
+  scale: { credits: 100_000, price: 79, label: "Scale" },
+} as const;
+
+export type CreditPack = keyof typeof CREDIT_PACKS;

@@ -126,7 +126,7 @@ export async function POST(request: Request) {
       .single();
 
     if (insertError || !job) {
-      releaseReservedRecords(user.user_id, totalRecords).catch(() => {});
+      releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
       return internalError("Failed to create async job");
     }
 
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
         const result = await generate(parsedData);
 
         if (!result.success) {
-          releaseReservedRecords(user.user_id, totalRecords).catch(() => {});
+          releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
           const errorMsg = "cycle" in result
             ? `Dependency cycle: ${result.cycle.join(" → ")}`
             : "Generation failed";
@@ -194,7 +194,7 @@ export async function POST(request: Request) {
         }).catch(() => {});
 
       } catch (err) {
-        releaseReservedRecords(user.user_id, totalRecords).catch(() => {});
+        releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
         await db
           .from("bulk_jobs")
           .update({
