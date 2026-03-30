@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Play, Copy, Check, Info, Share2 } from "lucide-react"
+import { Play, Copy, Check, Info } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +11,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { ShareCard } from "@/components/share-card"
 
 // Template quick-start requests (playground-sized: ~3-5 records per table)
 const PLAYGROUND_TEMPLATES = [
@@ -96,7 +95,6 @@ export function Playground() {
   const [output, setOutput] = useState(prefilledOutput)
   const [isGenerating, setIsGenerating] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [shareOpen, setShareOpen] = useState(false)
   const [meta, setMeta] = useState<{ tables?: number; total_records?: number; generation_time_ms?: number } | null>({
     tables: 1,
     total_records: 3,
@@ -259,24 +257,11 @@ export function Playground() {
               <Badge variant="secondary">{meta.total_records} records</Badge>
               <Badge variant="secondary">{meta.generation_time_ms ?? "—"}ms</Badge>
               <Badge variant="secondary">{meta.tables ?? "—"} {(meta.tables ?? 0) === 1 ? "table" : "tables"}</Badge>
-              <Button variant="outline" size="sm" onClick={() => setShareOpen(true)}>
-                <Share2 className="mr-1 h-3.5 w-3.5" />
-                Share
-              </Button>
             </div>
           )}
         </div>
       </div>
 
-      {meta && (
-        <ShareCard
-          records={meta.total_records ?? 0}
-          tables={meta.tables ?? 0}
-          timeMs={meta.generation_time_ms ?? 0}
-          open={shareOpen}
-          onOpenChange={setShareOpen}
-        />
-      )}
     </section>
   )
 }

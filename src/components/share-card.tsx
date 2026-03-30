@@ -11,6 +11,7 @@ interface ShareCardProps {
   timeMs: number
   open: boolean
   onOpenChange: (open: boolean) => void
+  mode?: "playground" | "dashboard"
 }
 
 function XIcon({ className }: { className?: string }) {
@@ -29,27 +30,27 @@ function LinkedInIcon({ className }: { className?: string }) {
   )
 }
 
-export function ShareCard({ records, tables, timeMs, open, onOpenChange }: ShareCardProps) {
+export function ShareCard({ records, tables, timeMs, open, onOpenChange, mode = "dashboard" }: ShareCardProps) {
   const [copied, setCopied] = useState(false)
 
-  const tweetText = `I just generated ${records} realistic test records in ${timeMs}ms with @MockHeroDev
+  const isDashboard = mode === "dashboard"
 
-${tables} table(s) \u2022 ${records} records \u2022 ${timeMs}ms
+  const tweetText = isDashboard
+    ? `I've generated ${records.toLocaleString()} test records with @MockHeroDev this month \ud83e\uddb8\n\nThe API supports 156 field types across 22 locales. No more writing seed scripts.\n\nTry it free \u2192 mockhero.dev?utm_source=twitter&utm_medium=share&utm_campaign=dashboard`
+    : `I just generated ${records} realistic test records in ${timeMs}ms with @MockHeroDev\n\n${tables} table(s) \u2022 ${records} records \u2022 ${timeMs}ms\n\nTry it free \u2192 mockhero.dev?utm_source=twitter&utm_medium=share&utm_campaign=playground`
 
-Try it free \u2192 mockhero.dev?utm_source=twitter&utm_medium=share&utm_campaign=playground`
+  const linkedInText = isDashboard
+    ? `This month I generated ${records.toLocaleString()} synthetic test records using MockHero's API. It handles 156 field types, 22 locales, and relational data \u2014 all in a single API call.\n\nTry it free \u2192 mockhero.dev?utm_source=linkedin&utm_medium=share&utm_campaign=dashboard`
+    : `Just discovered MockHero \u2014 generated ${records} realistic test records in ${timeMs}ms. The API supports 156 field types across 22 locales.\n\nTry it free \u2192 mockhero.dev?utm_source=linkedin&utm_medium=share&utm_campaign=playground`
 
-  const linkedInText = `Just discovered MockHero \u2014 generated ${records} realistic test records in ${timeMs}ms. The API supports 156 field types across 22 locales.
+  const campaign = isDashboard ? "dashboard" : "playground"
 
-Try it free \u2192 mockhero.dev?utm_source=linkedin&utm_medium=share&utm_campaign=playground`
-
-  const copyText = `I just generated ${records} realistic test records in ${timeMs}ms with MockHero
-
-${tables} table(s) \u2022 ${records} records \u2022 ${timeMs}ms
-
-Try it free \u2192 https://mockhero.dev?utm_source=clipboard&utm_medium=share&utm_campaign=playground`
+  const copyText = isDashboard
+    ? `I've generated ${records.toLocaleString()} test records with MockHero this month\n\n156 field types \u2022 22 locales \u2022 relational data in one API call\n\nTry it free \u2192 https://mockhero.dev?utm_source=clipboard&utm_medium=share&utm_campaign=dashboard`
+    : `I just generated ${records} realistic test records in ${timeMs}ms with MockHero\n\n${tables} table(s) \u2022 ${records} records \u2022 ${timeMs}ms\n\nTry it free \u2192 https://mockhero.dev?utm_source=clipboard&utm_medium=share&utm_campaign=playground`
 
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://mockhero.dev?utm_source=linkedin&utm_medium=share&utm_campaign=playground`)}`
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://mockhero.dev?utm_source=linkedin&utm_medium=share&utm_campaign=${campaign}`)}`
 
   const handleCopy = async () => {
     try {
@@ -62,22 +63,37 @@ Try it free \u2192 https://mockhero.dev?utm_source=clipboard&utm_medium=share&ut
   }
 
   return (
-    <Modal open={open} onClose={() => onOpenChange(false)} title="Share your results">
+    <Modal open={open} onClose={() => onOpenChange(false)} title={isDashboard ? "Share your stats" : "Share your results"}>
       {/* Preview card */}
       <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 mb-5">
-        <p className="text-sm font-medium text-foreground">
-          I just generated{" "}
-          <span className="font-bold text-primary">{records}</span> realistic test
-          records in{" "}
-          <span className="font-bold text-primary">{timeMs}ms</span> with MockHero
-        </p>
-        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-          <span>{tables} table{tables !== 1 ? "s" : ""}</span>
-          <span>&bull;</span>
-          <span>{records} records</span>
-          <span>&bull;</span>
-          <span>{timeMs}ms</span>
-        </div>
+        {isDashboard ? (
+          <>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">This month</p>
+            <p className="text-2xl font-bold text-primary mt-1">{records.toLocaleString()} records</p>
+            <p className="text-sm text-foreground mt-1">generated with MockHero</p>
+            <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+              <span>156 field types</span>
+              <span>&bull;</span>
+              <span>22 locales</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-sm font-medium text-foreground">
+              I just generated{" "}
+              <span className="font-bold text-primary">{records}</span> realistic test
+              records in{" "}
+              <span className="font-bold text-primary">{timeMs}ms</span> with MockHero
+            </p>
+            <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{tables} table{tables !== 1 ? "s" : ""}</span>
+              <span>&bull;</span>
+              <span>{records} records</span>
+              <span>&bull;</span>
+              <span>{timeMs}ms</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Share buttons */}

@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { Copy, Check, ArrowRight, Coins } from "lucide-react"
+import { Copy, Check, ArrowRight, Coins, Share2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ShareCard } from "@/components/share-card"
 import type { DashboardStats } from "@/lib/api/dashboard-queries"
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 export default function OverviewClient({ stats, keyPrefix }: Props) {
   const [copied, setCopied] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
 
   // Fire signup goal once for new users arriving at the dashboard for the first time
   useEffect(() => {
@@ -108,6 +110,24 @@ export default function OverviewClient({ stats, keyPrefix }: Props) {
           )}
         </Card>
       </div>
+
+      {/* Share stats */}
+      <div className="flex items-center justify-between rounded-lg border border-dashed border-muted-foreground/25 px-4 py-3">
+        <p className="text-sm text-muted-foreground">Enjoying MockHero?</p>
+        <Button variant="outline" size="sm" onClick={() => setShareOpen(true)}>
+          <Share2 className="mr-1.5 size-3.5" />
+          Share
+        </Button>
+      </div>
+
+      <ShareCard
+        records={stats.recordsToday}
+        tables={0}
+        timeMs={0}
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        mode="dashboard"
+      />
 
       {/* Quick Start */}
       <Card>

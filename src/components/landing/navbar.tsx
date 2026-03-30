@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { useAuth, UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -15,6 +15,12 @@ const navLinks = [
   { href: "#pricing", label: "Pricing" },
   { href: "/docs", label: "Docs" },
   { href: "/blog", label: "Blog" },
+]
+
+const toolLinks = [
+  { href: "/tools/schema-detector", label: "Schema Detector", description: "Paste JSON, get a MockHero schema" },
+  { href: "/tools/data-types", label: "Data Type Explorer", description: "Browse all 156 field types" },
+  { href: "/tools/calculator", label: "Test Data Calculator", description: "Estimate your test data needs" },
 ]
 
 export function Navbar() {
@@ -51,6 +57,27 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          {/* Tools dropdown */}
+          <div className="relative group">
+            <button className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground">
+              Tools
+              <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
+            </button>
+            <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+              <div className="w-64 rounded-lg border border-border bg-background shadow-lg p-2">
+                {toolLinks.map((tool) => (
+                  <Link
+                    key={tool.href}
+                    href={tool.href}
+                    className="block rounded-md px-3 py-2.5 hover:bg-muted transition-colors"
+                  >
+                    <span className="text-sm font-medium text-foreground">{tool.label}</span>
+                    <span className="block text-xs text-muted-foreground mt-0.5">{tool.description}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </nav>
 
         <div className="flex-1" />
@@ -98,6 +125,17 @@ export function Navbar() {
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
+              </Link>
+            ))}
+            <span className="text-xs font-medium text-foreground mt-1">Tools</span>
+            {toolLinks.map((tool) => (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors pl-2"
+                onClick={() => setMobileOpen(false)}
+              >
+                {tool.label}
               </Link>
             ))}
             <Separator className="my-2" />
