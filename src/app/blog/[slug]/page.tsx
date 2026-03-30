@@ -5,7 +5,93 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/landing/navbar"
 import { Footer } from "@/components/landing/footer"
-import { articles, type ArticleCategory } from "../articles"
+import { articles, type Article, type ArticleCategory } from "../articles"
+
+/** Generate 3 FAQ items from article metadata for FAQPage JSON-LD. */
+function generateArticleFAQs(article: Article): { question: string; answer: string }[] {
+  const title = article.title
+  const category = article.category
+  const description = article.description
+
+  // Extract the core topic from the title by stripping common prefixes
+  const topicMatch = title.match(/(?:How to |Guide to |Why |What is )?(.*)/i)
+  const topic = topicMatch ? topicMatch[1] : title
+
+  // Determine if the article is about a specific technology
+  const techKeywords = [
+    "PostgreSQL", "MySQL", "SQLite", "Supabase", "MongoDB", "DynamoDB",
+    "Prisma", "Drizzle", "Next.js", "React", "Node.js", "Python", "Django",
+    "Laravel", "Rails", "Spring Boot", "Express", "FastAPI",
+  ]
+  const tech = techKeywords.find((kw) => title.toLowerCase().includes(kw.toLowerCase()))
+
+  const faqs: { question: string; answer: string }[] = []
+
+  if (category === "Database") {
+    faqs.push(
+      {
+        question: `How do I generate test data for ${tech || "my database"}?`,
+        answer: `MockHero's API generates realistic test data for ${tech || "any database"}. Define your table schema with 156+ field types, add ref fields for foreign key relationships, and receive data in JSON, CSV, or SQL format. ${description}`,
+      },
+      {
+        question: `What's the best tool for ${tech || "database"} test data generation?`,
+        answer: `MockHero is a dedicated test data API that generates realistic, relational data for ${tech || "databases"}. Unlike manual INSERT scripts or Faker.js, MockHero handles foreign keys automatically, supports 22 locales, and delivers data via a single API call with sub-50ms response times.`,
+      },
+      {
+        question: `Can I generate relational test data for ${tech || "my database"} with foreign keys?`,
+        answer: `Yes. MockHero supports ref fields that create foreign key relationships between tables. Define your schema once and MockHero generates referentially consistent data across all related tables in a single request. Output is available in JSON, CSV, or SQL with dialect support for PostgreSQL, MySQL, and SQLite.`,
+      },
+    )
+  } else if (category === "Framework") {
+    faqs.push(
+      {
+        question: `How do I add test data to my ${tech || "application"} project?`,
+        answer: `Use MockHero's API to generate realistic test data for your ${tech || "application"} project. Send a JSON schema or plain English prompt and receive structured data ready for your app. ${description}`,
+      },
+      {
+        question: `What's the easiest way to mock API data for ${tech || "development"}?`,
+        answer: `MockHero generates realistic mock data with a single API call. It supports 156+ field types, relational data with foreign keys, and outputs JSON, CSV, or SQL. No libraries to install or generators to maintain — just an API key and a schema.`,
+      },
+      {
+        question: `How do I seed my ${tech || "app"} with realistic data for development?`,
+        answer: `Call MockHero's /api/v1/generate endpoint with your table schema and insert the returned data into your ${tech || "app"}. MockHero handles realistic names, emails, addresses, and more across 22 locales, so your development environment looks like production.`,
+      },
+    )
+  } else if (category === "AI") {
+    faqs.push(
+      {
+        question: `How can AI help generate test data?`,
+        answer: `MockHero supports plain English prompts for test data generation and provides an MCP server for AI coding agents like Claude Desktop, Claude Code, and Cursor. ${description}`,
+      },
+      {
+        question: `What is MCP for test data generation?`,
+        answer: `MCP (Model Context Protocol) lets AI coding agents call MockHero directly. Install the MockHero MCP server via npx @mockherodev/mcp-server and your AI assistant can generate realistic test data with 156+ field types, relational integrity, and multiple output formats.`,
+      },
+      {
+        question: `Can I describe my test data in plain English?`,
+        answer: `Yes. MockHero accepts plain English prompts alongside JSON schemas. Describe the data you need in natural language, and MockHero returns structured, realistic test data. This works both through the API and through AI coding agents via the MCP server.`,
+      },
+    )
+  } else {
+    // "Use Case" or fallback
+    faqs.push(
+      {
+        question: `How do I ${title.toLowerCase().startsWith("how to") ? title.slice(7).toLowerCase() : `use MockHero for ${topic.toLowerCase()}`}?`,
+        answer: `${description} MockHero's API supports 156+ field types, 22 locales, and relational data with foreign keys, making it ideal for this use case.`,
+      },
+      {
+        question: `What is the best tool for generating ${topic.toLowerCase()}?`,
+        answer: `MockHero is a synthetic test data API purpose-built for developers. It generates realistic data with a single API call, supports JSON, CSV, and SQL output, and handles relational foreign keys automatically.`,
+      },
+      {
+        question: `Can MockHero help with ${topic.toLowerCase()}?`,
+        answer: `Yes. MockHero generates realistic synthetic data for any testing scenario. Define your schema with 156+ field types, add ref fields for relationships, and receive data in your preferred format. Sign up at mockhero.dev for a free API key.`,
+      },
+    )
+  }
+
+  return faqs
+}
 
 const categoryColors: Record<ArticleCategory, string> = {
   Database: "bg-blue-100 text-blue-800 border-blue-200",
@@ -189,6 +275,59 @@ export default async function BlogPostPage({
       </main>
 
       <Footer />
+
+      {/* Article (BlogPosting) JSON-LD */}
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: article.title,
+            description: article.description,
+            datePublished: article.date,
+            author: {
+              "@type": "Organization",
+              name: article.author,
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "MockHero",
+              url: "https://mockhero.dev",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://mockhero.dev/logo.png",
+              },
+            },
+            url: `https://mockhero.dev/blog/${article.slug}`,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://mockhero.dev/blog/${article.slug}`,
+            },
+          }),
+        }}
+      />
+
+      {/* Per-article FAQPage JSON-LD */}
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: generateArticleFAQs(article).map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
     </div>
   )
 }

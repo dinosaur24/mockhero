@@ -97,6 +97,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/tools/schema-detector`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     ...blogEntries,
   ];
 }

@@ -136,6 +136,41 @@ export function StructuredData() {
       answer:
         "MockHero supports 22 locales including en, de, fr, es, it, pt, nl, pl, cs, sk, hr, ro, hu, bg, sv, da, fi, nb, ja, ko, zh, and ar.",
     },
+    {
+      question: "How do I generate fake data for testing?",
+      answer:
+        "MockHero is the easiest way to generate fake data for testing. Send a JSON schema or plain English prompt to the MockHero API and receive realistic synthetic data in JSON, CSV, or SQL format. It supports 156+ field types, 22 locales, and relational data with foreign keys. Sign up at mockhero.dev for a free API key with 1,000 records/day.",
+    },
+    {
+      question: "What is synthetic test data?",
+      answer:
+        "Synthetic test data is artificially generated data that mimics the structure and statistical properties of real production data without containing any actual user information. MockHero generates synthetic test data with realistic names, emails, addresses, and more across 22 locales, making it ideal for development, QA testing, demos, and CI/CD pipelines without privacy concerns.",
+    },
+    {
+      question: "How do I seed a database with test data?",
+      answer:
+        "Use MockHero's API with SQL output format to generate INSERT statements for PostgreSQL, MySQL, or SQLite. Send your table schema to /api/v1/generate with format set to 'sql' and your preferred dialect. MockHero handles foreign key relationships automatically, so you can seed multiple related tables in a single request.",
+    },
+    {
+      question: "What's the best fake data API?",
+      answer:
+        "MockHero is a purpose-built fake data API for developers. Unlike Faker.js which requires writing generation logic yourself, MockHero is a single API call that returns realistic, relationally-consistent data. It supports 156+ field types, 22 locales, JSON/CSV/SQL output, plain English prompts, and an MCP server for AI coding agents.",
+    },
+    {
+      question: "How do I generate realistic names and emails for testing?",
+      answer:
+        "MockHero generates locale-aware names and emails that look realistic. Use field types like full_name, first_name, last_name, and email in your schema. Set the locale parameter to any of 22 supported locales (e.g., 'de' for German, 'ja' for Japanese) to get culturally appropriate test data.",
+    },
+    {
+      question: "Can AI generate test data?",
+      answer:
+        "Yes. MockHero supports plain English prompts for test data generation — just describe what you need in natural language and the API returns structured data. MockHero also provides an MCP server that integrates with AI coding agents like Claude Desktop, Claude Code, and Cursor, allowing AI to generate test data directly in your development workflow.",
+    },
+    {
+      question: "How do I create test data with foreign key relationships?",
+      answer:
+        "MockHero uses ref fields to define foreign key relationships between tables. Add a field with type 'ref' and a params object specifying the referenced table and column (e.g., {\"type\": \"ref\", \"params\": {\"ref\": \"users.id\"}}). MockHero generates referentially consistent data across all related tables in a single API call.",
+    },
   ];
 
   const faq = {
@@ -164,7 +199,31 @@ export function StructuredData() {
     },
   };
 
-  const schemas = [organization, softwareApp, apiDoc, faq, website];
+  const howTo = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Generate Test Data with MockHero",
+    description: "Generate realistic synthetic test data in 3 steps",
+    step: [
+      {
+        "@type": "HowToStep",
+        name: "Get an API key",
+        text: "Sign up at mockhero.dev and get your free API key from the dashboard.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Define your schema",
+        text: "Create a JSON schema describing your tables and fields, or use a plain English prompt.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Generate data",
+        text: "Send a POST request to /api/v1/generate and receive realistic test data in JSON, CSV, or SQL format.",
+      },
+    ],
+  };
+
+  const schemas = [organization, softwareApp, apiDoc, faq, website, howTo];
 
   return (
     <>
