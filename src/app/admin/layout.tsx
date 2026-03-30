@@ -4,7 +4,7 @@ import { isAdmin } from "@/lib/api/admin-auth";
 import { AdminShell } from "./admin-shell";
 
 export const metadata = {
-  title: "Admin — MockHero",
+  title: "Admin | MockHero",
   robots: { index: false, follow: false },
 };
 

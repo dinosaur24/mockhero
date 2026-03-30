@@ -3,7 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Terms of Service — MockHero",
+  title: "Terms of Service | MockHero",
   description:
     "Terms of Service for mockhero.dev, provided by Space Cadet d.o.o.",
 }

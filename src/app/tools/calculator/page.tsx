@@ -4,7 +4,7 @@ import { Footer } from "@/components/landing/footer"
 import { CalculatorClient } from "./calculator-client"
 
 export const metadata: Metadata = {
-  title: "Test Data Calculator — How Much Test Data Do You Need?",
+  title: "Test Data Calculator | How Much Test Data Do You Need?",
   description: "Calculate how much synthetic test data your project needs. Estimate records, API calls, and find the right MockHero plan for your testing workflow.",
   openGraph: {
     title: "Test Data Calculator | MockHero",

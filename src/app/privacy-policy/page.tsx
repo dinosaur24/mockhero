@@ -3,7 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — MockHero",
+  title: "Privacy Policy | MockHero",
   description:
     "How Space Cadet d.o.o. collects, uses, and protects your personal information on mockhero.dev.",
 }

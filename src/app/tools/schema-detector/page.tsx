@@ -4,7 +4,7 @@ import { Footer } from "@/components/landing/footer"
 import { SchemaDetectorClient } from "./schema-detector-client"
 
 export const metadata: Metadata = {
-  title: "Schema Detector — Paste JSON, Get Test Data Schema",
+  title: "Schema Detector | Paste JSON, Get Test Data Schema",
   description:
     "Paste any JSON payload and instantly get a MockHero schema with auto-detected field types. Convert real API responses into synthetic test data schemas in seconds.",
   openGraph: {

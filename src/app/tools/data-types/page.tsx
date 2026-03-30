@@ -4,7 +4,7 @@ import { Footer } from "@/components/landing/footer"
 import { DataTypesClient } from "./data-types-client"
 
 export const metadata: Metadata = {
-  title: "Data Type Explorer — All 156 MockHero Field Types",
+  title: "Data Type Explorer | All 156 MockHero Field Types",
   description: "Browse all 156 field types available in MockHero. Search by category, see live examples, and copy field definitions for your test data schemas.",
   openGraph: {
     title: "Data Type Explorer | MockHero",
