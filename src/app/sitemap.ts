@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { articles } from "./blog/articles";
+import { getAllFieldTypeSlugs } from "@/lib/engine/field-type-seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://mockhero.dev";
@@ -116,5 +117,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     ...blogEntries,
+    // Programmatic SEO: individual field type pages (156+)
+    ...getAllFieldTypeSlugs().map((type) => ({
+      url: `${baseUrl}/tools/data-types/${type}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
   ];
 }

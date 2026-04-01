@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -203,12 +202,15 @@ export function DataTypesClient() {
           const paramKeys = Object.keys(field.params)
 
           return (
-            <Card key={`${category}-${typeName}`} className="flex flex-col">
+            <Card key={`${category}-${typeName}`} className="flex flex-col group">
               <CardHeader className="pb-1">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-sm font-mono font-semibold">
+                  <Link
+                    href={`/tools/data-types/${typeName}`}
+                    className="text-sm font-mono font-semibold hover:text-primary transition-colors"
+                  >
                     {typeName}
-                  </CardTitle>
+                  </Link>
                   <span
                     className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[0.625rem] font-medium ${meta.bgColor} ${meta.color}`}
                   >
