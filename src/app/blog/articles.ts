@@ -3498,4 +3498,2274 @@ app.listen(3001, () => console.log("Mock API running on port 3001"));</code></pr
 <p>Ship your API prototype in hours, not weeks. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and generate the realistic data your prototype deserves.</p>
 `,
   },
+
+  // ============================================================
+  // COMPARISONS
+  // ============================================================
+  {
+    slug: "mockhero-vs-faker-js",
+    title: "MockHero vs Faker.js: Which Test Data Tool Should You Use?",
+    description:
+      "A practical comparison of MockHero and Faker.js for generating realistic test data. Covers setup, relational data, output formats, locales, and when each tool wins.",
+    category: "Use Case",
+    date: "2026-04-02",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>Faker.js is a great local library for sprinkling random values into tests. MockHero is an API that returns entire relational datasets in one call — with foreign keys, deterministic seeds, and JSON/CSV/SQL output ready to insert into your database. Use Faker for inline fixtures; use MockHero when you need a <em>dataset</em>, not a field.</p>
+
+<h2>At a Glance</h2>
+<ul>
+<li><strong>Faker.js</strong> — npm library, returns one value at a time, you build the loop.</li>
+<li><strong>MockHero</strong> — single API call returns the whole dataset with foreign-key integrity.</li>
+<li><strong>Faker.js</strong> — JavaScript only.</li>
+<li><strong>MockHero</strong> — language-agnostic (any HTTP client works).</li>
+<li><strong>Faker.js</strong> — you write the schema glue code.</li>
+<li><strong>MockHero</strong> — declare tables and <code>ref</code> fields; relations are automatic.</li>
+</ul>
+
+<h2>The Same Task, Both Ways</h2>
+<p>Goal: 20 users and 100 posts, each post belongs to a user.</p>
+
+<h3>Faker.js</h3>
+<pre><code>import { faker } from "@faker-js/faker";
+
+const users = Array.from({ length: 20 }, () => ({
+  id: faker.string.uuid(),
+  name: faker.person.fullName(),
+  email: faker.internet.email(),
+}));
+
+const posts = Array.from({ length: 100 }, () => ({
+  id: faker.string.uuid(),
+  user_id: faker.helpers.arrayElement(users).id,
+  title: faker.lorem.sentence(),
+  body: faker.lorem.paragraphs(2),
+}));</code></pre>
+
+<h3>MockHero</h3>
+<pre><code>curl -X POST https://api.mockhero.dev/api/v1/generate \\
+  -H "x-api-key: mh_your_api_key" \\
+  -d '{
+  "tables": [
+    { "name": "users", "count": 20, "fields": [
+      { "name": "id", "type": "uuid" },
+      { "name": "name", "type": "full_name" },
+      { "name": "email", "type": "email" }
+    ]},
+    { "name": "posts", "count": 100, "fields": [
+      { "name": "id", "type": "uuid" },
+      { "name": "user_id", "type": "ref", "ref": "users.id" },
+      { "name": "title", "type": "sentence" },
+      { "name": "body", "type": "paragraphs" }
+    ]}
+  ]
+}'</code></pre>
+
+<h2>Where MockHero Wins</h2>
+<ul>
+<li><strong>Relational data is declarative.</strong> <code>ref</code> fields mean no hand-wiring foreign keys.</li>
+<li><strong>Output formats.</strong> Return JSON, CSV, or ready-to-run SQL INSERT statements.</li>
+<li><strong>Deterministic seeds.</strong> Pass <code>seed</code> and CI gets the same dataset every time.</li>
+<li><strong>Language-agnostic.</strong> Python, Go, Ruby, Rust — any HTTP client works.</li>
+<li><strong>Zero maintenance.</strong> No package upgrades, no transitive vulns.</li>
+</ul>
+
+<h2>Where Faker.js Wins</h2>
+<ul>
+<li>Offline unit tests that don't touch the network.</li>
+<li>Generating a single random value inline.</li>
+<li>Projects with no budget for any paid tool (though MockHero has a free tier).</li>
+</ul>
+
+<h2>Combine Them</h2>
+<p>Many teams use both: Faker.js in unit tests for single-value stubs, MockHero for full seed datasets and staging environments. The two aren't mutually exclusive.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab a free MockHero API key</a> and generate a relational dataset in your first minute.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-mockaroo",
+    title: "MockHero vs Mockaroo: A Developer-Focused Comparison",
+    description:
+      "Mockaroo and MockHero both generate mock data, but the workflows are very different. Compare API, relational support, pricing, and developer experience.",
+    category: "Use Case",
+    date: "2026-04-02",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>Mockaroo popularized browser-based mock data generation. MockHero is the API-first successor: schema-as-code, first-class relational support, deterministic seeds, and an MCP server for AI coding agents. If you live in the terminal, MockHero fits the workflow better.</p>
+
+<h2>Workflow Differences</h2>
+<ul>
+<li><strong>Mockaroo</strong> — build your schema in a web UI, export a file or hit their API.</li>
+<li><strong>MockHero</strong> — define schema in JSON or plain English, POST to the API, ship the response into your DB.</li>
+</ul>
+
+<h2>Relational Data</h2>
+<p>Mockaroo supports relational fields, but wiring them requires navigating the UI and tends to break when schemas evolve. MockHero's <code>ref</code> fields live next to the schema — check them into git, diff them in PRs, and regenerate.</p>
+
+<pre><code>{
+  "tables": [
+    { "name": "customers", "count": 50, "fields": [
+      { "name": "id", "type": "uuid" },
+      { "name": "name", "type": "company_name" }
+    ]},
+    { "name": "orders", "count": 200, "fields": [
+      { "name": "customer_id", "type": "ref", "ref": "customers.id" },
+      { "name": "total", "type": "price" }
+    ]}
+  ]
+}</code></pre>
+
+<h2>Output Formats</h2>
+<ul>
+<li><strong>Mockaroo</strong> — CSV, JSON, SQL, Excel, XML.</li>
+<li><strong>MockHero</strong> — JSON, CSV, and dialect-aware SQL (PostgreSQL, MySQL, SQLite).</li>
+</ul>
+
+<h2>AI and MCP</h2>
+<p>MockHero ships an MCP server so Claude Code, Cursor, and Windsurf can generate test data directly from your coding agent. Mockaroo doesn't have a native AI integration today.</p>
+
+<pre><code>npx @mockherodev/mcp-server</code></pre>
+
+<h2>Pricing Model</h2>
+<p>Both offer free tiers. MockHero's free tier includes 1,000 rows/month with no credit card. Paid plans scale by rows/month rather than schemas or seats.</p>
+
+<h2>When Mockaroo Still Wins</h2>
+<ul>
+<li>You prefer a visual schema builder and don't write code.</li>
+<li>You need a format MockHero doesn't emit (e.g., Excel).</li>
+</ul>
+
+<h2>When MockHero Wins</h2>
+<ul>
+<li>Your schemas live in git and change often.</li>
+<li>You want deterministic CI-friendly seeds.</li>
+<li>You use an AI coding agent and want inline test data.</li>
+</ul>
+
+<h2>Try MockHero</h2>
+<p><a href="https://mockhero.dev/sign-up">Sign up for a free API key</a> and generate your first relational dataset in under a minute.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-json-generator",
+    title: "MockHero vs JSON Generator: Beyond Static Mock Files",
+    description:
+      "JSON Generator is great for one-off mocks. MockHero is built for relational, repeatable, production-style test data. Here's how they compare.",
+    category: "Use Case",
+    date: "2026-04-03",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>JSON Generator gives you a quick JSON blob for a prototype. MockHero gives you a repeatable, versioned, relational dataset you can re-seed on every CI run.</p>
+
+<h2>Mental Model</h2>
+<ul>
+<li><strong>JSON Generator</strong> — template language renders a random JSON tree.</li>
+<li><strong>MockHero</strong> — declarative schema of tables, fields, and refs. Call it from code. Re-run it with a seed.</li>
+</ul>
+
+<h2>Relational Data</h2>
+<p>JSON Generator can reference other fields within a document, but cross-table foreign keys across <em>hundreds of rows</em> get clumsy fast. MockHero was built for this case. A single API call returns every row in every table, all wired together.</p>
+
+<h2>Determinism</h2>
+<p>MockHero accepts a <code>seed</code> parameter that makes regeneration deterministic. JSON Generator is non-deterministic by default.</p>
+
+<pre><code>{ "seed": 42, "tables": [/* ... */] }</code></pre>
+
+<h2>Database-Ready Output</h2>
+<p>MockHero emits SQL INSERT statements with correct quoting for PostgreSQL, MySQL, and SQLite. JSON Generator only emits JSON — you'd write the conversion yourself.</p>
+
+<h2>Use the Right Tool</h2>
+<ul>
+<li><strong>JSON Generator</strong> — a single mock response for a prototype.</li>
+<li><strong>MockHero</strong> — seeding a whole dev/staging/CI environment.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Create a free MockHero account</a> and generate your first relational dataset in seconds.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-factory-bot",
+    title: "MockHero vs factory_bot: Rails Seed Data, Compared",
+    description:
+      "factory_bot is the Rails testing classic. MockHero offers a language-agnostic API with relational integrity built in. Here's when to use each.",
+    category: "Use Case",
+    date: "2026-04-03",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>factory_bot is excellent for per-test Ruby object factories. MockHero is better when you need a big realistic dataset across many tables, or when your stack isn't Ruby-only.</p>
+
+<h2>Scope</h2>
+<ul>
+<li><strong>factory_bot</strong> — Ruby library, per-object factories inside RSpec/Minitest.</li>
+<li><strong>MockHero</strong> — HTTP API, whole-dataset generation, usable from Ruby, JS, Python, Go, anything.</li>
+</ul>
+
+<h2>Seeding Ruby on Rails</h2>
+<pre><code># db/seeds.rb
+require "net/http"
+require "json"
+require "active_record"
+
+body = {
+  tables: [
+    { name: "users", count: 100, fields: [
+      { name: "id", type: "uuid" },
+      { name: "email", type: "email" }
+    ]},
+    { name: "posts", count: 500, fields: [
+      { name: "user_id", type: "ref", ref: "users.id" },
+      { name: "title", type: "sentence" }
+    ]}
+  ]
+}
+
+res = Net::HTTP.post(
+  URI("https://api.mockhero.dev/api/v1/generate"),
+  body.to_json,
+  "Content-Type" => "application/json",
+  "x-api-key" => ENV["MOCKHERO_API_KEY"]
+)
+
+data = JSON.parse(res.body)
+User.insert_all(data["users"])
+Post.insert_all(data["posts"])</code></pre>
+
+<h2>When to Combine</h2>
+<p>Use factory_bot in unit tests for per-test fixtures. Use MockHero in <code>db/seeds.rb</code> and in CI so every developer and every CI run starts with the same realistic 10,000-row dataset.</p>
+
+<h2>Realism</h2>
+<p>MockHero ships 156+ field types (addresses, company names, product SKUs, avatars). factory_bot is neutral about the values — you wire in Faker or write literals. MockHero gives you quality defaults out of the box.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab a free API key</a> and point your <code>db/seeds.rb</code> at MockHero.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-mimesis",
+    title: "MockHero vs Mimesis: Python Test Data, Compared",
+    description:
+      "Mimesis is a popular Python faker. MockHero is a language-agnostic API with relational support out of the box. Compare setup, speed, and realism.",
+    category: "Use Case",
+    date: "2026-04-04",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>Mimesis is fast and Python-native for per-field fakes. MockHero is the right tool when you need an entire relational dataset in one call, across any language — and when multiple services need to share the same seeded data.</p>
+
+<h2>The Relational Gap</h2>
+<p>Mimesis generates fields. If you want 500 orders that reference 50 customers, you still write the loop and keep track of IDs yourself. MockHero makes that a schema declaration.</p>
+
+<pre><code>import requests, os
+
+body = {
+  "tables": [
+    {"name": "customers", "count": 50, "fields": [
+      {"name": "id", "type": "uuid"},
+      {"name": "name", "type": "full_name"}
+    ]},
+    {"name": "orders", "count": 500, "fields": [
+      {"name": "id", "type": "uuid"},
+      {"name": "customer_id", "type": "ref", "ref": "customers.id"},
+      {"name": "total", "type": "price"}
+    ]}
+  ]
+}
+
+res = requests.post(
+  "https://api.mockhero.dev/api/v1/generate",
+  json=body,
+  headers={"x-api-key": os.environ["MOCKHERO_API_KEY"]}
+)
+
+data = res.json()</code></pre>
+
+<h2>Cross-Service Consistency</h2>
+<p>Microservice architectures often have many languages. With Mimesis, your Python service seeds its own data, your Go service seeds its own, and reconciling is hard. With MockHero, all services hit the same endpoint with the same <code>seed</code> and receive identical datasets.</p>
+
+<h2>When Mimesis Still Wins</h2>
+<ul>
+<li>Offline, local, pure-Python unit tests.</li>
+<li>Very fine-grained control over specific Python-only data types.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Sign up for MockHero free</a> and drop a <code>requests.post</code> into your seed script.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-bogus-dotnet",
+    title: "MockHero vs Bogus (.NET): Which Should C# Developers Use?",
+    description:
+      "Bogus is the Faker port for .NET. MockHero is a language-agnostic API with relational integrity. Here's when each one makes sense for C# teams.",
+    category: "Use Case",
+    date: "2026-04-04",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>Bogus is great for in-memory fake objects in xUnit/NUnit tests. MockHero is the better choice when you need a big relational dataset for EF Core migrations, staging environments, or demos.</p>
+
+<h2>Seeding EF Core with MockHero</h2>
+<pre><code>using var http = new HttpClient();
+http.DefaultRequestHeaders.Add("x-api-key", Env.Get("MOCKHERO_API_KEY"));
+
+var body = new {
+  tables = new object[] {
+    new { name = "Customers", count = 100, fields = new object[] {
+      new { name = "Id", type = "uuid" },
+      new { name = "Email", type = "email" }
+    }},
+    new { name = "Orders", count = 500, fields = new object[] {
+      new { name = "Id", type = "uuid" },
+      new { name = "CustomerId", type = "ref", @ref = "Customers.Id" },
+      new { name = "Total", type = "price" }
+    }}
+  }
+};
+
+var res = await http.PostAsJsonAsync(
+  "https://api.mockhero.dev/api/v1/generate", body);
+var data = await res.Content.ReadFromJsonAsync&lt;JsonDocument&gt;();</code></pre>
+
+<h2>Why MockHero Scales Better</h2>
+<ul>
+<li><strong>Relational integrity</strong> out of the box via <code>ref</code> fields.</li>
+<li><strong>SQL output</strong> — ship INSERT statements straight into SQL Server.</li>
+<li><strong>Shared datasets</strong> — every developer and every CI run seeds the same realistic 10,000-row database with a <code>seed</code> parameter.</li>
+</ul>
+
+<h2>When Bogus Still Wins</h2>
+<ul>
+<li>Per-test in-memory fakes inside unit tests.</li>
+<li>Tight, offline feedback loops where network calls are unwanted.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab a free API key</a> and wire MockHero into your EF Core seeder.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-gretel",
+    title: "MockHero vs Gretel: Synthetic Data for Developers",
+    description:
+      "Gretel focuses on privacy-preserving synthetic data trained on real datasets. MockHero is a developer-first test data API. Which one do you need?",
+    category: "Use Case",
+    date: "2026-04-05",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>Gretel is a data-science platform for privacy-preserving synthetic data trained on your actual production data. MockHero is a developer tool for seeding databases and mocking APIs. Different problems, different tools.</p>
+
+<h2>Who Each Tool Serves</h2>
+<ul>
+<li><strong>Gretel</strong> — data scientists and ML engineers who need statistically faithful synthetic datasets derived from real data (often for model training without exposing PII).</li>
+<li><strong>MockHero</strong> — software engineers who need realistic, relational fake data in a dev or CI environment. Not trained on your production data.</li>
+</ul>
+
+<h2>Setup Effort</h2>
+<ul>
+<li><strong>Gretel</strong> — upload data, train a model, generate synthetic output. Minutes to hours depending on dataset size.</li>
+<li><strong>MockHero</strong> — one API call. Milliseconds.</li>
+</ul>
+
+<h2>When to Pick Each</h2>
+<ul>
+<li>Use <strong>Gretel</strong> if you need synthetic data <em>statistically faithful</em> to your production data for ML, analytics, or regulated sharing.</li>
+<li>Use <strong>MockHero</strong> if you need a big relational dataset for local dev, CI tests, demos, or API prototypes.</li>
+</ul>
+
+<h2>Can You Use Both?</h2>
+<p>Yes. Teams often use Gretel to generate privacy-safe sharing datasets and MockHero to fill dev environments with realistic 10,000-row tables. They aren't competitors; they occupy different layers.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Create a free MockHero account</a> and generate your first relational dataset in seconds.</p>
+`,
+  },
+  {
+    slug: "mockhero-vs-tonic",
+    title: "MockHero vs Tonic.ai: Enterprise Data vs Developer Simplicity",
+    description:
+      "Tonic.ai targets enterprise data masking. MockHero targets developers who need fast, realistic test data. Here's how to choose.",
+    category: "Use Case",
+    date: "2026-04-05",
+    author: "MockHero Team",
+    content: `
+<h2>TL;DR</h2>
+<p>Tonic.ai is an enterprise platform for masking production data before sharing it with dev or test environments. MockHero is a developer API for generating synthetic data from scratch. Very different shapes of problem.</p>
+
+<h2>Key Difference</h2>
+<ul>
+<li><strong>Tonic</strong> — starts from your real production data, anonymizes it, and ships a safe clone.</li>
+<li><strong>MockHero</strong> — starts from a schema and generates fresh synthetic data that never touched production.</li>
+</ul>
+
+<h2>Cost and Complexity</h2>
+<p>Tonic is priced for enterprise (annual contracts, VPC deployments). MockHero is usage-based with a free tier — you can be generating data in under a minute.</p>
+
+<h2>Compliance Angle</h2>
+<ul>
+<li>Tonic helps with <strong>sharing real data</strong> while staying compliant (GDPR/HIPAA) by masking PII.</li>
+<li>MockHero sidesteps compliance entirely by <strong>never using real data</strong>. There's no PII to leak.</li>
+</ul>
+
+<h2>When to Pick Each</h2>
+<ul>
+<li>Pick <strong>Tonic</strong> if analytics and statistical fidelity to production matter, and you have budget and a compliance team.</li>
+<li>Pick <strong>MockHero</strong> if you're a developer who needs a seeded database <em>now</em>, or if your org can't (or won't) export production data at all.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Sign up for MockHero free</a> — 1,000 rows/month, no credit card.</p>
+`,
+  },
+
+  // ============================================================
+  // STACK COMBOS
+  // ============================================================
+  {
+    slug: "nextjs-supabase-test-data",
+    title: "Seed a Next.js + Supabase App with Realistic Test Data",
+    description:
+      "Generate relational test data for a Next.js app backed by Supabase in one API call. Includes a drop-in seed script with foreign keys and RLS-safe inserts.",
+    category: "Framework",
+    date: "2026-04-06",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>You have a Next.js App Router project with a Supabase Postgres backend. You want 100 users, 500 posts, and 2,000 comments that are relationally consistent — locally and in CI.</p>
+
+<h2>Seed Script</h2>
+<pre><code>// scripts/seed.ts
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": process.env.MOCKHERO_API_KEY!,
+  },
+  body: JSON.stringify({
+    seed: 42,
+    tables: [
+      { name: "profiles", count: 100, fields: [
+        { name: "id", type: "uuid" },
+        { name: "full_name", type: "full_name" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "posts", count: 500, fields: [
+        { name: "id", type: "uuid" },
+        { name: "user_id", type: "ref", ref: "profiles.id" },
+        { name: "title", type: "sentence" },
+        { name: "body", type: "paragraphs" }
+      ]},
+      { name: "comments", count: 2000, fields: [
+        { name: "id", type: "uuid" },
+        { name: "post_id", type: "ref", ref: "posts.id" },
+        { name: "author_id", type: "ref", ref: "profiles.id" },
+        { name: "body", type: "paragraph" }
+      ]}
+    ]
+  })
+});
+
+const data = await res.json();
+await supabase.from("profiles").insert(data.profiles);
+await supabase.from("posts").insert(data.posts);
+await supabase.from("comments").insert(data.comments);</code></pre>
+
+<h2>RLS Note</h2>
+<p>Use the service-role key in the seed script — anon key inserts will be blocked by RLS. Never ship the service-role key to the browser.</p>
+
+<h2>Run It</h2>
+<pre><code>npx tsx scripts/seed.ts</code></pre>
+
+<h2>Why This Is Better Than Manual INSERTs</h2>
+<ul>
+<li>Foreign keys wired automatically via <code>ref</code>.</li>
+<li>Deterministic — same <code>seed</code> gives identical data on every run.</li>
+<li>One file, readable in code review.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Sign up free</a> and drop this script into your Next.js repo.</p>
+`,
+  },
+  {
+    slug: "nextjs-prisma-postgres-test-data",
+    title: "Seed Next.js + Prisma + Postgres with MockHero",
+    description:
+      "A ready-to-run seed script for the Next.js + Prisma + Postgres stack using the MockHero API. Relational data, deterministic seeds, zero manual INSERTs.",
+    category: "Framework",
+    date: "2026-04-06",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>A Next.js App Router app with Prisma pointed at Postgres. Drop this script into <code>prisma/seed.ts</code> and wire it up via <code>package.json</code>.</p>
+
+<pre><code>// prisma/seed.ts
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": process.env.MOCKHERO_API_KEY!,
+  },
+  body: JSON.stringify({
+    tables: [
+      { name: "User", count: 50, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" },
+        { name: "name", type: "full_name" }
+      ]},
+      { name: "Post", count: 200, fields: [
+        { name: "id", type: "uuid" },
+        { name: "authorId", type: "ref", ref: "User.id" },
+        { name: "title", type: "sentence" },
+        { name: "published", type: "boolean" }
+      ]}
+    ]
+  })
+});
+
+const data = await res.json();
+await prisma.user.createMany({ data: data.User });
+await prisma.post.createMany({ data: data.Post });</code></pre>
+
+<pre><code>// package.json
+{
+  "prisma": { "seed": "tsx prisma/seed.ts" }
+}</code></pre>
+
+<p>Run <code>npx prisma db seed</code>. Done.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Get a free API key</a>.</p>
+`,
+  },
+  {
+    slug: "nextjs-drizzle-neon-test-data",
+    title: "Seed Next.js + Drizzle + Neon with MockHero",
+    description:
+      "End-to-end seed script for Next.js + Drizzle ORM + Neon Postgres. Relational test data in one API call, inserted via Drizzle's type-safe bulk insert.",
+    category: "Framework",
+    date: "2026-04-07",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>Next.js App Router, Drizzle ORM, Neon serverless Postgres. Goal: realistic users, projects, and tasks with correct foreign keys.</p>
+
+<pre><code>// scripts/seed.ts
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { users, projects, tasks } from "@/db/schema";
+
+const sql = neon(process.env.DATABASE_URL!);
+const db = drizzle(sql);
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "users", count: 30, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "projects", count: 80, fields: [
+        { name: "id", type: "uuid" },
+        { name: "owner_id", type: "ref", ref: "users.id" },
+        { name: "name", type: "product_name" }
+      ]},
+      { name: "tasks", count: 400, fields: [
+        { name: "id", type: "uuid" },
+        { name: "project_id", type: "ref", ref: "projects.id" },
+        { name: "title", type: "sentence" }
+      ]}
+    ]
+  })
+});
+
+const data = await res.json();
+await db.insert(users).values(data.users);
+await db.insert(projects).values(data.projects);
+await db.insert(tasks).values(data.tasks);</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Create a free MockHero key</a> and point your Drizzle seed script at it.</p>
+`,
+  },
+  {
+    slug: "react-firebase-test-data",
+    title: "Generate Test Data for React + Firebase Apps",
+    description:
+      "Seed Firestore with realistic, relational test data for React apps using the MockHero API. Complete Node.js script included.",
+    category: "Framework",
+    date: "2026-04-07",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>React frontend with Firebase Firestore. You want a realistic local dataset so your UI renders like production.</p>
+
+<pre><code>// scripts/seed.mjs
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
+initializeApp({ credential: cert("./service-account.json") });
+const db = getFirestore();
+
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "users", count: 50, fields: [
+        { name: "id", type: "uuid" },
+        { name: "displayName", type: "full_name" },
+        { name: "photoURL", type: "avatar_url" }
+      ]},
+      { name: "posts", count: 200, fields: [
+        { name: "id", type: "uuid" },
+        { name: "userId", type: "ref", ref: "users.id" },
+        { name: "title", type: "sentence" }
+      ]}
+    ]
+  })
+});
+
+const data = await res.json();
+const batch = db.batch();
+for (const u of data.users) batch.set(db.collection("users").doc(u.id), u);
+for (const p of data.posts) batch.set(db.collection("posts").doc(p.id), p);
+await batch.commit();</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab a free API key</a>.</p>
+`,
+  },
+  {
+    slug: "vue-supabase-test-data",
+    title: "Seed a Vue + Supabase App with MockHero",
+    description:
+      "Complete seed script for Vue 3 + Supabase using MockHero. Relational data, deterministic seeds, service-role inserts that bypass RLS.",
+    category: "Framework",
+    date: "2026-04-08",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>Vue 3 (Vite) frontend on Supabase Postgres. You want a consistent local dataset without writing a line of SQL.</p>
+
+<pre><code>// scripts/seed.ts
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "stores", count: 10, fields: [
+        { name: "id", type: "uuid" },
+        { name: "name", type: "company_name" }
+      ]},
+      { name: "products", count: 100, fields: [
+        { name: "id", type: "uuid" },
+        { name: "store_id", type: "ref", ref: "stores.id" },
+        { name: "name", type: "product_name" },
+        { name: "price", type: "price" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await supabase.from("stores").insert(data.stores);
+await supabase.from("products").insert(data.products);</code></pre>
+
+<h2>Run It</h2>
+<pre><code>npx tsx scripts/seed.ts</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key here</a>.</p>
+`,
+  },
+  {
+    slug: "sveltekit-drizzle-test-data",
+    title: "Seed SvelteKit + Drizzle with Realistic Test Data",
+    description:
+      "Drop-in seed script for SvelteKit apps using Drizzle ORM. Generate relational data via the MockHero API and insert with Drizzle in one file.",
+    category: "Framework",
+    date: "2026-04-08",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code>// scripts/seed.ts
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { users, posts } from "../src/lib/server/schema";
+
+const db = drizzle(postgres(process.env.DATABASE_URL!));
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "users", count: 25, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "posts", count: 120, fields: [
+        { name: "id", type: "uuid" },
+        { name: "author_id", type: "ref", ref: "users.id" },
+        { name: "title", type: "sentence" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await db.insert(users).values(data.users);
+await db.insert(posts).values(data.posts);</code></pre>
+
+<p>Run with <code>tsx scripts/seed.ts</code>.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Get your free key</a>.</p>
+`,
+  },
+  {
+    slug: "nuxt-planetscale-test-data",
+    title: "Seed Nuxt + PlanetScale with MockHero",
+    description:
+      "Quickly seed a Nuxt 3 app backed by PlanetScale MySQL with realistic, relational test data. Includes a Prisma + MockHero seed script.",
+    category: "Framework",
+    date: "2026-04-09",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>Nuxt 3 + Nitro + Prisma + PlanetScale. PlanetScale doesn't support foreign keys in MySQL, but you can still model relations via <code>ref</code> fields in MockHero and enforce them in app code.</p>
+
+<pre><code>// scripts/seed.ts
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "User", count: 40, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "Event", count: 160, fields: [
+        { name: "id", type: "uuid" },
+        { name: "userId", type: "ref", ref: "User.id" },
+        { name: "name", type: "sentence" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await prisma.user.createMany({ data: data.User });
+await prisma.event.createMany({ data: data.Event });</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "remix-prisma-test-data",
+    title: "Seed Remix + Prisma with Realistic Test Data",
+    description:
+      "A clean seed script for Remix apps using Prisma, powered by the MockHero API. Relational data with foreign keys and no manual INSERTs.",
+    category: "Framework",
+    date: "2026-04-09",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code>// prisma/seed.ts
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "User", count: 20, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "Note", count: 100, fields: [
+        { name: "id", type: "uuid" },
+        { name: "userId", type: "ref", ref: "User.id" },
+        { name: "title", type: "sentence" },
+        { name: "body", type: "paragraph" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await prisma.user.createMany({ data: data.User });
+await prisma.note.createMany({ data: data.Note });</code></pre>
+
+<h2>Wire It Up</h2>
+<pre><code>// package.json
+{ "prisma": { "seed": "tsx prisma/seed.ts" } }</code></pre>
+
+<p>Then <code>npx prisma db seed</code>.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab your free key</a>.</p>
+`,
+  },
+  {
+    slug: "astro-turso-test-data",
+    title: "Seed Astro + Turso (LibSQL) with MockHero",
+    description:
+      "Seed a Turso-backed Astro site with realistic relational data using MockHero. Perfect for prototyping content-heavy sites with thousands of rows.",
+    category: "Framework",
+    date: "2026-04-10",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code>// scripts/seed.mjs
+import { createClient } from "@libsql/client";
+
+const turso = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    format: "sql",
+    dialect: "sqlite",
+    tables: [
+      { name: "authors", count: 15, fields: [
+        { name: "id", type: "uuid" },
+        { name: "name", type: "full_name" }
+      ]},
+      { name: "articles", count: 150, fields: [
+        { name: "id", type: "uuid" },
+        { name: "author_id", type: "ref", ref: "authors.id" },
+        { name: "title", type: "sentence" }
+      ]}
+    ]
+  })
+}).then(r => r.text());
+
+for (const stmt of data.split(";").filter(Boolean)) {
+  await turso.execute(stmt);
+}</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Create a free account</a>.</p>
+`,
+  },
+  {
+    slug: "angular-firebase-test-data",
+    title: "Seed an Angular + Firebase App with MockHero",
+    description:
+      "Generate realistic relational test data for Angular apps backed by Firebase Firestore. Drop-in Node.js seed script included.",
+    category: "Framework",
+    date: "2026-04-10",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code>// scripts/seed.mjs
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
+initializeApp({ credential: cert("./service-account.json") });
+const db = getFirestore();
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "organizations", count: 10, fields: [
+        { name: "id", type: "uuid" },
+        { name: "name", type: "company_name" }
+      ]},
+      { name: "members", count: 80, fields: [
+        { name: "id", type: "uuid" },
+        { name: "orgId", type: "ref", ref: "organizations.id" },
+        { name: "email", type: "email" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+const batch = db.batch();
+for (const o of data.organizations) batch.set(db.collection("orgs").doc(o.id), o);
+for (const m of data.members) batch.set(db.collection("members").doc(m.id), m);
+await batch.commit();</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Get a free API key</a>.</p>
+`,
+  },
+  {
+    slug: "express-postgres-test-data",
+    title: "Seed an Express + Postgres API with MockHero",
+    description:
+      "Seed an Express.js REST API backed by Postgres using the MockHero API. Relational data in one call, inserted via node-postgres.",
+    category: "Framework",
+    date: "2026-04-11",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code>// scripts/seed.mjs
+import pg from "pg";
+const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
+await client.connect();
+
+const sql = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    format: "sql",
+    dialect: "postgresql",
+    tables: [
+      { name: "users", count: 100, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "orders", count: 500, fields: [
+        { name: "id", type: "uuid" },
+        { name: "user_id", type: "ref", ref: "users.id" },
+        { name: "total", type: "price" }
+      ]}
+    ]
+  })
+}).then(r => r.text());
+
+await client.query(sql);
+await client.end();</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "fastapi-postgres-test-data",
+    title: "Seed FastAPI + Postgres with MockHero",
+    description:
+      "A Python seed script for FastAPI apps backed by Postgres. Generate relational test data via MockHero and insert with SQLAlchemy.",
+    category: "Framework",
+    date: "2026-04-11",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code># scripts/seed.py
+import os, requests
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from app.models import User, Post
+
+engine = create_engine(os.environ["DATABASE_URL"])
+
+body = {
+  "tables": [
+    {"name": "users", "count": 50, "fields": [
+      {"name": "id", "type": "uuid"},
+      {"name": "email", "type": "email"}
+    ]},
+    {"name": "posts", "count": 200, "fields": [
+      {"name": "id", "type": "uuid"},
+      {"name": "user_id", "type": "ref", "ref": "users.id"},
+      {"name": "title", "type": "sentence"}
+    ]}
+  ]
+}
+
+data = requests.post(
+  "https://api.mockhero.dev/api/v1/generate",
+  json=body,
+  headers={"x-api-key": os.environ["MOCKHERO_API_KEY"]}
+).json()
+
+with Session(engine) as s:
+  s.bulk_insert_mappings(User, data["users"])
+  s.bulk_insert_mappings(Post, data["posts"])
+  s.commit()</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Get your free key</a>.</p>
+`,
+  },
+  {
+    slug: "django-supabase-test-data",
+    title: "Seed Django + Supabase with MockHero",
+    description:
+      "A Django management command that seeds a Supabase Postgres database using the MockHero API. Relational data, no manual fixtures.",
+    category: "Framework",
+    date: "2026-04-12",
+    author: "MockHero Team",
+    content: `
+<h2>Command</h2>
+<pre><code># app/management/commands/seed.py
+import os, requests
+from django.core.management.base import BaseCommand
+from app.models import Profile, Post
+
+class Command(BaseCommand):
+  def handle(self, *args, **kwargs):
+    body = {
+      "tables": [
+        {"name": "profiles", "count": 40, "fields": [
+          {"name": "id", "type": "uuid"},
+          {"name": "full_name", "type": "full_name"}
+        ]},
+        {"name": "posts", "count": 200, "fields": [
+          {"name": "id", "type": "uuid"},
+          {"name": "user_id", "type": "ref", "ref": "profiles.id"},
+          {"name": "title", "type": "sentence"}
+        ]}
+      ]
+    }
+    data = requests.post(
+      "https://api.mockhero.dev/api/v1/generate", json=body,
+      headers={"x-api-key": os.environ["MOCKHERO_API_KEY"]}
+    ).json()
+    Profile.objects.bulk_create([Profile(**p) for p in data["profiles"]])
+    Post.objects.bulk_create([Post(**p) for p in data["posts"]])</code></pre>
+
+<p>Run with <code>python manage.py seed</code>.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "rails-redis-test-data",
+    title: "Populate Rails + Redis with Realistic Mock Data",
+    description:
+      "Use MockHero to populate Redis-backed caches and data stores used by Rails apps. Complete seed task with relational keys and JSON payloads.",
+    category: "Framework",
+    date: "2026-04-12",
+    author: "MockHero Team",
+    content: `
+<h2>Task</h2>
+<pre><code># lib/tasks/seed_redis.rake
+require "net/http"
+require "json"
+require "redis"
+
+namespace :seed do
+  task redis: :environment do
+    redis = Redis.new(url: ENV["REDIS_URL"])
+
+    body = {
+      tables: [
+        { name: "users", count: 100, fields: [
+          { name: "id", type: "uuid" },
+          { name: "name", type: "full_name" },
+          { name: "email", type: "email" }
+        ]}
+      ]
+    }
+
+    res = Net::HTTP.post(
+      URI("https://api.mockhero.dev/api/v1/generate"),
+      body.to_json,
+      "Content-Type" => "application/json",
+      "x-api-key" => ENV["MOCKHERO_API_KEY"]
+    )
+
+    JSON.parse(res.body)["users"].each do |u|
+      redis.set("user:#{u["id"]}", u.to_json)
+    end
+  end
+end</code></pre>
+
+<p>Run with <code>bin/rake seed:redis</code>.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab a free key</a>.</p>
+`,
+  },
+  {
+    slug: "laravel-mysql-test-data",
+    title: "Seed Laravel + MySQL with MockHero",
+    description:
+      "Replace Laravel factories with a single MockHero API call for large relational datasets. Drop-in seeder included.",
+    category: "Framework",
+    date: "2026-04-13",
+    author: "MockHero Team",
+    content: `
+<h2>Seeder</h2>
+<pre><code>// database/seeders/MockHeroSeeder.php
+&lt;?php
+namespace Database\\Seeders;
+
+use Illuminate\\Database\\Seeder;
+use Illuminate\\Support\\Facades\\DB;
+use Illuminate\\Support\\Facades\\Http;
+
+class MockHeroSeeder extends Seeder {
+  public function run(): void {
+    $res = Http::withHeaders(["x-api-key" => env("MOCKHERO_API_KEY")])
+      -&gt;post("https://api.mockhero.dev/api/v1/generate", [
+        "tables" =&gt; [
+          ["name" =&gt; "users", "count" =&gt; 50, "fields" =&gt; [
+            ["name" =&gt; "id", "type" =&gt; "uuid"],
+            ["name" =&gt; "email", "type" =&gt; "email"],
+          ]],
+          ["name" =&gt; "orders", "count" =&gt; 200, "fields" =&gt; [
+            ["name" =&gt; "id", "type" =&gt; "uuid"],
+            ["name" =&gt; "user_id", "type" =&gt; "ref", "ref" =&gt; "users.id"],
+            ["name" =&gt; "total", "type" =&gt; "price"],
+          ]],
+        ],
+      ])
+      -&gt;json();
+
+    DB::table("users")-&gt;insert($res["users"]);
+    DB::table("orders")-&gt;insert($res["orders"]);
+  }
+}</code></pre>
+
+<p>Run with <code>php artisan db:seed --class=MockHeroSeeder</code>.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "nestjs-typeorm-postgres-test-data",
+    title: "Seed Nest.js + TypeORM + Postgres with MockHero",
+    description:
+      "A Nest.js seed script that generates relational data via MockHero and inserts it with TypeORM. Production-ready pattern included.",
+    category: "Framework",
+    date: "2026-04-13",
+    author: "MockHero Team",
+    content: `
+<h2>Script</h2>
+<pre><code>// src/scripts/seed.ts
+import { DataSource } from "typeorm";
+import { User, Product } from "../entities";
+
+const ds = new DataSource({
+  type: "postgres",
+  url: process.env.DATABASE_URL,
+  entities: [User, Product],
+});
+await ds.initialize();
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "users", count: 30, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]},
+      { name: "products", count: 150, fields: [
+        { name: "id", type: "uuid" },
+        { name: "seller_id", type: "ref", ref: "users.id" },
+        { name: "name", type: "product_name" },
+        { name: "price", type: "price" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await ds.getRepository(User).insert(data.users);
+await ds.getRepository(Product).insert(data.products);</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "nextjs-clerk-user-seeding",
+    title: "Seed Next.js + Clerk User Data with MockHero",
+    description:
+      "Generate realistic user profile data to accompany Clerk-authenticated apps. Create companion profile rows for test Clerk users.",
+    category: "Framework",
+    date: "2026-04-14",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>Clerk handles auth. Your app has a <code>profiles</code> table keyed by Clerk's <code>user_id</code>. After creating test Clerk users programmatically, seed matching profile rows from MockHero.</p>
+
+<pre><code>// scripts/seed-profiles.ts
+import { clerkClient } from "@clerk/nextjs/server";
+import { db } from "@/db";
+import { profiles } from "@/db/schema";
+
+// 1. Get Clerk user IDs
+const { data: users } = await clerkClient.users.getUserList({ limit: 50 });
+const clerkIds = users.map(u => u.id);
+
+// 2. Generate matching profile content
+const res = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [{
+      name: "profiles", count: clerkIds.length, fields: [
+        { name: "bio", type: "paragraph" },
+        { name: "website", type: "url" },
+        { name: "location", type: "city" }
+      ]
+    }]
+  })
+}).then(r => r.json());
+
+// 3. Pair them
+await db.insert(profiles).values(
+  res.profiles.map((p: any, i: number) => ({ user_id: clerkIds[i], ...p }))
+);</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "react-native-firebase-test-data",
+    title: "Seed React Native + Firebase Apps with MockHero",
+    description:
+      "Populate Firestore with realistic test data for React Native apps so your mobile UI looks production-ready during development.",
+    category: "Framework",
+    date: "2026-04-14",
+    author: "MockHero Team",
+    content: `
+<h2>The Setup</h2>
+<p>React Native app using Firebase JS SDK (or Reanimated + Firestore). A seed script populates Firestore so your Expo build loads with realistic data.</p>
+
+<pre><code>// scripts/seed.mjs
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+
+initializeApp({ credential: cert("./service-account.json") });
+const db = getFirestore();
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "users", count: 50, fields: [
+        { name: "id", type: "uuid" },
+        { name: "name", type: "full_name" },
+        { name: "avatar", type: "avatar_url" }
+      ]},
+      { name: "messages", count: 300, fields: [
+        { name: "id", type: "uuid" },
+        { name: "from", type: "ref", ref: "users.id" },
+        { name: "body", type: "sentence" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+const batch = db.batch();
+for (const u of data.users) batch.set(db.collection("users").doc(u.id), u);
+for (const m of data.messages) batch.set(db.collection("messages").doc(m.id), m);
+await batch.commit();</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free key here</a>.</p>
+`,
+  },
+  {
+    slug: "flutter-supabase-test-data",
+    title: "Seed Flutter + Supabase Apps with MockHero",
+    description:
+      "A Dart-free seeding approach for Flutter + Supabase: generate data server-side via MockHero and insert with the Supabase service-role key.",
+    category: "Framework",
+    date: "2026-04-15",
+    author: "MockHero Team",
+    content: `
+<h2>Approach</h2>
+<p>Don't seed from the Flutter client — it can't hold a service-role key safely. Run a Node or Python seed script locally or in CI that writes directly to Supabase.</p>
+
+<pre><code>// scripts/seed.mjs
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    tables: [
+      { name: "trips", count: 30, fields: [
+        { name: "id", type: "uuid" },
+        { name: "destination", type: "city" },
+        { name: "start_date", type: "date" },
+        { name: "end_date", type: "date" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await supabase.from("trips").insert(data.trips);</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "spring-boot-postgres-test-data",
+    title: "Seed Spring Boot + Postgres with MockHero",
+    description:
+      "Generate realistic relational test data for Spring Boot apps backed by Postgres. Complete Java seeding pattern using MockHero's API.",
+    category: "Framework",
+    date: "2026-04-15",
+    author: "MockHero Team",
+    content: `
+<h2>Approach</h2>
+<p>Use a <code>CommandLineRunner</code> that only runs in a dev profile, pulls data from MockHero, and persists via JPA.</p>
+
+<pre><code>// src/main/java/com/example/seed/DevSeeder.java
+@Component
+@Profile("dev")
+public class DevSeeder implements CommandLineRunner {
+
+  @Autowired UserRepository users;
+  @Autowired OrderRepository orders;
+
+  @Override
+  public void run(String... args) throws Exception {
+    var body = Map.of(
+      "tables", List.of(
+        Map.of("name","users","count",50,"fields", List.of(
+          Map.of("name","id","type","uuid"),
+          Map.of("name","email","type","email")
+        )),
+        Map.of("name","orders","count",200,"fields", List.of(
+          Map.of("name","id","type","uuid"),
+          Map.of("name","userId","type","ref","ref","users.id"),
+          Map.of("name","total","type","price")
+        ))
+      )
+    );
+
+    var client = HttpClient.newHttpClient();
+    var req = HttpRequest.newBuilder()
+      .uri(URI.create("https://api.mockhero.dev/api/v1/generate"))
+      .header("x-api-key", System.getenv("MOCKHERO_API_KEY"))
+      .header("Content-Type","application/json")
+      .POST(BodyPublishers.ofString(new ObjectMapper().writeValueAsString(body)))
+      .build();
+    var res = client.send(req, BodyHandlers.ofString());
+    // parse + persist
+  }
+}</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+
+  // ============================================================
+  // LANGUAGE-SPECIFIC GUIDES
+  // ============================================================
+  {
+    slug: "python-test-data-generation",
+    title: "Python Test Data Generation with MockHero",
+    description:
+      "A clean Python pattern for generating realistic, relational test data via the MockHero API. Works with SQLAlchemy, Django ORM, or plain psycopg.",
+    category: "Framework",
+    date: "2026-04-16",
+    author: "MockHero Team",
+    content: `
+<h2>The Pattern</h2>
+<p>Hit MockHero with <code>requests</code>, receive JSON, and let your ORM do the insert. No Faker.py maintenance, no per-test factories.</p>
+
+<pre><code>import os, requests
+
+def mock(tables, seed=None):
+  body = {"tables": tables}
+  if seed is not None: body["seed"] = seed
+  return requests.post(
+    "https://api.mockhero.dev/api/v1/generate",
+    json=body,
+    headers={"x-api-key": os.environ["MOCKHERO_API_KEY"]}
+  ).json()
+
+data = mock([
+  {"name": "users", "count": 50, "fields": [
+    {"name": "id", "type": "uuid"},
+    {"name": "email", "type": "email"},
+    {"name": "full_name", "type": "full_name"}
+  ]},
+  {"name": "orders", "count": 200, "fields": [
+    {"name": "id", "type": "uuid"},
+    {"name": "user_id", "type": "ref", "ref": "users.id"},
+    {"name": "total", "type": "price"}
+  ]}
+], seed=42)</code></pre>
+
+<h2>Why Not Just Use Faker.py or Mimesis?</h2>
+<ul>
+<li>Relational data is declarative, not a hand-written loop.</li>
+<li>Same <code>seed</code> gives identical data across machines and CI.</li>
+<li>Data flows through one endpoint, so a Go service and a Python service can share identical test rows.</li>
+</ul>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Grab a free API key</a>.</p>
+`,
+  },
+  {
+    slug: "go-test-data-generation",
+    title: "Go Test Data Generation with MockHero",
+    description:
+      "Generate realistic relational test data from Go using MockHero's HTTP API. Type-safe decoding and pgx bulk inserts included.",
+    category: "Framework",
+    date: "2026-04-16",
+    author: "MockHero Team",
+    content: `
+<h2>The Script</h2>
+<pre><code>package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "net/http"
+  "os"
+)
+
+type Field struct {
+  Name string \`json:"name"\`
+  Type string \`json:"type"\`
+  Ref  string \`json:"ref,omitempty"\`
+}
+type Table struct {
+  Name   string  \`json:"name"\`
+  Count  int     \`json:"count"\`
+  Fields []Field \`json:"fields"\`
+}
+type Body struct {
+  Tables []Table \`json:"tables"\`
+  Seed   int     \`json:"seed,omitempty"\`
+}
+
+func main() {
+  body := Body{
+    Tables: []Table{
+      {Name: "users", Count: 30, Fields: []Field{
+        {Name: "id", Type: "uuid"},
+        {Name: "email", Type: "email"},
+      }},
+      {Name: "orders", Count: 120, Fields: []Field{
+        {Name: "id", Type: "uuid"},
+        {Name: "user_id", Type: "ref", Ref: "users.id"},
+        {Name: "total", Type: "price"},
+      }},
+    },
+  }
+  buf, _ := json.Marshal(body)
+  req, _ := http.NewRequest("POST",
+    "https://api.mockhero.dev/api/v1/generate", bytes.NewReader(buf))
+  req.Header.Set("x-api-key", os.Getenv("MOCKHERO_API_KEY"))
+  req.Header.Set("Content-Type", "application/json")
+  res, _ := http.DefaultClient.Do(req)
+  var data map[string][]map[string]any
+  json.NewDecoder(res.Body).Decode(&amp;data)
+  // insert with pgx.CopyFrom ...
+}</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "ruby-test-data-generation",
+    title: "Ruby Test Data Generation with MockHero",
+    description:
+      "Generate realistic, relational test data from Ruby using the MockHero API. Drop-in pattern for Rails, Sinatra, or plain Ruby scripts.",
+    category: "Framework",
+    date: "2026-04-17",
+    author: "MockHero Team",
+    content: `
+<h2>Client Helper</h2>
+<pre><code>require "net/http"
+require "json"
+
+def mockhero(tables, seed: nil)
+  body = { tables: tables }
+  body[:seed] = seed if seed
+  res = Net::HTTP.post(
+    URI("https://api.mockhero.dev/api/v1/generate"),
+    body.to_json,
+    "Content-Type" => "application/json",
+    "x-api-key" => ENV["MOCKHERO_API_KEY"]
+  )
+  JSON.parse(res.body)
+end
+
+data = mockhero([
+  { name: "users", count: 50, fields: [
+    { name: "id", type: "uuid" },
+    { name: "email", type: "email" }
+  ]},
+  { name: "posts", count: 200, fields: [
+    { name: "id", type: "uuid" },
+    { name: "user_id", type: "ref", ref: "users.id" },
+    { name: "title", type: "sentence" }
+  ]}
+], seed: 42)</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "php-test-data-generation",
+    title: "PHP Test Data Generation with MockHero",
+    description:
+      "Generate realistic relational test data from PHP using Guzzle and the MockHero API. Works great in Laravel and Symfony projects.",
+    category: "Framework",
+    date: "2026-04-17",
+    author: "MockHero Team",
+    content: `
+<h2>Client</h2>
+<pre><code>&lt;?php
+use GuzzleHttp\\Client;
+
+$client = new Client();
+$res = $client-&gt;post("https://api.mockhero.dev/api/v1/generate", [
+  "headers" =&gt; [
+    "x-api-key" =&gt; getenv("MOCKHERO_API_KEY"),
+    "Content-Type" =&gt; "application/json",
+  ],
+  "json" =&gt; [
+    "tables" =&gt; [
+      ["name" =&gt; "users", "count" =&gt; 50, "fields" =&gt; [
+        ["name" =&gt; "id", "type" =&gt; "uuid"],
+        ["name" =&gt; "email", "type" =&gt; "email"],
+      ]],
+      ["name" =&gt; "orders", "count" =&gt; 200, "fields" =&gt; [
+        ["name" =&gt; "id", "type" =&gt; "uuid"],
+        ["name" =&gt; "user_id", "type" =&gt; "ref", "ref" =&gt; "users.id"],
+        ["name" =&gt; "total", "type" =&gt; "price"],
+      ]],
+    ],
+  ],
+]);
+
+$data = json_decode($res-&gt;getBody(), true);</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "java-test-data-generation",
+    title: "Java Test Data Generation with MockHero",
+    description:
+      "Use MockHero from Java via java.net.http and Jackson to generate relational test data for JDBC, JPA, or Hibernate-backed apps.",
+    category: "Framework",
+    date: "2026-04-18",
+    author: "MockHero Team",
+    content: `
+<h2>Minimal Client</h2>
+<pre><code>import java.net.URI;
+import java.net.http.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+var body = Map.of("tables", List.of(
+  Map.of("name","users","count",50,"fields", List.of(
+    Map.of("name","id","type","uuid"),
+    Map.of("name","email","type","email")
+  )),
+  Map.of("name","orders","count",200,"fields", List.of(
+    Map.of("name","id","type","uuid"),
+    Map.of("name","userId","type","ref","ref","users.id"),
+    Map.of("name","total","type","price")
+  ))
+));
+
+var mapper = new ObjectMapper();
+var req = HttpRequest.newBuilder(URI.create("https://api.mockhero.dev/api/v1/generate"))
+  .header("x-api-key", System.getenv("MOCKHERO_API_KEY"))
+  .header("Content-Type","application/json")
+  .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
+  .build();
+
+var res = HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());
+var data = mapper.readTree(res.body());</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "kotlin-test-data-generation",
+    title: "Kotlin Test Data Generation with MockHero",
+    description:
+      "A concise Kotlin + Ktor client for generating relational test data via the MockHero API. Works in Spring Boot, Ktor, and Android backends.",
+    category: "Framework",
+    date: "2026-04-18",
+    author: "MockHero Team",
+    content: `
+<h2>Client</h2>
+<pre><code>import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.request.*
+
+val client = HttpClient(CIO) { install(ContentNegotiation) { json() } }
+
+val body = mapOf(
+  "tables" to listOf(
+    mapOf("name" to "users", "count" to 50, "fields" to listOf(
+      mapOf("name" to "id", "type" to "uuid"),
+      mapOf("name" to "email", "type" to "email")
+    ))
+  )
+)
+
+val data: Map&lt;String, List&lt;Map&lt;String, Any&gt;&gt;&gt; = client.post("https://api.mockhero.dev/api/v1/generate") {
+  header("x-api-key", System.getenv("MOCKHERO_API_KEY"))
+  header("Content-Type", "application/json")
+  setBody(body)
+}.body()</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "rust-test-data-generation",
+    title: "Rust Test Data Generation with MockHero",
+    description:
+      "Use reqwest and serde to generate realistic test data from Rust via the MockHero API. Great for Actix, Axum, or sqlx-based services.",
+    category: "Framework",
+    date: "2026-04-19",
+    author: "MockHero Team",
+    content: `
+<h2>Client</h2>
+<pre><code>use reqwest::Client;
+use serde_json::json;
+
+#[tokio::main]
+async fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+  let client = Client::new();
+  let body = json!({
+    "tables": [
+      { "name": "users", "count": 50, "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "email", "type": "email" }
+      ]},
+      { "name": "orders", "count": 200, "fields": [
+        { "name": "id", "type": "uuid" },
+        { "name": "user_id", "type": "ref", "ref": "users.id" },
+        { "name": "total", "type": "price" }
+      ]}
+    ]
+  });
+
+  let data: serde_json::Value = client
+    .post("https://api.mockhero.dev/api/v1/generate")
+    .header("x-api-key", std::env::var("MOCKHERO_API_KEY")?)
+    .json(&amp;body)
+    .send().await?
+    .json().await?;
+
+  Ok(())
+}</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "csharp-dotnet-test-data-generation",
+    title: "C# / .NET Test Data Generation with MockHero",
+    description:
+      "Generate realistic, relational test data from C# via HttpClient and System.Text.Json. Drops straight into EF Core or Dapper seeders.",
+    category: "Framework",
+    date: "2026-04-19",
+    author: "MockHero Team",
+    content: `
+<h2>Client</h2>
+<pre><code>using System.Net.Http.Json;
+
+var http = new HttpClient();
+http.DefaultRequestHeaders.Add("x-api-key", Environment.GetEnvironmentVariable("MOCKHERO_API_KEY"));
+
+var body = new {
+  tables = new object[] {
+    new {
+      name = "Users", count = 50, fields = new object[] {
+        new { name = "Id", type = "uuid" },
+        new { name = "Email", type = "email" }
+      }
+    },
+    new {
+      name = "Orders", count = 200, fields = new object[] {
+        new { name = "Id", type = "uuid" },
+        new { name = "UserId", type = "ref", @ref = "Users.Id" },
+        new { name = "Total", type = "price" }
+      }
+    }
+  }
+};
+
+var res = await http.PostAsJsonAsync("https://api.mockhero.dev/api/v1/generate", body);
+var data = await res.Content.ReadFromJsonAsync&lt;JsonDocument&gt;();</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "swift-test-data-generation",
+    title: "Swift Test Data Generation with MockHero",
+    description:
+      "Populate Core Data, SQLite, or Firebase with realistic test data from a Swift seeding script that calls the MockHero API.",
+    category: "Framework",
+    date: "2026-04-20",
+    author: "MockHero Team",
+    content: `
+<h2>Client</h2>
+<pre><code>import Foundation
+
+let body: [String: Any] = [
+  "tables": [[
+    "name": "users",
+    "count": 50,
+    "fields": [
+      ["name": "id", "type": "uuid"],
+      ["name": "name", "type": "full_name"]
+    ]
+  ]]
+]
+
+var req = URLRequest(url: URL(string: "https://api.mockhero.dev/api/v1/generate")!)
+req.httpMethod = "POST"
+req.setValue(ProcessInfo.processInfo.environment["MOCKHERO_API_KEY"], forHTTPHeaderField: "x-api-key")
+req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+req.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+let (data, _) = try await URLSession.shared.data(for: req)
+let json = try JSONSerialization.jsonObject(with: data) as! [String: Any]</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "elixir-test-data-generation",
+    title: "Elixir Test Data Generation with MockHero",
+    description:
+      "Generate realistic, relational test data from Elixir using Req (or HTTPoison). Perfect for Phoenix + Ecto seed scripts.",
+    category: "Framework",
+    date: "2026-04-20",
+    author: "MockHero Team",
+    content: `
+<h2>Client</h2>
+<pre><code>defmodule MockHero do
+  def generate(tables, seed \\\\ nil) do
+    body = %{tables: tables}
+    body = if seed, do: Map.put(body, :seed, seed), else: body
+
+    Req.post!("https://api.mockhero.dev/api/v1/generate",
+      json: body,
+      headers: [
+        {"x-api-key", System.get_env("MOCKHERO_API_KEY")}
+      ]
+    ).body
+  end
+end
+
+data = MockHero.generate([
+  %{name: "users", count: 50, fields: [
+    %{name: "id", type: "uuid"},
+    %{name: "email", type: "email"}
+  ]},
+  %{name: "posts", count: 200, fields: [
+    %{name: "id", type: "uuid"},
+    %{name: "user_id", type: "ref", ref: "users.id"},
+    %{name: "title", type: "sentence"}
+  ]}
+], 42)</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+
+  // ============================================================
+  // TESTING FRAMEWORKS
+  // ============================================================
+  {
+    slug: "jest-mock-data-with-mockhero",
+    title: "Using MockHero with Jest for Deterministic Test Fixtures",
+    description:
+      "Generate deterministic test fixtures for Jest using the MockHero API. Fetch once, cache as JSON, and re-use across test runs.",
+    category: "Use Case",
+    date: "2026-04-21",
+    author: "MockHero Team",
+    content: `
+<h2>The Pattern</h2>
+<p>Generate test data once with a deterministic <code>seed</code>, save to <code>__fixtures__/</code>, and import from your Jest tests. No network calls on each run, but still realistic data.</p>
+
+<pre><code>// scripts/gen-fixtures.ts
+import fs from "node:fs";
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    seed: 1,
+    tables: [{
+      name: "users", count: 20, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]
+    }]
+  })
+}).then(r => r.json());
+
+fs.writeFileSync("__fixtures__/users.json", JSON.stringify(data.users, null, 2));</code></pre>
+
+<pre><code>// users.test.ts
+import users from "../__fixtures__/users.json";
+
+test("handles 20 users", () =&gt; {
+  expect(users).toHaveLength(20);
+});</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "vitest-mockhero-fixtures",
+    title: "Vitest Fixtures with MockHero: Fast, Realistic, Deterministic",
+    description:
+      "Use MockHero to generate realistic, relational test fixtures for Vitest. Regenerate with a seed; import with zero network overhead during tests.",
+    category: "Use Case",
+    date: "2026-04-21",
+    author: "MockHero Team",
+    content: `
+<h2>Generate Once, Import Everywhere</h2>
+<pre><code>// scripts/fixtures.ts
+import fs from "node:fs/promises";
+
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    seed: 7,
+    tables: [
+      { name: "products", count: 50, fields: [
+        { name: "id", type: "uuid" },
+        { name: "name", type: "product_name" },
+        { name: "price", type: "price" }
+      ]}
+    ]
+  })
+}).then(r => r.json());
+
+await fs.writeFile("src/__fixtures__/products.json", JSON.stringify(data.products));</code></pre>
+
+<pre><code>// src/products.test.ts
+import { test, expect } from "vitest";
+import products from "./__fixtures__/products.json";
+
+test("catalog has 50 products", () =&gt; {
+  expect(products).toHaveLength(50);
+});</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "playwright-test-data-with-mockhero",
+    title: "Playwright E2E Tests with Realistic Data from MockHero",
+    description:
+      "Seed your app before Playwright runs so end-to-end tests render like production. Global setup hook and seed script included.",
+    category: "Use Case",
+    date: "2026-04-22",
+    author: "MockHero Team",
+    content: `
+<h2>Global Setup</h2>
+<pre><code>// playwright.config.ts
+export default defineConfig({
+  globalSetup: "./tests/global-setup.ts",
+  // ...
+});</code></pre>
+
+<pre><code>// tests/global-setup.ts
+import { createClient } from "@supabase/supabase-js";
+
+export default async () =&gt; {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+    method: "POST",
+    headers: { "x-api-key": process.env.MOCKHERO_API_KEY!, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      seed: 1,
+      tables: [
+        { name: "users", count: 10, fields: [
+          { name: "id", type: "uuid" },
+          { name: "email", type: "email" }
+        ]}
+      ]
+    })
+  }).then(r =&gt; r.json());
+
+  await supabase.from("users").upsert(data.users);
+};</code></pre>
+
+<p>Now every Playwright test starts against a realistic 10-user dataset.</p>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "cypress-mock-data-with-mockhero",
+    title: "Seed Cypress E2E Tests with MockHero",
+    description:
+      "Run Cypress against a realistic, relationally consistent dataset using MockHero. Seed before the suite via cy.task, then run tests offline.",
+    category: "Use Case",
+    date: "2026-04-22",
+    author: "MockHero Team",
+    content: `
+<h2>cypress.config.ts</h2>
+<pre><code>import { defineConfig } from "cypress";
+
+export default defineConfig({
+  e2e: {
+    async setupNodeEvents(on, config) {
+      on("task", {
+        async seed() {
+          const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+            method: "POST",
+            headers: {
+              "x-api-key": process.env.MOCKHERO_API_KEY!,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              seed: 1,
+              tables: [{
+                name: "users", count: 10,
+                fields: [
+                  { name: "id", type: "uuid" },
+                  { name: "email", type: "email" }
+                ]
+              }]
+            })
+          }).then(r =&gt; r.json());
+          // insert into your DB here
+          return null;
+        }
+      });
+    }
+  }
+});</code></pre>
+
+<pre><code>// cypress/e2e/home.cy.ts
+before(() =&gt; { cy.task("seed"); });
+
+it("renders 10 users", () =&gt; {
+  cy.visit("/users");
+  cy.get("[data-testid=user-row]").should("have.length", 10);
+});</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "pytest-fixtures-with-mockhero",
+    title: "Pytest Fixtures Powered by MockHero",
+    description:
+      "Define session-scoped Pytest fixtures that pull realistic relational data from MockHero. Deterministic seeds keep tests reproducible.",
+    category: "Use Case",
+    date: "2026-04-23",
+    author: "MockHero Team",
+    content: `
+<h2>conftest.py</h2>
+<pre><code>import os, requests, pytest
+
+@pytest.fixture(scope="session")
+def dataset():
+    return requests.post(
+        "https://api.mockhero.dev/api/v1/generate",
+        json={
+            "seed": 42,
+            "tables": [
+                {"name": "users", "count": 20, "fields": [
+                    {"name": "id", "type": "uuid"},
+                    {"name": "email", "type": "email"}
+                ]},
+                {"name": "orders", "count": 80, "fields": [
+                    {"name": "id", "type": "uuid"},
+                    {"name": "user_id", "type": "ref", "ref": "users.id"},
+                    {"name": "total", "type": "price"}
+                ]}
+            ]
+        },
+        headers={"x-api-key": os.environ["MOCKHERO_API_KEY"]}
+    ).json()
+
+def test_has_twenty_users(dataset):
+    assert len(dataset["users"]) == 20</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "rspec-fixtures-with-mockhero",
+    title: "RSpec Fixtures with MockHero",
+    description:
+      "Replace hand-built factories with realistic, relational data from MockHero in your RSpec suite. Great for integration tests against Postgres.",
+    category: "Use Case",
+    date: "2026-04-23",
+    author: "MockHero Team",
+    content: `
+<h2>spec_helper.rb</h2>
+<pre><code>require "net/http"
+require "json"
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    body = {
+      seed: 1,
+      tables: [
+        { name: "users", count: 20, fields: [
+          { name: "id", type: "uuid" },
+          { name: "email", type: "email" }
+        ]},
+        { name: "orders", count: 80, fields: [
+          { name: "id", type: "uuid" },
+          { name: "user_id", type: "ref", ref: "users.id" },
+          { name: "total", type: "price" }
+        ]}
+      ]
+    }
+    res = Net::HTTP.post(
+      URI("https://api.mockhero.dev/api/v1/generate"),
+      body.to_json,
+      "Content-Type" => "application/json",
+      "x-api-key" => ENV["MOCKHERO_API_KEY"]
+    )
+    data = JSON.parse(res.body)
+    User.insert_all(data["users"])
+    Order.insert_all(data["orders"])
+  end
+end</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "phpunit-fixtures-with-mockhero",
+    title: "PHPUnit Fixtures with MockHero",
+    description:
+      "Generate realistic, relational test data for PHPUnit integration tests using the MockHero API. Works great with Laravel and Symfony.",
+    category: "Use Case",
+    date: "2026-04-24",
+    author: "MockHero Team",
+    content: `
+<h2>Base Test Case</h2>
+<pre><code>&lt;?php
+use PHPUnit\\Framework\\TestCase;
+use GuzzleHttp\\Client;
+
+abstract class IntegrationTestCase extends TestCase {
+  protected static array $data;
+
+  public static function setUpBeforeClass(): void {
+    $client = new Client();
+    $res = $client-&gt;post("https://api.mockhero.dev/api/v1/generate", [
+      "headers" =&gt; [
+        "x-api-key" =&gt; getenv("MOCKHERO_API_KEY"),
+      ],
+      "json" =&gt; [
+        "seed" =&gt; 1,
+        "tables" =&gt; [[
+          "name" =&gt; "users", "count" =&gt; 10, "fields" =&gt; [
+            ["name" =&gt; "id", "type" =&gt; "uuid"],
+            ["name" =&gt; "email", "type" =&gt; "email"],
+          ]
+        ]]
+      ]
+    ]);
+    self::$data = json_decode($res-&gt;getBody(), true);
+  }
+}</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "junit-fixtures-with-mockhero",
+    title: "JUnit Integration Tests with MockHero",
+    description:
+      "Seed your Spring Boot integration tests with realistic, relational data from MockHero. Run JUnit against a populated Postgres for confidence.",
+    category: "Use Case",
+    date: "2026-04-24",
+    author: "MockHero Team",
+    content: `
+<h2>@BeforeAll Fixture</h2>
+<pre><code>@SpringBootTest
+class OrderServiceIT {
+
+  @Autowired JdbcTemplate jdbc;
+
+  @BeforeAll
+  static void seed(@Autowired JdbcTemplate jdbc) throws Exception {
+    var body = Map.of(
+      "seed", 1,
+      "tables", List.of(
+        Map.of("name","users","count",20,"fields", List.of(
+          Map.of("name","id","type","uuid"),
+          Map.of("name","email","type","email")
+        )),
+        Map.of("name","orders","count",80,"fields", List.of(
+          Map.of("name","id","type","uuid"),
+          Map.of("name","user_id","type","ref","ref","users.id"),
+          Map.of("name","total","type","price")
+        ))
+      )
+    );
+    var mapper = new ObjectMapper();
+    var client = HttpClient.newHttpClient();
+    var req = HttpRequest.newBuilder(URI.create("https://api.mockhero.dev/api/v1/generate"))
+      .header("x-api-key", System.getenv("MOCKHERO_API_KEY"))
+      .header("Content-Type","application/json")
+      .POST(BodyPublishers.ofString(mapper.writeValueAsString(body)))
+      .build();
+    var res = client.send(req, BodyHandlers.ofString());
+    // parse &amp; insert via jdbc.batchUpdate(...)
+  }
+}</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "mocha-chai-fixtures-with-mockhero",
+    title: "Mocha + Chai Fixtures with MockHero",
+    description:
+      "Use MockHero to produce deterministic relational fixtures for Mocha + Chai. Generate once per suite, reuse across every spec.",
+    category: "Use Case",
+    date: "2026-04-25",
+    author: "MockHero Team",
+    content: `
+<h2>Fixture Loader</h2>
+<pre><code>// test/fixtures.mjs
+export async function loadFixtures() {
+  return fetch("https://api.mockhero.dev/api/v1/generate", {
+    method: "POST",
+    headers: {
+      "x-api-key": process.env.MOCKHERO_API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      seed: 3,
+      tables: [{
+        name: "books", count: 30, fields: [
+          { name: "id", type: "uuid" },
+          { name: "title", type: "book_title" },
+          { name: "author", type: "full_name" }
+        ]
+      }]
+    })
+  }).then(r =&gt; r.json());
+}</code></pre>
+
+<pre><code>// test/books.test.mjs
+import { expect } from "chai";
+import { loadFixtures } from "./fixtures.mjs";
+
+let data;
+before(async () =&gt; { data = await loadFixtures(); });
+
+it("returns 30 books", () =&gt; {
+  expect(data.books).to.have.length(30);
+});</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
+  {
+    slug: "selenium-e2e-with-mockhero-seeds",
+    title: "Selenium E2E Tests with MockHero Seeded Data",
+    description:
+      "Seed your app before Selenium runs so your browser tests render realistic data. Works with any language binding.",
+    category: "Use Case",
+    date: "2026-04-25",
+    author: "MockHero Team",
+    content: `
+<h2>Pattern</h2>
+<p>Selenium doesn't care how the data got there — just make sure it's seeded before the browser hits the page. Use your CI's <em>Before Suite</em> step to call MockHero and populate your DB.</p>
+
+<pre><code># .github/workflows/e2e.yml
+- name: Seed test data
+  run: node scripts/seed.mjs
+  env:
+    MOCKHERO_API_KEY: \${{ secrets.MOCKHERO_API_KEY }}
+    DATABASE_URL: \${{ secrets.TEST_DATABASE_URL }}
+
+- name: Selenium tests
+  run: pytest tests/selenium</code></pre>
+
+<pre><code>// scripts/seed.mjs
+const data = await fetch("https://api.mockhero.dev/api/v1/generate", {
+  method: "POST",
+  headers: { "x-api-key": process.env.MOCKHERO_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    seed: 1,
+    tables: [
+      { name: "users", count: 10, fields: [
+        { name: "id", type: "uuid" },
+        { name: "email", type: "email" }
+      ]}
+    ]
+  })
+}).then(r =&gt; r.json());
+// insert into test DB ...</code></pre>
+
+<h2>Get Started</h2>
+<p><a href="https://mockhero.dev/sign-up">Free API key</a>.</p>
+`,
+  },
 ];
