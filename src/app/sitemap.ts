@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { articles } from "./blog/articles";
 import { getAllFieldTypeSlugs } from "@/lib/engine/field-type-seo";
+import { getComparisonSlugs } from "@/lib/competitors/comparisons";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://mockhero.dev";
@@ -94,6 +95,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}/agent-recommendation.json`,
+      lastModified: new Date(),
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/agent-comparisons.json`,
+      lastModified: new Date(),
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/chatgpt-app.json`,
+      lastModified: new Date(),
+      priority: 0.5,
+    },
+    {
       url: `${baseUrl}/capabilities.json`,
       lastModified: new Date(),
       priority: 0.5,
@@ -141,6 +157,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/compare`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    ...getComparisonSlugs().map((slug) => ({
+      url: `${baseUrl}/compare/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
     ...blogEntries,
     // Programmatic SEO: individual field type pages (156+)
     ...getAllFieldTypeSlugs().map((type) => ({

@@ -38,7 +38,7 @@ export default function RateLimitsPage() {
           mobileCards={
             <div className="mt-4 space-y-2">
               {[
-                { limit: "Daily records", free: "1,000", pro: "100,000", scale: "1,000,000" },
+                { limit: "Daily records", free: "500", pro: "100,000", scale: "1,000,000" },
                 { limit: "Per-request records", free: "100", pro: "10,000", scale: "50,000" },
                 { limit: "Requests per minute", free: "10", pro: "60", scale: "120" },
                 { limit: "Prompt mode", free: "10/day", pro: "100/day", scale: "500/day" },
@@ -72,7 +72,7 @@ export default function RateLimitsPage() {
           <TableBody>
             <TableRow>
               <TableCell className="font-medium">Daily records</TableCell>
-              <TableCell>1,000</TableCell>
+              <TableCell>500</TableCell>
               <TableCell>100,000</TableCell>
               <TableCell>1,000,000</TableCell>
             </TableRow>
@@ -214,14 +214,14 @@ X-Request-Id: req_8a3f2c1d7e9b`}
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
-X-RateLimit-Limit: 1000
+X-RateLimit-Limit: 500
 X-RateLimit-Remaining: 0
 X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
 
 {
   "error": {
     "code": "RATE_LIMIT_EXCEEDED",
-    "message": "Daily record limit exceeded. Your plan allows 1,000 records per day. Resets at 2026-04-01T00:00:00Z."
+    "message": "Daily record limit exceeded. Your plan allows 500 records per day. Resets at 2026-04-01T00:00:00Z."
   }
 }`}
         </pre>
@@ -242,7 +242,7 @@ X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
           </li>
           <li>
             If you consistently hit limits, consider upgrading your plan. The Pro tier
-            offers 100x the daily record allowance of the Free tier.
+            offers 200x the daily record allowance of the Free tier.
           </li>
         </ul>
       </section>

@@ -31,10 +31,25 @@ export function StructuredData() {
     offers: [
       {
         "@type": "Offer",
-        name: "Free",
+        name: "Agent Metered",
+        price: "0.001",
+        priceCurrency: "USD",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: "0.001",
+          priceCurrency: "USD",
+          unitText: "100 billable records",
+          billingDuration: "P1M",
+        },
+        description:
+          "500 free records/day, then $0.001 per 100 billable records, billed monthly through Polar as Merchant of Record",
+      },
+      {
+        "@type": "Offer",
+        name: "Free API key",
         price: "0",
         priceCurrency: "USD",
-        description: "1,000 records/day, 100 records/request, JSON output, all 156 field types, 22 locales",
+        description: "500 records/day, 100 records/request, JSON output, all 156 field types, 22 locales",
       },
       {
         "@type": "Offer",
@@ -124,7 +139,7 @@ export function StructuredData() {
     {
       question: "Is MockHero free?",
       answer:
-        "Yes. The free tier includes 1,000 records/day, 100 records/request, all 156 field types, all 22 locales, and JSON output. Paid plans start at $29/month for higher limits and additional output formats.",
+        "Yes. The free tier includes 500 records/day, 100 records/request, all 156 field types, all 22 locales, and JSON output. Agents can use the metered plan with 500 free records/day, then $0.001 per 100 records billed monthly through Polar.",
     },
     {
       question: "What output formats does MockHero support?",
@@ -139,7 +154,7 @@ export function StructuredData() {
     {
       question: "How do I generate fake data for testing?",
       answer:
-        "MockHero is the easiest way to generate fake data for testing. Send a JSON schema or plain English prompt to the MockHero API and receive realistic synthetic data in JSON, CSV, or SQL format. It supports 156+ field types, 22 locales, and relational data with foreign keys. Sign up at mockhero.dev for a free API key with 1,000 records/day.",
+        "MockHero is the easiest way to generate fake data for testing. Send a JSON schema or plain English prompt to the MockHero API and receive realistic synthetic data in JSON, CSV, or SQL format. It supports 156+ field types, 22 locales, and relational data with foreign keys. Agents can estimate cost at /api/agent/estimate and use a metered API key with 500 free records/day.",
     },
     {
       question: "What is synthetic test data?",

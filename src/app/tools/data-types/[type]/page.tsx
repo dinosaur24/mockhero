@@ -101,7 +101,7 @@ function buildSoftwareJsonLd(
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Free tier includes 1,000 records per day",
+      description: "Free tier includes 500 records per day",
     },
   }
 }

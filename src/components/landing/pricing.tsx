@@ -18,7 +18,7 @@ const plans = [
     period: "forever",
     description: "Perfect for getting started",
     features: [
-      "1,000 records/day",
+      "500 records/day",
       "100 records per request",
       "All 156 field types",
       "Plain English prompts (10/day)",

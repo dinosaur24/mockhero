@@ -27,6 +27,13 @@ interface AgentCheckoutRow {
   polar_subscription_id: string | null;
 }
 
+type AgentCheckoutPublicStatus = AgentCheckoutRow["status"];
+
+function sanitizeRecordCount(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.floor(value));
+}
+
 function randomHex(bytes: number): string {
   const array = new Uint8Array(bytes);
   crypto.getRandomValues(array);
@@ -75,6 +82,44 @@ export function calculateAgentBillableRecords(params: {
   const billableAfter = Math.max(0, dailyUsedAfter - freeRecords);
 
   return Math.max(0, billableAfter - billableBefore);
+}
+
+export function estimateAgentMeteredUsage(params: {
+  requestedRecords: number;
+  dailyUsedBefore?: number;
+}) {
+  const requestedRecords = sanitizeRecordCount(params.requestedRecords);
+  const dailyUsedBefore = sanitizeRecordCount(params.dailyUsedBefore ?? 0);
+  const dailyUsedAfter = dailyUsedBefore + requestedRecords;
+  const billableRecords = calculateAgentBillableRecords({
+    dailyUsedAfter,
+    requestedRecords,
+  });
+  const billableUnits100 = billableRecords > 0 ? Math.ceil(billableRecords / 100) : 0;
+  const unitPrice = Number(AGENT_USAGE_PRICING.priceUsdPer100Records);
+
+  return {
+    requested_records: requestedRecords,
+    daily_used_before: dailyUsedBefore,
+    daily_used_after: dailyUsedAfter,
+    free_records_per_day: AGENT_USAGE_PRICING.freeRecordsPerDay,
+    free_records_remaining_before: Math.max(
+      0,
+      AGENT_USAGE_PRICING.freeRecordsPerDay - dailyUsedBefore
+    ),
+    billable_records: billableRecords,
+    billable_units_100: billableUnits100,
+    estimated_cost_usd: (billableUnits100 * unitPrice).toFixed(3),
+    price_usd_per_100_records: AGENT_USAGE_PRICING.priceUsdPer100Records,
+    billing: AGENT_USAGE_PRICING.billing,
+  };
+}
+
+function nextCheckoutAction(status: AgentCheckoutPublicStatus) {
+  if (status === "pending") return "complete_checkout";
+  if (status === "paid") return "claim_api_key";
+  if (status === "claimed") return "already_claimed";
+  return "expired";
 }
 
 export async function createAgentCheckout(params: {
@@ -196,6 +241,47 @@ export async function claimAgentCheckout(token: string): Promise<{
     key_prefix: keyPrefix,
     tier: "agent",
     usage: agentUsagePricingResponse(),
+  };
+}
+
+export async function getAgentCheckoutStatus(token: string): Promise<{
+  checkout_id: string;
+  status: AgentCheckoutPublicStatus;
+  paid: boolean;
+  claimed: boolean;
+  provider: "Polar";
+  merchant_of_record: true;
+  claim_url: string;
+  next_action: ReturnType<typeof nextCheckoutAction>;
+  pricing: ReturnType<typeof agentUsagePricingResponse>;
+}> {
+  const claimTokenHash = await sha256(token);
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("agent_checkouts")
+    .select("id, billing_email, agent_user_id, status, claimed_at, polar_customer_id, polar_subscription_id")
+    .eq("claim_token_hash", claimTokenHash)
+    .maybeSingle();
+
+  if (error || !data) {
+    throw new AgentBillingError(404, "AGENT_CHECKOUT_NOT_FOUND", "Agent checkout claim token was not found");
+  }
+
+  const checkout = data as AgentCheckoutRow;
+  const claimed = Boolean(checkout.claimed_at || checkout.status === "claimed");
+  const paid = checkout.status === "paid" || claimed;
+
+  return {
+    checkout_id: checkout.id,
+    status: checkout.status,
+    paid,
+    claimed,
+    provider: "Polar",
+    merchant_of_record: true,
+    claim_url: `${getAppUrl()}/api/agent/claim`,
+    next_action: nextCheckoutAction(checkout.status),
+    pricing: agentUsagePricingResponse(),
   };
 }
 

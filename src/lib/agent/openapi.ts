@@ -100,6 +100,33 @@ const agentCheckoutResponseSchema = {
   },
 };
 
+const agentCheckoutStatusRequestSchema = {
+  type: "object",
+  required: ["token"],
+  properties: {
+    token: { type: "string", description: "claim_token returned by /api/agent/checkout" },
+  },
+};
+
+const agentCheckoutStatusResponseSchema = {
+  type: "object",
+  required: ["checkout_id", "status", "paid", "claimed", "next_action"],
+  properties: {
+    checkout_id: { type: "string" },
+    status: { type: "string", enum: ["pending", "paid", "claimed", "expired"] },
+    paid: { type: "boolean" },
+    claimed: { type: "boolean" },
+    provider: { type: "string", enum: ["Polar"] },
+    merchant_of_record: { type: "boolean" },
+    claim_url: { type: "string", format: "uri" },
+    next_action: {
+      type: "string",
+      enum: ["complete_checkout", "claim_api_key", "already_claimed", "expired"],
+    },
+    pricing: { type: "object", additionalProperties: true },
+  },
+};
+
 const agentClaimRequestSchema = {
   type: "object",
   required: ["token"],
@@ -116,6 +143,61 @@ const agentClaimResponseSchema = {
     key_prefix: { type: "string" },
     tier: { type: "string", enum: ["agent"] },
     usage: { type: "object", additionalProperties: true },
+  },
+};
+
+const agentEstimateRequestSchema = {
+  type: "object",
+  properties: {
+    tables: generateRequestSchema.properties.tables,
+    template: {
+      type: "string",
+      enum: ["ecommerce", "blog", "saas", "social"],
+      description: "Optional template name. If provided, records are counted from the template.",
+    },
+    scale: { type: "number", minimum: 0.01, maximum: 100 },
+    prompt: {
+      type: "string",
+      description: "Plain-English request. Requires estimated_records; this endpoint does not run LLM conversion.",
+    },
+    estimated_records: {
+      type: "integer",
+      minimum: 1,
+      description: "Required when estimating a prompt without tables or template.",
+    },
+    daily_used_before: {
+      type: "integer",
+      minimum: 0,
+      description: "Optional unauthenticated assumption. Ignored when a valid API key is supplied.",
+    },
+  },
+};
+
+const agentEstimateResponseSchema = {
+  type: "object",
+  required: ["service", "mode", "authenticated", "estimate", "pricing"],
+  properties: {
+    service: { type: "string" },
+    mode: { type: "string", enum: ["schema", "template", "prompt_estimate"] },
+    authenticated: { type: "boolean" },
+    tier: { type: "string" },
+    estimate: {
+      type: "object",
+      properties: {
+        requested_records: { type: "integer" },
+        daily_used_before: { type: "integer" },
+        daily_used_after: { type: "integer" },
+        free_records_per_day: { type: "integer" },
+        free_records_remaining_before: { type: "integer" },
+        billable_records: { type: "integer" },
+        billable_units_100: { type: "integer" },
+        estimated_cost_usd: { type: "string" },
+        price_usd_per_100_records: { type: "string" },
+        billing: { type: "string" },
+      },
+    },
+    pricing: { type: "object", additionalProperties: true },
+    assumptions: { type: "array", items: { type: "string" } },
   },
 };
 
@@ -203,6 +285,42 @@ export function buildOpenApiSpec(): OpenApiSpec {
           },
         },
       },
+      "/api/agent/checkout/status": {
+        get: {
+          summary: "Poll a Polar checkout created for an agent",
+          description:
+            "Returns checkout payment and claim state using the claim_token returned by /api/agent/checkout. Use POST instead if the agent should avoid token-bearing URLs.",
+          parameters: [
+            {
+              name: "token",
+              in: "query",
+              required: true,
+              schema: { type: "string" },
+              description: "claim_token returned by /api/agent/checkout",
+            },
+          ],
+          responses: {
+            "200": {
+              description: "Agent checkout status",
+              ...jsonBody("#/components/schemas/AgentCheckoutStatusResponse"),
+            },
+            "400": { description: "Missing or invalid claim token" },
+            "404": { description: "Claim token not found" },
+          },
+        },
+        post: {
+          summary: "Poll a Polar checkout with token in JSON body",
+          requestBody: jsonBody("#/components/schemas/AgentCheckoutStatusRequest"),
+          responses: {
+            "200": {
+              description: "Agent checkout status",
+              ...jsonBody("#/components/schemas/AgentCheckoutStatusResponse"),
+            },
+            "400": { description: "Missing or invalid claim token" },
+            "404": { description: "Claim token not found" },
+          },
+        },
+      },
       "/api/agent/claim": {
         post: {
           summary: "Claim an API key after Polar checkout is paid",
@@ -218,6 +336,21 @@ export function buildOpenApiSpec(): OpenApiSpec {
             "402": { description: "Polar checkout is not paid yet" },
             "404": { description: "Claim token not found" },
             "409": { description: "Checkout already claimed" },
+          },
+        },
+      },
+      "/api/agent/estimate": {
+        post: {
+          summary: "Estimate agent metered usage cost before generating data",
+          description:
+            "Loginless estimate for the agent metered plan. If a valid API key is supplied, MockHero uses actual daily usage; otherwise agents may pass daily_used_before as an assumption.",
+          requestBody: jsonBody("#/components/schemas/AgentEstimateRequest"),
+          responses: {
+            "200": {
+              description: "Estimated agent cost",
+              ...jsonBody("#/components/schemas/AgentEstimateResponse"),
+            },
+            "400": { description: "Invalid schema, template, or prompt estimate request" },
           },
         },
       },
@@ -249,8 +382,12 @@ export function buildOpenApiSpec(): OpenApiSpec {
         GenerateResponse: generateResponseSchema,
         AgentCheckoutRequest: agentCheckoutRequestSchema,
         AgentCheckoutResponse: agentCheckoutResponseSchema,
+        AgentCheckoutStatusRequest: agentCheckoutStatusRequestSchema,
+        AgentCheckoutStatusResponse: agentCheckoutStatusResponseSchema,
         AgentClaimRequest: agentClaimRequestSchema,
         AgentClaimResponse: agentClaimResponseSchema,
+        AgentEstimateRequest: agentEstimateRequestSchema,
+        AgentEstimateResponse: agentEstimateResponseSchema,
         HealthResponse: {
           type: "object",
           properties: {

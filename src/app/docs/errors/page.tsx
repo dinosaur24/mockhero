@@ -353,14 +353,14 @@ Content-Type: application/json
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
-X-RateLimit-Limit: 1000
+X-RateLimit-Limit: 500
 X-RateLimit-Remaining: 0
 X-RateLimit-Reset: 2026-04-01T00:00:00.000Z
 
 {
   "error": {
     "code": "RATE_LIMIT_EXCEEDED",
-    "message": "Daily record limit exceeded. Your plan allows 1,000 records per day. Resets at 2026-04-01T00:00:00Z."
+    "message": "Daily record limit exceeded. Your plan allows 500 records per day. Resets at 2026-04-01T00:00:00Z."
   }
 }`}
         </pre>

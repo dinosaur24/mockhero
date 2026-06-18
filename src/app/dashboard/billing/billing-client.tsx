@@ -51,7 +51,7 @@ const plans: {
     price: "$0",
     priceNote: "forever",
     features: [
-      "1,000 records/day",
+      "500 records/day",
       "100 records/request",
       "10 requests/min",
       "10 prompts/day (schema mode unlimited)",

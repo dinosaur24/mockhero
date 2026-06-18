@@ -75,7 +75,7 @@ export const helpArticles: HelpArticle[] = [
 
       <p>Every new account starts on the <strong>Free plan</strong>, which includes:</p>
       <ul>
-        <li>1,000 records per day</li>
+        <li>500 records per day</li>
         <li>100 records per request</li>
         <li>10 requests per minute</li>
       </ul>
