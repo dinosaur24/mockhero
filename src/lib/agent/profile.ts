@@ -1,4 +1,4 @@
-import { TIER_LIMITS } from "@/lib/utils/constants";
+import { AGENT_USAGE_PRICING, TIER_LIMITS } from "@/lib/utils/constants";
 
 const websiteUrl = "https://mockhero.dev";
 
@@ -22,7 +22,8 @@ export const MOCKHERO_AGENT_PROFILE = {
   endpoints: {
     generate: "/api/v1/generate",
     generateX402: "/api/v1/generate/x402",
-    checkout: "/api/dashboard/checkout",
+    checkout: "/api/agent/checkout",
+    claim: "/api/agent/claim",
     templates: "/api/v1/templates",
     types: "/api/v1/types",
     schemaDetect: "/api/v1/schema/detect",
@@ -35,6 +36,17 @@ export const MOCKHERO_AGENT_PROFILE = {
       recordsPerRequest: TIER_LIMITS.free.perRequest,
       requestsPerMinute: TIER_LIMITS.free.perMinute,
       promptsPerDay: TIER_LIMITS.free.promptsPerDay,
+    },
+    agent: {
+      freeRecordsPerDay: AGENT_USAGE_PRICING.freeRecordsPerDay,
+      priceUsdPer100Records: AGENT_USAGE_PRICING.priceUsdPer100Records,
+      billing: AGENT_USAGE_PRICING.billing,
+      billedBy: "Polar",
+      merchantOfRecord: true,
+      hardDailySafetyCapRecords: TIER_LIMITS.agent.dailyRecords,
+      recordsPerRequest: TIER_LIMITS.agent.perRequest,
+      requestsPerMinute: TIER_LIMITS.agent.perMinute,
+      promptsPerDay: TIER_LIMITS.agent.promptsPerDay,
     },
     pro: {
       priceUsdMonthly: 29,
@@ -66,12 +78,13 @@ export const MOCKHERO_AGENT_PROFILE = {
       provider: "Polar",
       protocols: ["polar_checkout"],
       merchantOfRecord: true,
-      checkoutUrl: `${websiteUrl}/dashboard/billing`,
-      newCustomerUrl: `${websiteUrl}/sign-up`,
-      authenticatedCheckoutApiUrl: `${websiteUrl}/api/dashboard/checkout`,
-      supportedTiers: ["pro", "scale"],
+      checkoutUrl: `${websiteUrl}/api/agent/checkout`,
+      agentCheckoutApiUrl: `${websiteUrl}/api/agent/checkout`,
+      agentClaimApiUrl: `${websiteUrl}/api/agent/claim`,
+      pricingUrl: `${websiteUrl}/agent-pricing.json`,
+      supportedTiers: ["agent"],
       note:
-        "Agents should use Polar Checkout. Polar is the Merchant of Record for checkout, tax calculation, collection, and remittance.",
+        "Agents should create a loginless Polar Checkout for the agent metered plan, then claim an API key after the Polar webhook confirms payment. Polar is the Merchant of Record for checkout, tax calculation, collection, and remittance.",
     },
     inactive: [
       {

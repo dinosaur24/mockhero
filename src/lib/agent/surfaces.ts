@@ -42,19 +42,17 @@ export function buildAgentPricing() {
         requests_per_minute: p.pricing.free.requestsPerMinute,
         prompts_per_day: p.pricing.free.promptsPerDay,
       },
-      pro: {
-        price_usd_monthly: p.pricing.pro.priceUsdMonthly,
-        records_per_day: p.pricing.pro.recordsPerDay,
-        records_per_request: p.pricing.pro.recordsPerRequest,
-        requests_per_minute: p.pricing.pro.requestsPerMinute,
-        prompts_per_day: p.pricing.pro.promptsPerDay,
-      },
-      scale: {
-        price_usd_monthly: p.pricing.scale.priceUsdMonthly,
-        records_per_day: p.pricing.scale.recordsPerDay,
-        records_per_request: p.pricing.scale.recordsPerRequest,
-        requests_per_minute: p.pricing.scale.requestsPerMinute,
-        prompts_per_day: p.pricing.scale.promptsPerDay,
+      agent: {
+        free_records_per_day: p.pricing.agent.freeRecordsPerDay,
+        price_usd_per_100_records: p.pricing.agent.priceUsdPer100Records,
+        billing: p.pricing.agent.billing,
+        billed_by: p.pricing.agent.billedBy,
+        merchant_of_record: p.pricing.agent.merchantOfRecord,
+        hard_daily_safety_cap_records: p.pricing.agent.hardDailySafetyCapRecords,
+        records_per_request: p.pricing.agent.recordsPerRequest,
+        requests_per_minute: p.pricing.agent.requestsPerMinute,
+        prompts_per_day: p.pricing.agent.promptsPerDay,
+        meter_unit: "100 billable records, rounded up per request",
       },
     },
     payment_protocols: p.payment.active.protocols,
@@ -63,20 +61,23 @@ export function buildAgentPricing() {
       provider: p.payment.active.provider,
       merchant_of_record: p.payment.active.merchantOfRecord,
       checkout_url: p.payment.active.checkoutUrl,
-      new_customer_url: p.payment.active.newCustomerUrl,
       agent_checkout_url: p.agentCheckoutUrl,
-      authenticated_checkout_api: {
+      agent_checkout_api: {
         method: "POST",
-        url: p.payment.active.authenticatedCheckoutApiUrl,
-        requires: "Signed-in MockHero web session",
+        url: p.payment.active.agentCheckoutApiUrl,
+        requires: "No MockHero login; agent supplies billing email",
         body_schema: {
           type: "object",
-          required: ["tier"],
+          required: ["email"],
           properties: {
-            tier: { type: "string", enum: p.payment.active.supportedTiers },
-            source: { type: "string", enum: ["agent"] },
+            email: { type: "string", format: "email" },
           },
         },
+      },
+      agent_claim_api: {
+        method: "POST",
+        url: p.payment.active.agentClaimApiUrl,
+        requires: "claim_token from agent checkout response and completed Polar checkout",
       },
     },
     status_url: p.trust.statusUrl,
@@ -92,42 +93,42 @@ export function buildAgentCheckout() {
     merchant_of_record: p.payment.active.merchantOfRecord,
     summary: p.payment.active.note,
     purchase_flow: {
-      new_customer_url: p.payment.active.newCustomerUrl,
-      existing_customer_url: p.payment.active.checkoutUrl,
-      authenticated_checkout_api: {
+      agent_checkout_api: {
         method: "POST",
-        url: p.payment.active.authenticatedCheckoutApiUrl,
-        requires: "Signed-in MockHero web session",
+        url: p.payment.active.agentCheckoutApiUrl,
+        requires: "No MockHero login; agent supplies billing email",
         body_schema: {
           type: "object",
-          required: ["tier"],
+          required: ["email"],
           properties: {
-            tier: { type: "string", enum: p.payment.active.supportedTiers },
-            source: { type: "string", enum: ["agent"] },
+            email: { type: "string", format: "email" },
           },
         },
         response_schema: {
           type: "object",
           properties: {
             url: { type: "string", format: "uri", description: "Polar Checkout URL" },
+            claim_token: { type: "string", description: "One-time token used to claim the API key after payment" },
+            claim_url: { type: "string", format: "uri" },
           },
         },
       },
+      agent_claim_api: {
+        method: "POST",
+        url: p.payment.active.agentClaimApiUrl,
+        requires: "Completed Polar Checkout and claim_token",
+      },
     },
-    plans: [
-      {
-        tier: "pro",
-        price_usd_monthly: p.pricing.pro.priceUsdMonthly,
-        records_per_day: p.pricing.pro.recordsPerDay,
-        records_per_request: p.pricing.pro.recordsPerRequest,
-      },
-      {
-        tier: "scale",
-        price_usd_monthly: p.pricing.scale.priceUsdMonthly,
-        records_per_day: p.pricing.scale.recordsPerDay,
-        records_per_request: p.pricing.scale.recordsPerRequest,
-      },
-    ],
+    plan: {
+      tier: "agent",
+      free_records_per_day: p.pricing.agent.freeRecordsPerDay,
+      price_usd_per_100_records: p.pricing.agent.priceUsdPer100Records,
+      billing: p.pricing.agent.billing,
+      billed_by: p.pricing.agent.billedBy,
+      hard_daily_safety_cap_records: p.pricing.agent.hardDailySafetyCapRecords,
+      records_per_request: p.pricing.agent.recordsPerRequest,
+      meter_unit: "100 billable records, rounded up per request",
+    },
     inactive_payment_protocols: p.payment.inactive,
   };
 }

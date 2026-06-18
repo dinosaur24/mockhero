@@ -88,7 +88,7 @@ export async function validateApiKey(
     .maybeSingle();
 
   if (subscription) {
-    const validTiers = ["free", "pro", "scale"] as const;
+    const validTiers = ["free", "agent", "pro", "scale"] as const;
     const subTier = subscription.product_name?.toLowerCase();
     if (validTiers.includes(subTier as any)) {
       tier = subTier as Tier;

@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     }
 
     if (!checkPlaygroundRateLimit(ip)) {
-      return rateLimitError("Playground rate limit exceeded. Sign up for a free API key to get 1,000 records/day.");
+      return rateLimitError("Playground rate limit exceeded. Sign up for a free API key to get 500 records/day.");
     }
 
     // Parse body with size limit (100KB — playground schemas are small)

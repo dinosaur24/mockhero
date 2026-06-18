@@ -17,6 +17,7 @@ export default function AdminOverviewClient({ overview, signupTrend }: Props) {
 
   const tierEntries = [
     { tier: "free", count: overview.tierDistribution.free },
+    { tier: "agent", count: overview.tierDistribution.agent },
     { tier: "pro", count: overview.tierDistribution.pro },
     { tier: "scale", count: overview.tierDistribution.scale },
   ]
@@ -33,6 +34,7 @@ export default function AdminOverviewClient({ overview, signupTrend }: Props) {
 
   const tierColors: Record<string, string> = {
     free: "bg-muted-foreground/30",
+    agent: "bg-emerald-500",
     pro: "bg-primary",
     scale: "bg-primary/60",
   }

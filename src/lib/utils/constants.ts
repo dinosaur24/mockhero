@@ -4,10 +4,16 @@
  */
 export const TIER_LIMITS = {
   free: {
-    dailyRecords: 1_000,
+    dailyRecords: 500,
     perRequest: 100,
     perMinute: 10,
     promptsPerDay: 10,
+  },
+  agent: {
+    dailyRecords: 1_000_000,
+    perRequest: 50_000,
+    perMinute: 120,
+    promptsPerDay: 500,
   },
   pro: {
     dailyRecords: 100_000,
@@ -27,6 +33,13 @@ export const TIER_LIMITS = {
 export const API_KEY_PREFIX = "mh_";
 
 export type Tier = keyof typeof TIER_LIMITS;
+
+/** Agent-first metered pricing enforced by MockHero and billed through Polar. */
+export const AGENT_USAGE_PRICING = {
+  freeRecordsPerDay: 500,
+  priceUsdPer100Records: "0.001",
+  billing: "monthly_usage",
+} as const;
 
 /**
  * Credit packs — one-time purchases via Polar.

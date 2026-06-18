@@ -14,7 +14,7 @@ export interface AdminOverview {
   apiCallsToday: number
   recordsToday: number
   mrr: number
-  tierDistribution: { free: number; pro: number; scale: number }
+  tierDistribution: { free: number; agent: number; pro: number; scale: number }
 }
 
 export interface SignupTimeSeriesPoint {
@@ -183,6 +183,7 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     activeUsers7dRes,
     apiCallsTodayRes,
     recordsTodayRes,
+    agentCountRes,
     proCountRes,
     scaleCountRes,
     freeCountRes,
@@ -216,6 +217,12 @@ export async function getAdminOverview(): Promise<AdminOverview> {
       .from("daily_usage")
       .select("records_used")
       .eq("date", today),
+
+    // Agent metered accounts
+    supabase
+      .from("profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("tier", "agent"),
 
     // Pro active subscriptions
     supabase
@@ -253,6 +260,7 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     0
   )
 
+  const agentCount = agentCountRes.count ?? 0
   const proCount = proCountRes.count ?? 0
   const scaleCount = scaleCountRes.count ?? 0
   const freeCount = freeCountRes.count ?? 0
@@ -266,6 +274,7 @@ export async function getAdminOverview(): Promise<AdminOverview> {
     mrr: proCount * PRO_PRICE + scaleCount * SCALE_PRICE,
     tierDistribution: {
       free: freeCount,
+      agent: agentCount,
       pro: proCount,
       scale: scaleCount,
     },

@@ -14,8 +14,8 @@ import { GET as getAgentCheckout } from "@/app/agent-checkout.json/route";
 describe("agent discovery profile", () => {
   it("keeps public pricing in sync with API limits", () => {
     expect(MOCKHERO_AGENT_PROFILE.pricing.free.recordsPerDay).toBe(TIER_LIMITS.free.dailyRecords);
-    expect(MOCKHERO_AGENT_PROFILE.pricing.pro.recordsPerDay).toBe(TIER_LIMITS.pro.dailyRecords);
-    expect(MOCKHERO_AGENT_PROFILE.pricing.scale.recordsPerDay).toBe(TIER_LIMITS.scale.dailyRecords);
+    expect(MOCKHERO_AGENT_PROFILE.pricing.agent.freeRecordsPerDay).toBe(500);
+    expect(MOCKHERO_AGENT_PROFILE.pricing.agent.hardDailySafetyCapRecords).toBe(TIER_LIMITS.agent.dailyRecords);
   });
 
   it("uses canonical agent-first URLs and metadata", () => {
@@ -26,6 +26,8 @@ describe("agent discovery profile", () => {
     expect(MOCKHERO_AGENT_PROFILE.payment.active.provider).toBe("Polar");
     expect(MOCKHERO_AGENT_PROFILE.payment.active.merchantOfRecord).toBe(true);
     expect(MOCKHERO_AGENT_PROFILE.payment.active.protocols).toEqual(["polar_checkout"]);
+    expect(MOCKHERO_AGENT_PROFILE.payment.active.agentCheckoutApiUrl).toBe("https://mockhero.dev/api/agent/checkout");
+    expect(MOCKHERO_AGENT_PROFILE.payment.active.agentClaimApiUrl).toBe("https://mockhero.dev/api/agent/claim");
     expect(MOCKHERO_AGENT_PROFILE.fieldTypeCount).toBe(156);
     expect(MOCKHERO_AGENT_PROFILE.localeCount).toBe(22);
   });
@@ -43,6 +45,7 @@ describe("agent-readable document renderers", () => {
     expect(text).toContain("@mockherodev/mcp-server");
     expect(text).toContain("Polar Checkout");
     expect(text).toContain("Merchant of Record");
+    expect(text).toContain("POST https://mockhero.dev/api/agent/checkout");
     expect(text).toContain("POST https://mockhero.dev/api/v1/generate");
     expect(text).not.toContain("POST https://mockhero.dev/api/v1/generate/x402");
   });
@@ -51,9 +54,9 @@ describe("agent-readable document renderers", () => {
     const text = renderLlmsFullTxt();
 
     expect(text).toContain("## Example Generate Request");
-    expect(text).toContain("1,000 records/day");
-    expect(text).toContain("100,000 records/day");
-    expect(text).toContain("1,000,000 records/day");
+    expect(text).toContain("500 free records/day");
+    expect(text).toContain("$0.001 per 100 records");
+    expect(text).toContain("billed monthly through Polar");
   });
 });
 
@@ -64,7 +67,7 @@ describe("machine-readable surfaces", () => {
     expect(manifest.name).toBe("MockHero");
     expect(manifest.openapi_url).toBe("https://mockhero.dev/openapi.json");
     expect(manifest.payment_protocols).toEqual(["polar_checkout"]);
-    expect(manifest.checkout_url).toBe("https://mockhero.dev/dashboard/billing");
+    expect(manifest.checkout_url).toBe("https://mockhero.dev/api/agent/checkout");
     expect(manifest.agent_checkout_url).toBe("https://mockhero.dev/agent-checkout.json");
     expect(manifest.merchant_of_record.provider).toBe("Polar");
     expect(manifest.mcp.package).toBe("@mockherodev/mcp-server");
@@ -73,10 +76,13 @@ describe("machine-readable surfaces", () => {
   it("builds machine-readable pricing", () => {
     const pricing = buildAgentPricing();
 
-    expect(pricing.pricing.free.records_per_day).toBe(1000);
+    expect(pricing.pricing.agent.free_records_per_day).toBe(500);
+    expect(pricing.pricing.agent.price_usd_per_100_records).toBe("0.001");
+    expect(pricing.pricing.agent.billing).toBe("monthly_usage");
     expect(pricing.checkout.provider).toBe("Polar");
     expect(pricing.checkout.merchant_of_record).toBe(true);
-    expect(pricing.checkout.authenticated_checkout_api.url).toBe("https://mockhero.dev/api/dashboard/checkout");
+    expect(pricing.checkout.agent_checkout_api.url).toBe("https://mockhero.dev/api/agent/checkout");
+    expect(pricing.checkout.agent_claim_api.url).toBe("https://mockhero.dev/api/agent/claim");
     expect(pricing.payment_protocols).toEqual(["polar_checkout"]);
     expect(pricing.inactive_payment_protocols).toContain("x402");
   });
@@ -86,9 +92,12 @@ describe("machine-readable surfaces", () => {
 
     expect(checkout.provider).toBe("Polar");
     expect(checkout.merchant_of_record).toBe(true);
-    expect(checkout.purchase_flow.existing_customer_url).toBe("https://mockhero.dev/dashboard/billing");
-    expect(checkout.purchase_flow.authenticated_checkout_api.body_schema.properties.tier.enum).toEqual(["pro", "scale"]);
-    expect(checkout.plans.map((plan) => plan.tier)).toEqual(["pro", "scale"]);
+    expect(checkout.purchase_flow.agent_checkout_api.url).toBe("https://mockhero.dev/api/agent/checkout");
+    expect(checkout.purchase_flow.agent_checkout_api.requires).toBe("No MockHero login; agent supplies billing email");
+    expect(checkout.purchase_flow.agent_claim_api.url).toBe("https://mockhero.dev/api/agent/claim");
+    expect(checkout.plan.tier).toBe("agent");
+    expect(checkout.plan.free_records_per_day).toBe(500);
+    expect(checkout.plan.price_usd_per_100_records).toBe("0.001");
     expect(checkout.inactive_payment_protocols[0].protocol).toBe("x402");
   });
 
@@ -100,16 +109,18 @@ describe("machine-readable surfaces", () => {
     expect(capabilities.mcp.package).toBe("@mockherodev/mcp-server");
   });
 
-  it("builds an OpenAPI 3.1 spec for the core API and Polar checkout endpoint", () => {
+  it("builds an OpenAPI 3.1 spec for the core API and agent Polar checkout endpoint", () => {
     const spec = buildOpenApiSpec();
 
     expect(spec.openapi).toBe("3.1.0");
     expect(spec.paths["/api/v1/generate"]).toBeDefined();
     expect(spec.paths["/api/v1/generate/x402"]).toBeUndefined();
-    expect(spec.paths["/api/dashboard/checkout"]).toBeDefined();
+    expect(spec.paths["/api/agent/checkout"]).toBeDefined();
+    expect(spec.paths["/api/agent/claim"]).toBeDefined();
+    expect(spec.paths["/api/dashboard/checkout"]).toBeUndefined();
     expect(spec.paths["/api/v1/types"]).toBeDefined();
     expect(spec.components.securitySchemes.MockHeroApiKey).toBeDefined();
-    expect(spec.components.securitySchemes.MockHeroWebSession).toBeDefined();
+    expect(spec.components.securitySchemes.MockHeroWebSession).toBeUndefined();
   });
 });
 
@@ -128,7 +139,9 @@ describe("agent routes", () => {
 
     expect(json.openapi).toBe("3.1.0");
     expect(json.paths["/api/v1/generate/x402"]).toBeUndefined();
-    expect(json.paths["/api/dashboard/checkout"]).toBeDefined();
+    expect(json.paths["/api/agent/checkout"]).toBeDefined();
+    expect(json.paths["/api/agent/claim"]).toBeDefined();
+    expect(json.paths["/api/dashboard/checkout"]).toBeUndefined();
   });
 
   it("serves .well-known/agent.json", async () => {
@@ -144,7 +157,8 @@ describe("agent routes", () => {
     const res = await getAgentPricing();
     const json = await res.json();
 
-    expect(json.pricing.free.records_per_day).toBe(1000);
+    expect(json.pricing.agent.free_records_per_day).toBe(500);
+    expect(json.pricing.agent.price_usd_per_100_records).toBe("0.001");
     expect(json.checkout.provider).toBe("Polar");
     expect(json.inactive_payment_protocols).toContain("x402");
   });
@@ -155,7 +169,7 @@ describe("agent routes", () => {
 
     expect(json.provider).toBe("Polar");
     expect(json.merchant_of_record).toBe(true);
-    expect(json.purchase_flow.authenticated_checkout_api.url).toBe("https://mockhero.dev/api/dashboard/checkout");
+    expect(json.purchase_flow.agent_checkout_api.url).toBe("https://mockhero.dev/api/agent/checkout");
   });
 
   it("serves capabilities.json", async () => {

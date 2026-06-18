@@ -10,6 +10,7 @@ interface TierInfoProps {
 
 const tierBadgeVariant: Record<Tier, "default" | "secondary" | "outline"> = {
   free: "secondary",
+  agent: "default",
   pro: "default",
   scale: "outline",
 };

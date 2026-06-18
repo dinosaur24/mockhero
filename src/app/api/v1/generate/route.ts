@@ -21,11 +21,14 @@ import {
   internalError,
   payloadTooLargeError,
   forbiddenFeatureError,
+  serviceUnavailableError,
 } from "@/lib/api/errors";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deliverWebhook } from "@/lib/api/webhooks";
-import { TIER_LIMITS } from "@/lib/utils/constants";
+import { AGENT_USAGE_PRICING, TIER_LIMITS } from "@/lib/utils/constants";
 import { checkUsageAlerts } from "@/lib/email/usage-alerts";
+import { calculateAgentBillableRecords, recordAgentBillableUsage } from "@/lib/agent/billing";
+import { isAgentUsageBillingConfigured } from "@/lib/polar/client";
 
 // Allow up to 60s for LLM-powered content generation (blog_post, blog_comment)
 export const maxDuration = 60;
@@ -170,6 +173,18 @@ export async function POST(request: Request) {
       return response;
     }
 
+    const agentBillableRecords = user.tier === "agent" && !rateCheck.creditsUsed
+      ? calculateAgentBillableRecords({
+          dailyUsedAfter: rateCheck.dailyUsed,
+          requestedRecords: totalRecords,
+        })
+      : 0;
+
+    if (agentBillableRecords > 0 && !isAgentUsageBillingConfigured()) {
+      releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
+      return serviceUnavailableError("Agent metered billing is not configured. No billable data was generated.");
+    }
+
     // 6. Generate data (records already reserved atomically in rate limiter)
     let result: Awaited<ReturnType<typeof generate>>;
     try {
@@ -208,6 +223,21 @@ export async function POST(request: Request) {
       return internalError("Output formatting failed");
     }
 
+    if (agentBillableRecords > 0) {
+      try {
+        await recordAgentBillableUsage({
+          userId: user.user_id,
+          apiKeyId: user.api_key_id,
+          billableRecords: agentBillableRecords,
+          totalRecords,
+        });
+      } catch (err) {
+        releaseReservedRecords(user.user_id, totalRecords, rateCheck.creditsUsed).catch(() => {});
+        console.error("Agent usage billing failed:", err);
+        return serviceUnavailableError("Agent metered billing failed. No billable data was returned; retry later.");
+      }
+    }
+
     // 8. Deliver webhook (Scale tier, fire-and-forget)
     if (user.tier === "scale") {
       deliverWebhook(user.user_id, "generation.completed", {
@@ -232,6 +262,10 @@ export async function POST(request: Request) {
     // is always application/json — CSV/SQL strings are wrapped in the
     // JSON response body, not sent as raw text.
     const headers = rateLimitHeaders(rateCheck);
+    if (user.tier === "agent") {
+      headers["X-MockHero-Agent-Free-Records-Per-Day"] = String(AGENT_USAGE_PRICING.freeRecordsPerDay);
+      headers["X-MockHero-Agent-Billable-Records"] = String(agentBillableRecords);
+    }
 
     return NextResponse.json(formatted.body, { headers });
   } catch (err) {

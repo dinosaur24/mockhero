@@ -1,7 +1,7 @@
 /**
  * PATCH /api/admin/users/[id]/tier
  * Updates a user's tier. Admin only.
- * Body: { tier: 'free' | 'pro' | 'scale' }
+ * Body: { tier: 'free' | 'agent' | 'pro' | 'scale' }
  */
 
 import { NextResponse } from "next/server"
@@ -9,7 +9,7 @@ import { auth } from "@clerk/nextjs/server"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { unauthorizedError, validationError, internalError } from "@/lib/api/errors"
 
-const VALID_TIERS = ["free", "pro", "scale"]
+const VALID_TIERS = ["free", "agent", "pro", "scale"]
 
 export async function PATCH(
   request: Request,
@@ -24,7 +24,7 @@ export async function PATCH(
     const tier = body?.tier
 
     if (!tier || !VALID_TIERS.includes(tier)) {
-      return validationError("tier must be one of: free, pro, scale")
+      return validationError("tier must be one of: free, agent, pro, scale")
     }
 
     const supabase = createAdminClient()

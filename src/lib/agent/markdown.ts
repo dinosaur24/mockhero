@@ -17,7 +17,7 @@ export function renderLlmsTxt() {
 - Agent Checkout: ${p.agentCheckoutUrl}
 - Capabilities: ${p.capabilitiesUrl}
 - npm MCP Server: ${p.mcpPackage}
-- Free tier: ${p.pricing.free.recordsPerDay.toLocaleString("en-US")} records/day, no credit card required
+- Agent pricing: ${p.pricing.agent.freeRecordsPerDay.toLocaleString("en-US")} free records/day, then $${p.pricing.agent.priceUsdPer100Records} per 100 records, billed monthly through Polar
 
 ## Capabilities
 
@@ -33,12 +33,11 @@ POST ${p.apiBaseUrl}/generate
 
 ## Agent Purchase
 
-Use Polar Checkout for paid plans. Polar is the Merchant of Record for checkout, tax calculation, collection, and remittance.
+Use Polar Checkout for agent metered billing. Polar is the Merchant of Record for checkout, tax calculation, collection, and remittance.
 
 - Agent checkout instructions: ${p.agentCheckoutUrl}
-- New customers: ${p.payment.active.newCustomerUrl}
-- Existing customers: ${p.payment.active.checkoutUrl}
-- Authenticated checkout API: POST ${p.payment.active.authenticatedCheckoutApiUrl}
+- Create checkout: POST ${p.payment.active.agentCheckoutApiUrl}
+- Claim API key: POST ${p.payment.active.agentClaimApiUrl}
 - Active payment protocol: ${p.payment.active.protocols.join(", ")}
 
 ## Links
@@ -76,9 +75,9 @@ export function renderLlmsFullTxt() {
 
 ## Rate Limits
 
-- Free: ${p.pricing.free.recordsPerDay.toLocaleString("en-US")} records/day, ${p.pricing.free.recordsPerRequest} records/request, ${p.pricing.free.requestsPerMinute} req/min
-- Pro: ${p.pricing.pro.recordsPerDay.toLocaleString("en-US")} records/day, ${p.pricing.pro.recordsPerRequest.toLocaleString("en-US")} records/request, ${p.pricing.pro.requestsPerMinute} req/min
-- Scale: ${p.pricing.scale.recordsPerDay.toLocaleString("en-US")} records/day, ${p.pricing.scale.recordsPerRequest.toLocaleString("en-US")} records/request, ${p.pricing.scale.requestsPerMinute} req/min
+- Agent: ${p.pricing.agent.freeRecordsPerDay.toLocaleString("en-US")} free records/day, then $${p.pricing.agent.priceUsdPer100Records} per 100 records, billed monthly through Polar
+- Agent hard safety cap: ${p.pricing.agent.hardDailySafetyCapRecords.toLocaleString("en-US")} records/day, ${p.pricing.agent.recordsPerRequest.toLocaleString("en-US")} records/request, ${p.pricing.agent.requestsPerMinute} req/min
+- Free legacy API key: ${p.pricing.free.recordsPerDay.toLocaleString("en-US")} records/day, ${p.pricing.free.recordsPerRequest} records/request, ${p.pricing.free.requestsPerMinute} req/min
 
 ## MCP Server
 

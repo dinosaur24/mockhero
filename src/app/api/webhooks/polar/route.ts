@@ -44,13 +44,14 @@ function resolveCreditPack(data: Record<string, unknown>): CreditPack | null {
 function resolveTier(data: Record<string, unknown>): Tier {
   // Check metadata.tier (set during checkout)
   const metadata = (data.metadata ?? {}) as Record<string, string>
-  if (metadata.tier === "pro" || metadata.tier === "scale") {
+  if (metadata.tier === "agent" || metadata.tier === "pro" || metadata.tier === "scale") {
     return metadata.tier as Tier
   }
 
   // Fallback: match by product name
   const product = data.product as Record<string, unknown> | undefined
   const name = (product?.name as string ?? "").toLowerCase()
+  if (name.includes("agent")) return "agent"
   if (name.includes("scale")) return "scale"
   if (name.includes("pro")) return "pro"
 
@@ -97,11 +98,22 @@ export async function POST(req: Request) {
     const metadata = (sub.metadata ?? {}) as Record<string, string>
     const customerMetadata = (sub.customer_metadata ?? {}) as Record<string, string>
     const checkoutMeta = ((sub.checkout as Record<string, unknown>)?.metadata ?? {}) as Record<string, string>
+    const agentCheckoutId =
+      metadata.agent_checkout_id ??
+      customerMetadata.agent_checkout_id ??
+      checkoutMeta.agent_checkout_id ??
+      null
+    const agentUserId =
+      metadata.agent_user_id ??
+      customerMetadata.agent_user_id ??
+      checkoutMeta.agent_user_id ??
+      null
 
     const userId: string | null =
       metadata.user_id ??
       customerMetadata.user_id ??
       checkoutMeta.user_id ??
+      agentUserId ??
       null
 
     if (!userId) {
@@ -120,6 +132,25 @@ export async function POST(req: Request) {
       case "subscription.created":
       case "subscription.updated": {
         const product = sub.product as Record<string, unknown> | undefined
+        const polarCustomerId = (sub.customer_id as string) ?? (sub.customer as Record<string, unknown>)?.id ?? ""
+        const polarCheckoutId = (sub.checkout_id as string) ?? (sub.checkout as Record<string, unknown>)?.id ?? null
+
+        if (tier === "agent") {
+          const { error: agentProfileError } = await supabase
+            .from("profiles")
+            .upsert(
+              {
+                id: userId,
+                display_name: (sub.customer_email as string) ?? (sub.customer as Record<string, unknown>)?.email ?? userId,
+                tier: "agent",
+              },
+              { onConflict: "id" }
+            )
+
+          if (agentProfileError) {
+            console.error("[Polar webhook] Agent profile upsert failed:", agentProfileError)
+          }
+        }
 
         const { error: subError } = await supabase
           .from("subscriptions")
@@ -127,7 +158,7 @@ export async function POST(req: Request) {
             {
               user_id: userId,
               polar_subscription_id: sub.id as string,
-              polar_customer_id: (sub.customer_id as string) ?? (sub.customer as Record<string, unknown>)?.id ?? "",
+              polar_customer_id: polarCustomerId,
               product_name: (product?.name as string) ?? tier,
               status: "active",
               current_period_end: (sub.current_period_end as string) ?? null,
@@ -140,11 +171,29 @@ export async function POST(req: Request) {
           console.error("[Polar webhook] Subscription upsert failed:", subError)
         }
 
+        if (agentCheckoutId) {
+          const { error: agentCheckoutError } = await supabase
+            .from("agent_checkouts")
+            .update({
+              status: "paid",
+              polar_checkout_id: polarCheckoutId,
+              polar_customer_id: polarCustomerId,
+              polar_subscription_id: sub.id as string,
+            })
+            .eq("id", agentCheckoutId)
+
+          if (agentCheckoutError) {
+            console.error("[Polar webhook] Agent checkout update failed:", agentCheckoutError)
+          }
+        }
+
         // Upgrade profile tier
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({ tier })
-          .eq("id", userId)
+        const { error: profileError } = tier === "agent"
+          ? { error: null }
+          : await supabase
+              .from("profiles")
+              .update({ tier })
+              .eq("id", userId)
 
         if (profileError) {
           console.error("[Polar webhook] Profile tier update failed:", profileError)
@@ -153,7 +202,7 @@ export async function POST(req: Request) {
         }
 
         // Only send upgrade email on subscription.created (not .updated to avoid duplicates)
-        if (tier !== "free" && event.type === "subscription.created") {
+        if (tier !== "free" && tier !== "agent" && event.type === "subscription.created") {
           getUserEmail(userId).then((email) => {
             if (email) {
               const dailyLimit = TIER_LIMITS[tier].dailyRecords

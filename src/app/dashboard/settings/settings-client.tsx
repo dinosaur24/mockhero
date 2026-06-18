@@ -22,6 +22,7 @@ interface Props {
 
 const tierLabel: Record<Tier, string> = {
   free: "Free",
+  agent: "Agent",
   pro: "Pro",
   scale: "Scale",
 }

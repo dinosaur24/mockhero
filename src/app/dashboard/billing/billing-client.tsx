@@ -88,7 +88,7 @@ const plans: {
   },
 ]
 
-const tierRank: Record<Tier, number> = { free: 0, pro: 1, scale: 2 }
+const tierRank: Record<Tier, number> = { free: 0, agent: 2, pro: 1, scale: 2 }
 
 export default function BillingClient({ tier, credits, subscription, justUpgraded }: Props) {
   const router = useRouter()

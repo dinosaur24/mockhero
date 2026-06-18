@@ -79,20 +79,43 @@ const generateResponseSchema = {
   },
 };
 
-const checkoutRequestSchema = {
+const agentCheckoutRequestSchema = {
   type: "object",
-  required: ["tier"],
+  required: ["email"],
   properties: {
-    tier: { type: "string", enum: ["pro", "scale"] },
-    source: { type: "string", enum: ["agent"] },
+    email: { type: "string", format: "email" },
   },
 };
 
-const checkoutResponseSchema = {
+const agentCheckoutResponseSchema = {
   type: "object",
-  required: ["url"],
+  required: ["checkout_id", "url", "claim_url", "claim_token"],
   properties: {
+    checkout_id: { type: "string" },
     url: { type: "string", format: "uri", description: "Polar Checkout URL" },
+    claim_url: { type: "string", format: "uri" },
+    claim_token: { type: "string", description: "One-time token for claiming the API key after Polar confirms payment" },
+    provider: { type: "string", enum: ["Polar"] },
+    merchant_of_record: { type: "boolean" },
+  },
+};
+
+const agentClaimRequestSchema = {
+  type: "object",
+  required: ["token"],
+  properties: {
+    token: { type: "string" },
+  },
+};
+
+const agentClaimResponseSchema = {
+  type: "object",
+  required: ["api_key", "key_prefix", "tier", "usage"],
+  properties: {
+    api_key: { type: "string", description: "Shown once. Store as MOCKHERO_API_KEY." },
+    key_prefix: { type: "string" },
+    tier: { type: "string", enum: ["agent"] },
+    usage: { type: "object", additionalProperties: true },
   },
 };
 
@@ -164,21 +187,37 @@ export function buildOpenApiSpec(): OpenApiSpec {
           },
         },
       },
-      "/api/dashboard/checkout": {
+      "/api/agent/checkout": {
         post: {
-          summary: "Create a Polar checkout session",
+          summary: "Create a loginless Polar checkout session for an agent",
           description:
-            "Creates a Polar Checkout URL for Pro or Scale. Requires a signed-in MockHero web session. Polar is the Merchant of Record for checkout, tax calculation, collection, and remittance.",
-          security: [{ MockHeroWebSession: [] }],
-          requestBody: jsonBody("#/components/schemas/CheckoutRequest"),
+            "Creates a Polar Checkout URL for agent metered usage. No MockHero login is required. Polar is the Merchant of Record for checkout, tax calculation, collection, and remittance.",
+          requestBody: jsonBody("#/components/schemas/AgentCheckoutRequest"),
           responses: {
             "200": {
-              description: "Polar Checkout URL",
-              ...jsonBody("#/components/schemas/CheckoutResponse"),
+              description: "Polar Checkout URL plus one-time claim token",
+              ...jsonBody("#/components/schemas/AgentCheckoutResponse"),
             },
-            "400": { description: "Invalid tier or missing account email" },
-            "401": { description: "Signed-in MockHero web session required" },
+            "400": { description: "Invalid or missing billing email" },
             "500": { description: "Polar checkout creation failed" },
+          },
+        },
+      },
+      "/api/agent/claim": {
+        post: {
+          summary: "Claim an API key after Polar checkout is paid",
+          description:
+            "Returns a MockHero API key once the Polar webhook has marked the agent checkout as paid. The API key is shown only once.",
+          requestBody: jsonBody("#/components/schemas/AgentClaimRequest"),
+          responses: {
+            "200": {
+              description: "One-time API key response",
+              ...jsonBody("#/components/schemas/AgentClaimResponse"),
+            },
+            "400": { description: "Missing or invalid claim token" },
+            "402": { description: "Polar checkout is not paid yet" },
+            "404": { description: "Claim token not found" },
+            "409": { description: "Checkout already claimed" },
           },
         },
       },
@@ -204,18 +243,14 @@ export function buildOpenApiSpec(): OpenApiSpec {
           type: "http",
           scheme: "bearer",
         },
-        MockHeroWebSession: {
-          type: "apiKey",
-          in: "cookie",
-          name: "__session",
-          description: "Authenticated MockHero web session managed by Clerk.",
-        },
       },
       schemas: {
         GenerateRequest: generateRequestSchema,
         GenerateResponse: generateResponseSchema,
-        CheckoutRequest: checkoutRequestSchema,
-        CheckoutResponse: checkoutResponseSchema,
+        AgentCheckoutRequest: agentCheckoutRequestSchema,
+        AgentCheckoutResponse: agentCheckoutResponseSchema,
+        AgentClaimRequest: agentClaimRequestSchema,
+        AgentClaimResponse: agentClaimResponseSchema,
         HealthResponse: {
           type: "object",
           properties: {
