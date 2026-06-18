@@ -189,6 +189,31 @@ describe("POST /api/dashboard/checkout", () => {
     );
   });
 
+  it("passes agent checkout source into Polar metadata", async () => {
+    mockAuth.mockResolvedValue({ userId: "user_agent" });
+    mockClerkUsersGetUser.mockResolvedValue({
+      emailAddresses: [{ emailAddress: "agent@example.com" }],
+    });
+    mockCreateCheckoutSession.mockResolvedValue({
+      id: "checkout_agent",
+      url: "https://checkout.polar.sh/agent",
+    });
+
+    const res = await checkoutPOST(jsonRequest({ tier: "pro", source: "agent" }));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.url).toBe("https://checkout.polar.sh/agent");
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tier: "pro",
+        customerEmail: "agent@example.com",
+        userId: "user_agent",
+        checkoutSource: "agent",
+      })
+    );
+  });
+
   it("returns 500 when Polar API fails", async () => {
     mockAuth.mockResolvedValue({ userId: "user_123" });
     mockClerkUsersGetUser.mockResolvedValue({

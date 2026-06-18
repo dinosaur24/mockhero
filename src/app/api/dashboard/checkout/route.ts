@@ -21,6 +21,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
     const tier = body?.tier as Tier
+    const checkoutSource = body?.source === "agent" ? "agent" : undefined
 
     if (!tier || !ALLOWED_TIERS.includes(tier)) {
       return validationError('tier must be "pro" or "scale"')
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
       userId,
       datafastVisitorId,
       datafastSessionId,
+      checkoutSource,
     })
 
     return NextResponse.json({ url })

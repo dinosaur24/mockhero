@@ -10,5 +10,9 @@ export async function GET() {
     status: "ok",
     version: "0.1.0",
     timestamp: new Date().toISOString(),
+    checks: {
+      api: "ok",
+      database: "not_checked",
+    },
   });
 }
