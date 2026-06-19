@@ -1,0 +1,188 @@
+{
+  "$schema": "https://developers.openai.com/apps-sdk/schemas/chatgpt-app-submission.v1.json",
+  "schema_version": 1,
+  "app_info": {
+    "display_name": "MockHero",
+    "subtitle": "Generate test data",
+    "description": "MockHero helps developers and AI coding agents estimate cost, create a loginless Polar checkout, claim an API key after payment, and generate realistic synthetic JSON, CSV, or SQL test data from schemas, templates, or plain-English prompts. It is built for seed data, fixtures, demos, and QA datasets, including relational records with valid foreign keys.",
+    "category": "DEVELOPER_TOOLS"
+  },
+  "tools": {
+    "estimate_agent_usage": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Can validate a MockHero API key and update the key's last-used timestamp while computing a usage estimate.",
+        "open_world_justification": "Does not submit external forms, publish content, or change third-party systems.",
+        "destructive_justification": "Does not delete data, overwrite data, revoke access, or perform irreversible account actions."
+      }
+    },
+    "create_agent_checkout": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Creates a pending MockHero agent checkout and a Polar Checkout session for the supplied billing email.",
+        "open_world_justification": "Creates checkout state in Polar, a third-party Merchant of Record checkout system.",
+        "destructive_justification": "Does not charge the customer, delete data, revoke access, or perform an irreversible action by itself."
+      }
+    },
+    "check_agent_checkout_status": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Only looks up the private checkout status for a claim token and returns the current state.",
+        "open_world_justification": "Does not publish content, submit external forms, or update third-party systems.",
+        "destructive_justification": "Does not delete data, overwrite data, revoke access, or perform irreversible account actions."
+      }
+    },
+    "claim_agent_api_key": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Creates a private MockHero agent profile and API key, then marks the paid checkout as claimed.",
+        "open_world_justification": "Changes only MockHero private account records and does not publish or submit to third-party systems.",
+        "destructive_justification": "Provisions access rather than deleting data, revoking access, or overwriting existing API keys."
+      }
+    },
+    "generate_test_data": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Generates synthetic records and records rate-limit, usage, and billing-related activity for the authenticated API key.",
+        "open_world_justification": "Can report billable agent usage to Polar and can trigger configured generation webhooks for Scale users.",
+        "destructive_justification": "Does not delete data, overwrite user data, revoke access, or perform destructive admin actions."
+      }
+    },
+    "generate_from_template": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": true,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Generates synthetic template records and records rate-limit, usage, and billing-related activity for the authenticated API key.",
+        "open_world_justification": "Can report billable agent usage to Polar and can trigger configured generation webhooks for Scale users.",
+        "destructive_justification": "Does not delete data, overwrite user data, revoke access, or perform destructive admin actions."
+      }
+    },
+    "detect_schema": {
+      "annotations": {
+        "readOnlyHint": false,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Requires API-key validation, which updates the key's last-used timestamp before returning an inferred schema.",
+        "open_world_justification": "Does not publish content, submit external forms, or update third-party systems.",
+        "destructive_justification": "Does not delete data, overwrite data, revoke access, or perform irreversible account actions."
+      }
+    },
+    "list_field_types": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Only returns the public MockHero field type catalog without changing records.",
+        "open_world_justification": "Does not submit external forms, publish content, or change third-party systems.",
+        "destructive_justification": "Does not delete data, overwrite data, revoke access, or perform irreversible account actions."
+      }
+    },
+    "list_templates": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Only returns MockHero's public template list without changing records.",
+        "open_world_justification": "Does not submit external forms, publish content, or change third-party systems.",
+        "destructive_justification": "Does not delete data, overwrite data, revoke access, or perform irreversible account actions."
+      }
+    }
+  },
+  "test_cases": [
+    {
+      "description": "Estimate agent-plan cost before generating records.",
+      "user_prompt": "Use MockHero to estimate the cost of generating 200 user records after I already used 450 records today.",
+      "file_attachment_urls": null,
+      "tools_triggered": "estimate_agent_usage",
+      "expected_output": "Returns the daily free allowance, billable records, billable 100-record units, and estimated dollar cost.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Discover supported schema options before building test data.",
+      "user_prompt": "What MockHero field types and built-in templates can I use for realistic app seed data?",
+      "file_attachment_urls": null,
+      "tools_triggered": "list_field_types, list_templates",
+      "expected_output": "Summarizes supported field types and lists the ecommerce, blog, SaaS, and social templates.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Convert a SQL table definition into a MockHero schema.",
+      "user_prompt": "Convert this SQL into a MockHero schema: CREATE TABLE users (id uuid primary key, email text not null, created_at timestamp);",
+      "file_attachment_urls": null,
+      "tools_triggered": "detect_schema",
+      "expected_output": "Returns a MockHero schema with a users table and appropriate generated field types.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Generate relational JSON test data from a structured schema.",
+      "user_prompt": "Generate 5 users and 10 orders as JSON with valid user_id references from orders to users.",
+      "file_attachment_urls": null,
+      "tools_triggered": "generate_test_data",
+      "expected_output": "Returns generated JSON when an API key is available, or explains how to create checkout and claim a key when one is not available.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Create the loginless agent checkout and explain the claim flow.",
+      "user_prompt": "Run the MockHero agent purchase flow for buyer@example.com: create a checkout, then after I complete payment, use the returned claim token to check status and claim the API key.",
+      "file_attachment_urls": null,
+      "tools_triggered": "create_agent_checkout, check_agent_checkout_status, claim_agent_api_key",
+      "expected_output": "Creates a Polar checkout URL, checks the returned claim token, and only claims the API key after Polar marks the checkout paid.",
+      "expected_output_url": null
+    }
+  ],
+  "negative_test_cases": [
+    {
+      "description": "Do not trigger for production data anonymization requests.",
+      "user_prompt": "Anonymize this real customer export and guarantee it meets regulated de-identification requirements.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because MockHero generates synthetic test data and does not provide regulated anonymization guarantees.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for unrelated billing account management.",
+      "user_prompt": "Show me my Polar invoices and cancel my subscription.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because it can create MockHero agent checkout sessions but cannot manage Polar invoices or cancel subscriptions.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for broad application scaffolding without a mock-data request.",
+      "user_prompt": "Build me a full CRM app with authentication, dashboards, and deployment.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked unless the user specifically asks for synthetic records, fixtures, schema detection, templates, usage estimates, or MockHero checkout.",
+      "expected_output_url": null
+    }
+  ]
+}

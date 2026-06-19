@@ -263,9 +263,9 @@ const tools: ToolDefinition[] = [
     },
     outputSchema: genericObjectOutput,
     annotations: {
-      readOnlyHint: true,
+      readOnlyHint: false,
       destructiveHint: false,
-      openWorldHint: true,
+      openWorldHint: false,
     },
     run: (args, context) =>
       callMockHeroApi(context.request, "/api/agent/estimate", {
@@ -322,7 +322,7 @@ const tools: ToolDefinition[] = [
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
-      openWorldHint: true,
+      openWorldHint: false,
     },
     run: (args, context) =>
       callMockHeroApi(context.request, "/api/agent/checkout/status", {
@@ -350,7 +350,7 @@ const tools: ToolDefinition[] = [
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: false,
-      openWorldHint: true,
+      openWorldHint: false,
     },
     run: (args, context) =>
       callMockHeroApi(context.request, "/api/agent/claim", {
@@ -361,7 +361,7 @@ const tools: ToolDefinition[] = [
   {
     name: "generate_test_data",
     description:
-      "Generate realistic JSON, CSV, or SQL test data from structured tables or a plain-English prompt. Supports relational data with valid foreign keys, locale-aware names, and reproducible seeds.",
+      "Generate realistic JSON, CSV, or SQL test data from structured tables or a plain-English prompt. Requires a MockHero API key; generated records are usage-logged and agent overage can be metered through Polar.",
     inputSchema: generationSchema,
     outputSchema: genericObjectOutput,
     annotations: {
@@ -385,7 +385,7 @@ const tools: ToolDefinition[] = [
   {
     name: "generate_from_template",
     description:
-      "Generate realistic test data from a pre-built MockHero template: ecommerce, blog, saas, or social.",
+      "Generate realistic test data from a pre-built MockHero template: ecommerce, blog, saas, or social. Requires a MockHero API key; generated records are usage-logged and agent overage can be metered through Polar.",
     inputSchema: {
       type: "object",
       required: ["template"],
@@ -439,9 +439,9 @@ const tools: ToolDefinition[] = [
     },
     outputSchema: genericObjectOutput,
     annotations: {
-      readOnlyHint: true,
+      readOnlyHint: false,
       destructiveHint: false,
-      openWorldHint: true,
+      openWorldHint: false,
     },
     async run(args, context) {
       const apiKey = effectiveApiKey(context, args);
@@ -464,7 +464,7 @@ const tools: ToolDefinition[] = [
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
-      openWorldHint: true,
+      openWorldHint: false,
     },
     run: (_args, context) =>
       callMockHeroApi(context.request, "/api/v1/types", {
@@ -480,7 +480,7 @@ const tools: ToolDefinition[] = [
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
-      openWorldHint: true,
+      openWorldHint: false,
     },
     run: (_args, context) =>
       callMockHeroApi(context.request, "/api/v1/templates", {
