@@ -26,6 +26,7 @@ const isPublicRoute = createRouteMatcher([
   "/chatgpt-app.json",
   "/capabilities.json",
   "/.well-known/agent.json",
+  "/.well-known/openai-apps-challenge",
   "/sitemap.xml",
   "/robots.txt",
 ]);
