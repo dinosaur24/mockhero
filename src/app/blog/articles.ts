@@ -1977,16 +1977,20 @@ curl -X POST https://api.mockhero.dev/api/v1/generate \\
 <p>Even when agents try to use Faker.js, they have to generate the code, install dependencies, run it, and parse the output. It is a multi-step process that breaks the flow of AI-assisted development.</p>
 
 <h2>The Solution: MockHero MCP Server</h2>
-<p>The Model Context Protocol (MCP) is an open standard that lets AI agents call external tools directly. MockHero provides an MCP server that any compatible agent can use to generate realistic, relational test data without leaving the IDE. The agent describes the schema, MockHero returns the data, and the agent inserts it into your code or database.</p>
-<p>No npm installs. No seed scripts. The agent handles everything through a single tool call.</p>
+<p>The Model Context Protocol (MCP) is an open standard that lets AI agents call external tools directly. MockHero provides a hosted remote MCP endpoint and a local stdio MCP package that compatible agents can use to generate realistic, relational test data without leaving the IDE. The agent describes the schema, MockHero returns the data, and the agent inserts it into your code or database.</p>
+<p>For remote MCP clients, use <code>https://mockhero.dev/mcp/agent</code>. This endpoint includes cost estimation, loginless Polar checkout, checkout status, API key claiming, schema detection, templates, and generation tools.</p>
+<p>No seed scripts. The agent handles everything through a tool call.</p>
 
 <h2>Quick Setup</h2>
-<p>Add MockHero's MCP server to your agent's configuration:</p>
+<p>If your agent supports remote Streamable HTTP MCP, add this server URL:</p>
+<pre><code>https://mockhero.dev/mcp/agent</code></pre>
+
+<p>If your agent uses local stdio MCP configuration, add MockHero's npm MCP server:</p>
 <pre><code>{
   "mcpServers": {
     "mockhero": {
       "command": "npx",
-      "args": ["-y", "@mockhero/mcp-server"],
+      "args": ["-y", "@mockherodev/mcp-server"],
       "env": {
         "MOCKHERO_API_KEY": "mh_your_api_key"
       }
@@ -1999,8 +2003,8 @@ curl -X POST https://api.mockhero.dev/api/v1/generate \\
 <p>The agent translates this into a MockHero API call behind the scenes and gives you production-quality data instantly.</p>
 
 <h2>Step-by-Step Guide</h2>
-<h3>1. Install the MCP server</h3>
-<p>The MockHero MCP server runs via <code>npx</code>, so there is nothing to install globally. Just add the configuration block above to your AI agent's MCP settings file.</p>
+<h3>1. Connect the MCP server</h3>
+<p>Use <code>https://mockhero.dev/mcp/agent</code> for remote MCP clients. If your agent only supports local stdio servers, run the MockHero npm package via <code>npx</code> and add the configuration block above to your AI agent's MCP settings file.</p>
 
 <h3>2. Get your API key</h3>
 <p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key from the dashboard.</p>
@@ -2053,7 +2057,7 @@ curl -X POST https://api.mockhero.dev/api/v1/generate \\
   "mcpServers": {
     "mockhero": {
       "command": "npx",
-      "args": ["-y", "@mockhero/mcp-server"],
+      "args": ["-y", "@mockherodev/mcp-server"],
       "env": {
         "MOCKHERO_API_KEY": "mh_your_api_key"
       }
@@ -2116,7 +2120,7 @@ curl -X POST https://api.mockhero.dev/api/v1/generate \\
   "mcpServers": {
     "mockhero": {
       "command": "npx",
-      "args": ["-y", "@mockhero/mcp-server"],
+      "args": ["-y", "@mockherodev/mcp-server"],
       "env": {
         "MOCKHERO_API_KEY": "mh_your_api_key"
       }
@@ -2179,7 +2183,7 @@ assigned to users. Make the data realistic."</code></pre>
   "mcpServers": {
     "mockhero": {
       "command": "npx",
-      "args": ["-y", "@mockhero/mcp-server"],
+      "args": ["-y", "@mockherodev/mcp-server"],
       "env": {
         "MOCKHERO_API_KEY": "mh_your_api_key"
       }

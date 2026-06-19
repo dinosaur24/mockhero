@@ -83,15 +83,32 @@ export default function McpDocsPage() {
         <p className="text-xs sm:text-sm text-muted-foreground mt-3">
           Any MCP-compatible agent will work. The setup is the same — point it
           at <code className="text-xs bg-muted px-1.5 py-0.5 rounded">@mockherodev/mcp-server</code> with
-          your API key.
+          your API key, or use the hosted remote MCP endpoint if your agent supports Streamable HTTP.
+        </p>
+      </section>
+
+      {/* Hosted endpoint */}
+      <section>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3">Hosted Agent MCP Endpoint</h2>
+        <p className="text-muted-foreground leading-relaxed mb-3">
+          Remote MCP clients can connect directly to MockHero's full agent-first endpoint. This
+          hosted endpoint includes cost estimation, loginless Polar checkout, checkout status,
+          API key claiming, schema detection, templates, and authenticated generation.
+        </p>
+        <pre className="bg-muted rounded-lg p-3 sm:p-4 text-xs sm:text-sm font-mono overflow-x-auto">
+          <code>https://mockhero.dev/mcp/agent</code>
+        </pre>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-3">
+          ChatGPT App submission uses <code className="text-xs bg-muted px-1.5 py-0.5 rounded">https://mockhero.dev/mcp</code>.
+          Agent-first clients outside ChatGPT should use <code className="text-xs bg-muted px-1.5 py-0.5 rounded">https://mockhero.dev/mcp/agent</code>.
         </p>
       </section>
 
       {/* Install */}
       <section>
-        <h2 className="text-lg sm:text-xl font-semibold mb-3">Installation</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3">Local Stdio Installation</h2>
         <p className="text-muted-foreground mb-4">
-          You need an API key from MockHero.{" "}
+          Local stdio MCP clients need an API key from MockHero.{" "}
           <Link href="/sign-up" className="text-primary hover:underline">
             Sign up free
           </Link>{" "}
@@ -260,7 +277,12 @@ export default function McpDocsPage() {
       <section>
         <h2 className="text-lg sm:text-xl font-semibold mb-3">Available Tools</h2>
         <p className="text-muted-foreground mb-4">
-          Once installed, your AI agent can use these tools:
+          Once installed, your AI agent can use these local stdio tools. The hosted
+          <code className="text-xs bg-muted px-1.5 py-0.5 rounded mx-1">/mcp/agent</code>
+          endpoint also exposes checkout tools:
+          <code className="text-xs bg-muted px-1.5 py-0.5 rounded mx-1">create_agent_checkout</code>,
+          <code className="text-xs bg-muted px-1.5 py-0.5 rounded mx-1">check_agent_checkout_status</code>,
+          and <code className="text-xs bg-muted px-1.5 py-0.5 rounded mx-1">claim_agent_api_key</code>.
         </p>
         <div className="space-y-3 sm:space-y-4">
           {tools.map((tool) => (

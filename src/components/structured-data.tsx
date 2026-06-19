@@ -134,7 +134,7 @@ export function StructuredData() {
     {
       question: "Can I use MockHero with AI coding agents?",
       answer:
-        "Yes. MockHero provides an MCP (Model Context Protocol) server that works with Claude Desktop, Claude Code, Cursor, and other AI-powered development tools. Install it via npx @mockherodev/mcp-server.",
+        "Yes. MockHero provides an MCP (Model Context Protocol) server that works with Claude Desktop, Claude Code, Cursor, and other AI-powered development tools. Remote MCP clients can connect to https://mockhero.dev/mcp/agent, and local stdio clients can install it via npx @mockherodev/mcp-server.",
     },
     {
       question: "Is MockHero free?",

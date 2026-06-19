@@ -1223,7 +1223,7 @@ psql -d mydb -f seed.sql</code></pre>
         <li>Claude presents the data or uses it to write seed scripts, tests, etc.</li>
       </ol>
 
-      <p>The MCP server uses your API key for authentication and respects your plan's rate limits and quotas.</p>
+      <p>Remote MCP clients can connect directly to <code>https://mockhero.dev/mcp/agent</code>. That hosted endpoint includes cost estimation, loginless Polar checkout, checkout status, API key claiming, schema detection, templates, and authenticated generation. Local stdio clients can use the npm package with an API key.</p>
     `,
   },
   {
@@ -1232,15 +1232,15 @@ psql -d mydb -f seed.sql</code></pre>
     category: "mcp-server",
     tags: ["mcp", "install", "setup", "npm", "npx", "configuration", "server"],
     content: `
-      <p>The MockHero MCP server is distributed as an npm package. Install it globally or use <code>npx</code>.</p>
+      <p>Agents that support remote Streamable HTTP MCP can connect directly to <code>https://mockhero.dev/mcp/agent</code>. For local stdio MCP clients, the MockHero MCP server is distributed as an npm package. Install it globally or use <code>npx</code>.</p>
 
       <p><strong>Option 1: Global install</strong></p>
 
-<pre><code>npm install -g @mockhero/mcp-server</code></pre>
+<pre><code>npm install -g @mockherodev/mcp-server</code></pre>
 
       <p><strong>Option 2: Use npx (no install)</strong></p>
 
-<pre><code>npx @mockhero/mcp-server --api-key YOUR_API_KEY</code></pre>
+<pre><code>MOCKHERO_API_KEY=YOUR_API_KEY npx @mockherodev/mcp-server</code></pre>
 
       <p><strong>Configuration for Claude Desktop:</strong></p>
       <p>Add the following to your Claude Desktop MCP config (<code>claude_desktop_config.json</code>):</p>
@@ -1249,7 +1249,7 @@ psql -d mydb -f seed.sql</code></pre>
   "mcpServers": {
     "mockhero": {
       "command": "npx",
-      "args": ["-y", "@mockhero/mcp-server"],
+      "args": ["-y", "@mockherodev/mcp-server"],
       "env": {
         "MOCKHERO_API_KEY": "YOUR_API_KEY"
       }

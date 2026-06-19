@@ -2,6 +2,16 @@
 
 MCP server for [MockHero](https://mockhero.dev) — generate realistic test data from Claude Desktop, Cursor, Windsurf, and other AI agents.
 
+## Hosted agent endpoint
+
+Agents that support remote Streamable HTTP MCP can connect directly to:
+
+```text
+https://mockhero.dev/mcp/agent
+```
+
+The hosted endpoint includes cost estimation, loginless Polar checkout, checkout status, API key claiming, schema detection, templates, and authenticated data generation.
+
 ## Setup
 
 ### Claude Desktop

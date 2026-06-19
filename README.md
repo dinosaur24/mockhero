@@ -69,7 +69,17 @@ Available: `ecommerce`, `blog`, `saas`, `social`
 
 ## MCP server
 
-Use MockHero from AI agents via the Model Context Protocol:
+Use MockHero from AI agents via the Model Context Protocol.
+
+Hosted remote MCP endpoint for agent-first clients:
+
+```text
+https://mockhero.dev/mcp/agent
+```
+
+This endpoint exposes estimate, loginless Polar checkout, checkout status, API key claim, schema detection, templates, and generation tools.
+
+Local stdio MCP server for agents that run npm packages:
 
 ```bash
 npm install -g @mockherodev/mcp-server
