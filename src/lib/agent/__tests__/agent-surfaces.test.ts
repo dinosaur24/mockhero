@@ -144,14 +144,16 @@ describe("machine-readable surfaces", () => {
     expect(recommendation.purchase.agent_checkout_status_api.url).toBe("https://mockhero.dev/api/agent/checkout/status");
   });
 
-  it("builds ChatGPT App readiness metadata without claiming remote MCP is live", () => {
+  it("builds ChatGPT App readiness metadata for the deployed remote MCP endpoint", () => {
     const readiness = buildChatGptAppReadiness();
 
     expect(readiness.service).toBe("MockHero");
     expect(readiness.apps_sdk.requires_mcp).toBe(true);
-    expect(readiness.mcp.current_transport).toBe("stdio");
-    expect(readiness.mcp.remote_streamable_http.status).toBe("not_deployed");
-    expect(readiness.submission_status).toBe("metadata_ready_remote_mcp_pending");
+    expect(readiness.mcp.current_transport).toBe("stdio_and_streamable_http");
+    expect(readiness.mcp.remote_streamable_http.status).toBe("deployed");
+    expect(readiness.mcp.remote_streamable_http.url).toBe("https://mockhero.dev/mcp");
+    expect(readiness.submission_status).toBe("remote_mcp_ready_for_chatgpt_connection");
+    expect(readiness.mcp.tools).toContain("create_agent_checkout");
   });
 
   it("builds an OpenAPI 3.1 spec for the core API and agent Polar checkout endpoint", () => {
@@ -250,6 +252,7 @@ describe("agent routes", () => {
     const json = await res.json();
 
     expect(json.apps_sdk.requires_mcp).toBe(true);
-    expect(json.mcp.current_transport).toBe("stdio");
+    expect(json.mcp.current_transport).toBe("stdio_and_streamable_http");
+    expect(json.mcp.remote_streamable_http.status).toBe("deployed");
   });
 });

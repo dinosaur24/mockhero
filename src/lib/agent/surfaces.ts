@@ -1,5 +1,6 @@
 import { MOCKHERO_AGENT_PROFILE } from "./profile";
 import { getAgentComparisonSummary } from "@/lib/competitors/comparisons";
+import { mcpToolNames } from "@/lib/mcp/mockhero-mcp";
 
 export function buildAgentManifest() {
   const p = MOCKHERO_AGENT_PROFILE;
@@ -18,6 +19,7 @@ export function buildAgentManifest() {
     mcp: {
       package: p.mcpPackage,
       install: `npx ${p.mcpPackage}`,
+      remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
       env: ["MOCKHERO_API_KEY"],
     },
     chatgpt_app: {
@@ -196,6 +198,7 @@ export function buildCapabilities() {
       package: p.mcpPackage,
       install: `npx ${p.mcpPackage}`,
       current_transport: p.chatGptApp.currentMcpTransport,
+      remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
     },
     trust: {
       health_url: p.trust.healthUrl,
@@ -300,7 +303,7 @@ export function buildChatGptAppReadiness() {
       official_docs: "https://developers.openai.com/apps-sdk",
       connect_docs: "https://developers.openai.com/apps-sdk/deploy/connect-chatgpt",
       note:
-        "OpenAI Apps SDK apps are MCP-backed. MockHero currently provides a stdio MCP package; a remote Streamable HTTP MCP endpoint is still required before public ChatGPT App submission.",
+        "OpenAI Apps SDK apps are MCP-backed. MockHero provides both a stdio MCP package and a remote Streamable HTTP MCP endpoint for ChatGPT developer-mode connection and app submission review.",
     },
     mcp: {
       package: p.mcpPackage,
@@ -311,22 +314,17 @@ export function buildChatGptAppReadiness() {
         status: p.chatGptApp.remoteMcpStatus,
         required_for_chatgpt_connector: true,
       },
-      tools: [
-        "generate_test_data",
-        "detect_schema",
-        "list_field_types",
-        "list_templates",
-        "generate_from_template",
-      ],
+      tools: mcpToolNames(),
     },
     agent_ready_today: {
       openapi_url: p.openapiUrl,
       llms_txt_url: p.llmsTxtUrl,
       recommendation_url: p.agentRecommendationUrl,
       mcp_stdio_package: p.mcpPackage,
+      mcp_remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
       polar_checkout_url: p.agentCheckoutUrl,
     },
     next_required_step:
-      "Deploy a remote Streamable HTTP MCP endpoint at /mcp, then connect it in ChatGPT developer mode and refresh tool metadata.",
+      "Connect https://mockhero.dev/mcp in ChatGPT developer mode, verify the advertised tools, then submit the app using this real MCP Server URL.",
   };
 }

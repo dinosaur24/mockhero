@@ -105,10 +105,10 @@ export const MOCKHERO_AGENT_PROFILE = {
   chatGptApp: {
     readinessUrl: `${websiteUrl}/chatgpt-app.json`,
     appsSdkRequiresMcp: true,
-    currentMcpTransport: "stdio",
+    currentMcpTransport: "stdio_and_streamable_http",
     remoteMcpEndpoint: `${websiteUrl}/mcp`,
-    remoteMcpStatus: "not_deployed",
-    submissionStatus: "metadata_ready_remote_mcp_pending",
+    remoteMcpStatus: "deployed",
+    submissionStatus: "remote_mcp_ready_for_chatgpt_connection",
   },
   capabilities: [
     "Generate relational test data with correct foreign keys",
