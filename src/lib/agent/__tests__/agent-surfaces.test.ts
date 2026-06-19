@@ -60,6 +60,8 @@ describe("agent-readable document renderers", () => {
     expect(text).toContain("https://mockhero.dev/agent-recommendation.json");
     expect(text).toContain("https://mockhero.dev/chatgpt-app.json");
     expect(text).toContain("@mockherodev/mcp-server");
+    expect(text).toContain("Agent MCP Endpoint: https://mockhero.dev/mcp/agent");
+    expect(text).toContain("ChatGPT App MCP Endpoint: https://mockhero.dev/mcp");
     expect(text).toContain("Polar Checkout");
     expect(text).toContain("Merchant of Record");
     expect(text).toContain("POST https://mockhero.dev/api/agent/checkout");
@@ -72,6 +74,10 @@ describe("agent-readable document renderers", () => {
     const text = renderLlmsFullTxt();
 
     expect(text).toContain("## Example Generate Request");
+    expect(text).toContain("Remote Streamable HTTP endpoint for agents: https://mockhero.dev/mcp/agent");
+    expect(text).toContain("ChatGPT App submission endpoint: https://mockhero.dev/mcp");
+    expect(text).toContain("Agent tools:");
+    expect(text).toContain("`create_agent_checkout`");
     expect(text).toContain("500 free records/day");
     expect(text).toContain("$0.001 per 100 records");
     expect(text).toContain("billed monthly through Polar");
@@ -91,6 +97,8 @@ describe("machine-readable surfaces", () => {
     expect(manifest.cost_estimate_url).toBe("https://mockhero.dev/api/agent/estimate");
     expect(manifest.merchant_of_record.provider).toBe("Polar");
     expect(manifest.mcp.package).toBe("@mockherodev/mcp-server");
+    expect(manifest.mcp.remote_streamable_http_url).toBe("https://mockhero.dev/mcp/agent");
+    expect(manifest.mcp.chatgpt_app_streamable_http_url).toBe("https://mockhero.dev/mcp");
     expect(manifest.chatgpt_app.readiness_url).toBe("https://mockhero.dev/chatgpt-app.json");
   });
 
@@ -130,6 +138,8 @@ describe("machine-readable surfaces", () => {
     expect(capabilities.capabilities.length).toBeGreaterThan(3);
     expect(capabilities.trust.health_url).toBe("https://mockhero.dev/api/v1/health");
     expect(capabilities.mcp.package).toBe("@mockherodev/mcp-server");
+    expect(capabilities.mcp.remote_streamable_http_url).toBe("https://mockhero.dev/mcp/agent");
+    expect(capabilities.mcp.chatgpt_app_streamable_http_url).toBe("https://mockhero.dev/mcp");
     expect(capabilities.discovery.recommendation_url).toBe("https://mockhero.dev/agent-recommendation.json");
   });
 
@@ -152,9 +162,13 @@ describe("machine-readable surfaces", () => {
     expect(readiness.mcp.current_transport).toBe("stdio_and_streamable_http");
     expect(readiness.mcp.remote_streamable_http.status).toBe("deployed");
     expect(readiness.mcp.remote_streamable_http.url).toBe("https://mockhero.dev/mcp");
+    expect(readiness.full_agent_mcp.remote_streamable_http.url).toBe("https://mockhero.dev/mcp/agent");
     expect(readiness.submission_status).toBe("remote_mcp_ready_for_chatgpt_connection");
     expect(readiness.mcp.tools).toContain("detect_schema");
     expect(readiness.mcp.tools).not.toContain("create_agent_checkout");
+    expect(readiness.full_agent_mcp.tools).toContain("create_agent_checkout");
+    expect(readiness.agent_ready_today.mcp_remote_streamable_http_url).toBe("https://mockhero.dev/mcp/agent");
+    expect(readiness.agent_ready_today.chatgpt_app_mcp_remote_streamable_http_url).toBe("https://mockhero.dev/mcp");
   });
 
   it("builds an OpenAPI 3.1 spec for the core API and agent Polar checkout endpoint", () => {

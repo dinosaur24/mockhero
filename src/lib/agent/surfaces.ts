@@ -19,7 +19,8 @@ export function buildAgentManifest() {
     mcp: {
       package: p.mcpPackage,
       install: `npx ${p.mcpPackage}`,
-      remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
+      remote_streamable_http_url: p.agentMcp.remoteMcpEndpoint,
+      chatgpt_app_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
       env: ["MOCKHERO_API_KEY"],
     },
     chatgpt_app: {
@@ -198,7 +199,8 @@ export function buildCapabilities() {
       package: p.mcpPackage,
       install: `npx ${p.mcpPackage}`,
       current_transport: p.chatGptApp.currentMcpTransport,
-      remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
+      remote_streamable_http_url: p.agentMcp.remoteMcpEndpoint,
+      chatgpt_app_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
     },
     trust: {
       health_url: p.trust.healthUrl,
@@ -316,12 +318,21 @@ export function buildChatGptAppReadiness() {
       },
       tools: mcpToolNames(),
     },
+    full_agent_mcp: {
+      remote_streamable_http: {
+        url: p.agentMcp.remoteMcpEndpoint,
+        status: p.agentMcp.remoteMcpStatus,
+      },
+      tools: mcpToolNames("agent"),
+      note: p.agentMcp.purpose,
+    },
     agent_ready_today: {
       openapi_url: p.openapiUrl,
       llms_txt_url: p.llmsTxtUrl,
       recommendation_url: p.agentRecommendationUrl,
       mcp_stdio_package: p.mcpPackage,
-      mcp_remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
+      mcp_remote_streamable_http_url: p.agentMcp.remoteMcpEndpoint,
+      chatgpt_app_mcp_remote_streamable_http_url: p.chatGptApp.remoteMcpEndpoint,
       polar_checkout_url: p.agentCheckoutUrl,
     },
     next_required_step:

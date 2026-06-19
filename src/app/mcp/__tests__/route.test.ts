@@ -49,7 +49,7 @@ describe("POST /mcp", () => {
       },
     });
     expect(body.result.instructions).toMatch(/estimate/i);
-    expect(body.result.instructions).toContain("Generation requires a MockHero API key");
+    expect(body.result.instructions).toContain("generate small free previews");
   });
 
   it("lists submission-safe tools for ChatGPT", async () => {
@@ -154,7 +154,7 @@ describe("POST /mcp", () => {
     expect(body.result.structuredContent.data.users[0].id).toBe("u1");
   });
 
-  it("returns a tool-level auth error before generating without an API key", async () => {
+  it("generates small schema-based previews without an API key", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
 
     const res = await POST(
@@ -174,9 +174,58 @@ describe("POST /mcp", () => {
 
     expect(res.status).toBe(200);
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(body.result.isError).toBeUndefined();
+    expect(body.result.structuredContent.data.users).toHaveLength(1);
+    expect(body.result.structuredContent.meta.total_records).toBe(1);
+  });
+
+  it("requires an API key for anonymous prompt-based generation", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const res = await POST(
+      rpcRequest({
+        jsonrpc: "2.0",
+        id: 4,
+        method: "tools/call",
+        params: {
+          name: "generate_test_data",
+          arguments: {
+            prompt: "Generate 5 users with realistic email addresses.",
+          },
+        },
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(body.result.isError).toBe(true);
-    expect(body.result.content[0].text).toContain("MockHero API key");
+    expect(body.result.content[0].text).toContain("explicit table schemas");
     expect(body.result.content[0].text).not.toContain("create_agent_checkout");
+  });
+
+  it("enforces the anonymous generation record cap", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const res = await POST(
+      rpcRequest({
+        jsonrpc: "2.0",
+        id: "cap",
+        method: "tools/call",
+        params: {
+          name: "generate_test_data",
+          arguments: {
+            tables: [{ name: "users", count: 101, fields: [{ name: "id", type: "uuid" }] }],
+          },
+        },
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(body.result.isError).toBe(true);
+    expect(body.result.structuredContent.details.free_record_limit).toBe(100);
   });
 
   it("detects schema without a MockHero API key", async () => {

@@ -21,7 +21,8 @@ export function renderLlmsTxt() {
 - ChatGPT App Readiness: ${p.chatGptAppUrl}
 - Capabilities: ${p.capabilitiesUrl}
 - npm MCP Server: ${p.mcpPackage}
-- Remote MCP Endpoint: ${p.chatGptApp.remoteMcpEndpoint}
+- Agent MCP Endpoint: ${p.agentMcp.remoteMcpEndpoint}
+- ChatGPT App MCP Endpoint: ${p.chatGptApp.remoteMcpEndpoint}
 - Agent pricing: ${p.pricing.agent.freeRecordsPerDay.toLocaleString("en-US")} free records/day, then $${p.pricing.agent.priceUsdPer100Records} per 100 records, billed monthly through Polar
 
 ## Capabilities
@@ -96,13 +97,17 @@ Use this before generation. Authentication is optional. If the agent includes a 
 
 ## MCP Server
 
-Remote Streamable HTTP endpoint for ChatGPT and hosted MCP clients: ${p.chatGptApp.remoteMcpEndpoint}
+Remote Streamable HTTP endpoint for agents: ${p.agentMcp.remoteMcpEndpoint}
+
+ChatGPT App submission endpoint: ${p.chatGptApp.remoteMcpEndpoint}
 
 Install: \`npx ${p.mcpPackage}\`
 
 Environment variable: \`MOCKHERO_API_KEY=mh_your_key\`
 
-Tools: ${mcpToolNames().map((tool) => `\`${tool}\``).join(", ")}
+Agent tools: ${mcpToolNames("agent").map((tool) => `\`${tool}\``).join(", ")}
+
+ChatGPT App tools: ${mcpToolNames().map((tool) => `\`${tool}\``).join(", ")}
 
 ## ChatGPT App Readiness
 

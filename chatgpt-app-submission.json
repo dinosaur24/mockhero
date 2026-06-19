@@ -4,7 +4,7 @@
   "app_info": {
     "display_name": "MockHero",
     "subtitle": "Generate test data",
-    "description": "MockHero helps developers and AI coding agents estimate synthetic test-data usage, inspect supported field types and templates, convert SQL or sample JSON into schemas, and generate realistic synthetic JSON, CSV, or SQL test data when a MockHero API key is configured. It is built for seed data, fixtures, demos, and QA datasets, including relational records with valid foreign keys.",
+    "description": "MockHero helps developers and AI coding agents estimate synthetic test-data usage, inspect supported field types and templates, convert SQL or sample JSON into schemas, and generate realistic synthetic JSON, CSV, or SQL test data. Small schema and template previews work without login, while larger requests and plain-English prompt generation use a configured MockHero API key. It is built for seed data, fixtures, demos, and QA datasets, including relational records with valid foreign keys.",
     "category": "DEVELOPER_TOOLS"
   },
   "tools": {
@@ -27,8 +27,8 @@
         "destructiveHint": false
       },
       "justifications": {
-        "read_only_justification": "Generates synthetic records and records rate-limit, usage, and billing-related activity for the authenticated API key.",
-        "open_world_justification": "Can report billable agent usage to Polar and can trigger configured generation webhooks for Scale users.",
+        "read_only_justification": "Free previews compute synthetic records only, while authenticated generation records rate-limit, usage, and billing-related activity for the API key.",
+        "open_world_justification": "Authenticated generation can report billable agent usage to Polar and can trigger configured generation webhooks for Scale users.",
         "destructive_justification": "Does not delete data, overwrite user data, revoke access, or perform destructive admin actions."
       }
     },
@@ -39,8 +39,8 @@
         "destructiveHint": false
       },
       "justifications": {
-        "read_only_justification": "Generates synthetic template records and records rate-limit, usage, and billing-related activity for the authenticated API key.",
-        "open_world_justification": "Can report billable agent usage to Polar and can trigger configured generation webhooks for Scale users.",
+        "read_only_justification": "Free template previews compute synthetic records only, while authenticated generation records rate-limit, usage, and billing-related activity for the API key.",
+        "open_world_justification": "Authenticated template generation can report billable agent usage to Polar and can trigger configured generation webhooks for Scale users.",
         "destructive_justification": "Does not delete data, overwrite user data, revoke access, or perform destructive admin actions."
       }
     },
@@ -107,19 +107,19 @@
       "expected_output_url": null
     },
     {
-      "description": "Generate relational JSON test data from a structured schema.",
-      "user_prompt": "Generate 5 users and 10 orders as JSON with valid user_id references from orders to users.",
+      "description": "Generate a small free JSON preview from a structured schema.",
+      "user_prompt": "Use MockHero to generate 5 users and 10 orders as JSON with valid user_id references from orders to users.",
       "file_attachment_urls": null,
       "tools_triggered": "generate_test_data",
-      "expected_output": "Returns generated JSON when a MockHero API key is configured by the MCP client, or explains that generation requires a configured API key.",
+      "expected_output": "Returns generated JSON directly because the explicit structured schema is under the free 100-record preview limit.",
       "expected_output_url": null
     },
     {
-      "description": "Generate from a built-in template when authenticated.",
-      "user_prompt": "Use the MockHero SaaS template to generate JSON seed data for a small SaaS demo.",
+      "description": "Generate a small free preview from a built-in template.",
+      "user_prompt": "Use the MockHero SaaS template at a small scale to generate JSON seed data for a tiny SaaS demo.",
       "file_attachment_urls": null,
       "tools_triggered": "generate_from_template",
-      "expected_output": "Returns generated template data when a MockHero API key is configured by the MCP client, or explains that template generation requires a configured API key.",
+      "expected_output": "Returns generated template data directly when the scaled request is under the free 100-record preview limit.",
       "expected_output_url": null
     }
   ],

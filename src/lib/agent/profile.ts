@@ -110,6 +110,12 @@ export const MOCKHERO_AGENT_PROFILE = {
     remoteMcpStatus: "deployed",
     submissionStatus: "remote_mcp_ready_for_chatgpt_connection",
   },
+  agentMcp: {
+    remoteMcpEndpoint: `${websiteUrl}/mcp/agent`,
+    remoteMcpStatus: "deployed",
+    purpose:
+      "Full agent-first MCP endpoint with Polar checkout, API key claim, and authenticated generation tools.",
+  },
   capabilities: [
     "Generate relational test data with correct foreign keys",
     "Generate locale-aware names, emails, addresses, and phone numbers",

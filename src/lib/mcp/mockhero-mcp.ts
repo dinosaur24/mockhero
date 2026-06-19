@@ -1,3 +1,17 @@
+import { generate } from "@/lib/engine/generator";
+import { formatOutput } from "@/lib/engine/formatters";
+import { parseSchema } from "@/lib/engine/schema-parser";
+import { generateFromTemplate } from "@/lib/engine/templates";
+import {
+  SUPPORTED_FORMATS,
+  SUPPORTED_LOCALES,
+  SUPPORTED_SQL_DIALECTS,
+  type GenerateRequest,
+  type Locale,
+  type OutputFormat,
+  type SqlDialect,
+} from "@/lib/engine/types";
+
 const MOCKHERO_VERSION = "0.1.0";
 const LATEST_PROTOCOL_VERSION = "2025-11-25";
 const SUPPORTED_PROTOCOL_VERSIONS = new Set([
@@ -27,7 +41,10 @@ type ToolResult = {
 type ToolContext = {
   request: Request;
   apiKey: string | null;
+  surface: McpSurface;
 };
+
+type McpSurface = "chatgpt" | "agent";
 
 type ToolDescriptor = {
   name: string;
@@ -46,6 +63,12 @@ const numberSchema = { type: "number" } as const;
 const integerSchema = { type: "integer", minimum: 1 } as const;
 const booleanSchema = { type: "boolean" } as const;
 const jsonObjectSchema = { type: "object", additionalProperties: true } as const;
+const apiKeySchema = {
+  type: "string",
+  description:
+    "Optional MockHero API key for no-auth MCP clients. Prefer the Authorization header when the client supports it.",
+} as const;
+
 const fieldSchema = {
   type: "object",
   required: ["name", "type"],
@@ -86,10 +109,56 @@ const generationSchema = {
   additionalProperties: false,
 };
 
+const estimateSchema = {
+  type: "object",
+  properties: {
+    ...generationSchema.properties,
+    template: { type: "string", enum: ["ecommerce", "blog", "saas", "social"] },
+    scale: {
+      type: "number",
+      description: "Multiplier for template record counts.",
+    },
+    estimated_records: {
+      type: "integer",
+      minimum: 1,
+      description: "Required for prompt estimates because this tool does not run prompt-to-schema conversion.",
+    },
+    daily_used_before: {
+      type: "integer",
+      minimum: 0,
+      description: "Optional assumption when no API key is supplied.",
+    },
+  },
+  anyOf: [
+    { required: ["tables"] },
+    { required: ["template"] },
+    { required: ["prompt", "estimated_records"] },
+  ],
+  additionalProperties: false,
+};
+
+const agentGenerationSchema = {
+  ...generationSchema,
+  properties: {
+    ...generationSchema.properties,
+    api_key: apiKeySchema,
+  },
+};
+
+const agentEstimateSchema = {
+  ...estimateSchema,
+  properties: {
+    ...estimateSchema.properties,
+    api_key: apiKeySchema,
+  },
+};
+
 const genericObjectOutput = {
   type: "object",
   additionalProperties: true,
 };
+
+const ANONYMOUS_MCP_RECORD_LIMIT = 100;
 
 function originFromRequest(request: Request): string {
   const configured =
@@ -114,6 +183,22 @@ function extractApiKey(request: Request): string | null {
 
   const match = authorization.match(/^Bearer\s+(.+)$/i);
   return match ? match[1].trim() : null;
+}
+
+function apiKeyFromArgs(args: Record<string, unknown>): string | null {
+  return typeof args.api_key === "string" && args.api_key.trim() ? args.api_key.trim() : null;
+}
+
+function effectiveApiKey(context: ToolContext, args: Record<string, unknown>): string | null {
+  return context.apiKey ?? (context.surface === "agent" ? apiKeyFromArgs(args) : null);
+}
+
+function withoutMcpOnlyArgs(args: Record<string, unknown>): Record<string, unknown> {
+  if (!("api_key" in args)) return args;
+
+  const rest = { ...args };
+  delete rest.api_key;
+  return rest;
 }
 
 async function readJson(response: Response): Promise<unknown> {
@@ -159,12 +244,110 @@ function errorToolResult(message: string, data?: unknown): ToolResult {
   };
 }
 
-function requireApiKey(toolName: string, apiKey: string | null): ToolResult | null {
+function requireAgentApiKey(toolName: string, apiKey: string | null): ToolResult | null {
   if (apiKey) return null;
 
   return errorToolResult(
-    `${toolName} requires a MockHero API key configured by the MCP client. Retry with Authorization: Bearer mh_YOUR_API_KEY when your client supports authenticated MCP requests.`
+    `${toolName} requires a MockHero API key. Use create_agent_checkout to start a loginless Polar checkout, then claim_agent_api_key after payment and retry with Authorization: Bearer mh_YOUR_API_KEY or the api_key tool argument.`
   );
+}
+
+function totalRecords(request: GenerateRequest): number {
+  return request.tables.reduce((sum, table) => sum + table.count, 0);
+}
+
+function anonymousLimitError(records: number): ToolResult | null {
+  if (records <= ANONYMOUS_MCP_RECORD_LIMIT) return null;
+
+  return errorToolResult(
+    `Free ChatGPT generation is limited to ${ANONYMOUS_MCP_RECORD_LIMIT} records per request. Configure a MockHero API key for larger generations.`,
+    { requested_records: records, free_record_limit: ANONYMOUS_MCP_RECORD_LIMIT }
+  );
+}
+
+function supportedLocale(value: unknown): Locale | undefined {
+  return typeof value === "string" && SUPPORTED_LOCALES.includes(value as Locale)
+    ? (value as Locale)
+    : undefined;
+}
+
+function supportedFormat(value: unknown): OutputFormat | undefined {
+  return typeof value === "string" && SUPPORTED_FORMATS.includes(value as OutputFormat)
+    ? (value as OutputFormat)
+    : undefined;
+}
+
+function supportedSqlDialect(value: unknown): SqlDialect | undefined {
+  return typeof value === "string" && SUPPORTED_SQL_DIALECTS.includes(value as SqlDialect)
+    ? (value as SqlDialect)
+    : undefined;
+}
+
+async function runEngineGeneration(request: GenerateRequest): Promise<ToolResult> {
+  const generated = await generate(request);
+  if (!generated.success) {
+    if ("cycle" in generated) {
+      return errorToolResult("Generation failed because the schema has a circular dependency.", {
+        cycle: generated.cycle,
+      });
+    }
+
+    return errorToolResult("Generation failed because the schema is invalid.", {
+      errors: generated.errors,
+    });
+  }
+
+  const formatted = formatOutput(
+    generated.result,
+    request.tables,
+    request.format ?? "json",
+    request.sql_dialect
+  );
+
+  return textResult(formatted.body);
+}
+
+async function runAnonymousSchemaGeneration(args: Record<string, unknown>): Promise<ToolResult> {
+  if (typeof args.prompt === "string" && !args.tables) {
+    return errorToolResult(
+      "Free ChatGPT generation supports explicit table schemas only. Configure a MockHero API key for plain-English prompt generation."
+    );
+  }
+
+  const parsed = parseSchema(args);
+  if (!parsed.success) {
+    return errorToolResult("Schema validation failed.", { errors: parsed.errors });
+  }
+
+  const limitError = anonymousLimitError(totalRecords(parsed.data));
+  if (limitError) return limitError;
+
+  return runEngineGeneration(parsed.data);
+}
+
+async function runAnonymousTemplateGeneration(args: Record<string, unknown>): Promise<ToolResult> {
+  if (typeof args.template !== "string") {
+    return errorToolResult("template is required.");
+  }
+
+  let request: GenerateRequest;
+  try {
+    request = generateFromTemplate({
+      template: args.template,
+      scale: typeof args.scale === "number" ? args.scale : 0.05,
+      locale: supportedLocale(args.locale),
+      format: supportedFormat(args.format),
+      sql_dialect: supportedSqlDialect(args.sql_dialect),
+      seed: typeof args.seed === "number" ? args.seed : undefined,
+    });
+  } catch (err) {
+    return errorToolResult(err instanceof Error ? err.message : "Unknown template error");
+  }
+
+  const limitError = anonymousLimitError(totalRecords(request));
+  if (limitError) return limitError;
+
+  return runEngineGeneration(request);
 }
 
 async function callMockHeroApi(
@@ -217,27 +400,12 @@ async function callMockHeroApi(
   return textResult(data);
 }
 
-const tools: ToolDefinition[] = [
+const chatGptTools: ToolDefinition[] = [
   {
     name: "estimate_agent_usage",
     description:
       "Estimate MockHero agent-plan cost before generating data. No login or API key is required; authenticated MCP requests use actual daily usage when available.",
-    inputSchema: {
-      ...generationSchema,
-      properties: {
-        ...generationSchema.properties,
-        estimated_records: {
-          type: "integer",
-          minimum: 1,
-          description: "Required for prompt estimates because this tool does not run prompt-to-schema conversion.",
-        },
-        daily_used_before: {
-          type: "integer",
-          minimum: 0,
-          description: "Optional assumption when no API key is supplied.",
-        },
-      },
-    },
+    inputSchema: estimateSchema,
     outputSchema: genericObjectOutput,
     annotations: {
       readOnlyHint: false,
@@ -254,7 +422,7 @@ const tools: ToolDefinition[] = [
   {
     name: "generate_test_data",
     description:
-      "Generate realistic JSON, CSV, or SQL test data from structured tables or a plain-English prompt. Requires a MockHero API key; generated records are usage-logged and agent overage can be metered through Polar.",
+      "Generate realistic JSON, CSV, or SQL test data. Explicit table schemas up to 100 records can run free without login; plain-English prompt generation, larger requests, and authenticated usage require a MockHero API key configured by the MCP client.",
     inputSchema: generationSchema,
     outputSchema: genericObjectOutput,
     annotations: {
@@ -265,8 +433,7 @@ const tools: ToolDefinition[] = [
     },
     async run(args, context) {
       const apiKey = context.apiKey;
-      const missing = requireApiKey("generate_test_data", apiKey);
-      if (missing) return missing;
+      if (!apiKey) return runAnonymousSchemaGeneration(args);
 
       return callMockHeroApi(context.request, "/api/v1/generate", {
         method: "POST",
@@ -278,13 +445,18 @@ const tools: ToolDefinition[] = [
   {
     name: "generate_from_template",
     description:
-      "Generate realistic test data from a pre-built MockHero template: ecommerce, blog, saas, or social. Requires a MockHero API key; generated records are usage-logged and agent overage can be metered through Polar.",
+      "Generate realistic test data from a pre-built MockHero template: ecommerce, blog, saas, or social. Small template previews up to 100 records can run free without login; larger or authenticated usage requires a MockHero API key configured by the MCP client.",
     inputSchema: {
       type: "object",
       required: ["template"],
       properties: {
         template: { type: "string", enum: ["ecommerce", "blog", "saas", "social"] },
-        scale: { type: "number", default: 1 },
+        scale: {
+          type: "number",
+          default: 0.05,
+          description:
+            "Multiplier for template record counts. Free ChatGPT generation is capped at 100 records.",
+        },
         locale: textSchema,
         format: { type: "string", enum: ["json", "csv", "sql"], default: "json" },
         sql_dialect: { type: "string", enum: ["postgres", "mysql", "sqlite"] },
@@ -301,8 +473,7 @@ const tools: ToolDefinition[] = [
     },
     async run(args, context) {
       const apiKey = context.apiKey;
-      const missing = requireApiKey("generate_from_template", apiKey);
-      if (missing) return missing;
+      if (!apiKey) return runAnonymousTemplateGeneration(args);
 
       return callMockHeroApi(context.request, "/api/v1/generate", {
         method: "POST",
@@ -374,7 +545,178 @@ const tools: ToolDefinition[] = [
   },
 ];
 
-const toolByName = new Map(tools.map((tool) => [tool.name, tool]));
+const agentTools: ToolDefinition[] = [
+  {
+    name: "estimate_agent_usage",
+    description:
+      "Estimate MockHero agent-plan cost before generating data. No login or API key is required; include an API key only when you want the estimate to use actual daily usage.",
+    inputSchema: agentEstimateSchema,
+    outputSchema: genericObjectOutput,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      openWorldHint: false,
+    },
+    run: (args, context) =>
+      callMockHeroApi(context.request, "/api/agent/estimate", {
+        method: "POST",
+        body: withoutMcpOnlyArgs(args),
+        apiKey: effectiveApiKey(context, args),
+      }),
+  },
+  {
+    name: "create_agent_checkout",
+    description:
+      "Create a loginless Polar Checkout URL for MockHero's metered agent plan. Polar is the Merchant of Record for checkout, tax collection, and remittance.",
+    inputSchema: {
+      type: "object",
+      required: ["email"],
+      properties: {
+        email: {
+          type: "string",
+          format: "email",
+          description: "Billing email for the agent or the agent operator.",
+        },
+      },
+      additionalProperties: false,
+    },
+    outputSchema: genericObjectOutput,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
+    run: (args, context) =>
+      callMockHeroApi(context.request, "/api/agent/checkout", {
+        method: "POST",
+        body: args,
+      }),
+  },
+  {
+    name: "check_agent_checkout_status",
+    description:
+      "Poll a Polar checkout created by create_agent_checkout using the returned claim_token.",
+    inputSchema: {
+      type: "object",
+      required: ["token"],
+      properties: {
+        token: {
+          type: "string",
+          description: "claim_token returned by create_agent_checkout.",
+        },
+      },
+      additionalProperties: false,
+    },
+    outputSchema: genericObjectOutput,
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      openWorldHint: false,
+    },
+    run: (args, context) =>
+      callMockHeroApi(context.request, "/api/agent/checkout/status", {
+        method: "POST",
+        body: args,
+      }),
+  },
+  {
+    name: "claim_agent_api_key",
+    description:
+      "Claim the MockHero API key after Polar marks the loginless agent checkout as paid. The key is returned once.",
+    inputSchema: {
+      type: "object",
+      required: ["token"],
+      properties: {
+        token: {
+          type: "string",
+          description: "claim_token returned by create_agent_checkout.",
+        },
+      },
+      additionalProperties: false,
+    },
+    outputSchema: genericObjectOutput,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+    },
+    run: (args, context) =>
+      callMockHeroApi(context.request, "/api/agent/claim", {
+        method: "POST",
+        body: args,
+      }),
+  },
+  {
+    name: "generate_test_data",
+    description:
+      "Generate realistic JSON, CSV, or SQL test data from structured tables or a plain-English prompt. Requires a MockHero API key; generated records are usage-logged and agent overage can be metered through Polar.",
+    inputSchema: agentGenerationSchema,
+    outputSchema: genericObjectOutput,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
+    async run(args, context) {
+      const apiKey = effectiveApiKey(context, args);
+      const missing = requireAgentApiKey("generate_test_data", apiKey);
+      if (missing) return missing;
+
+      return callMockHeroApi(context.request, "/api/v1/generate", {
+        method: "POST",
+        body: withoutMcpOnlyArgs(args),
+        apiKey,
+      });
+    },
+  },
+  {
+    name: "generate_from_template",
+    description:
+      "Generate realistic test data from a pre-built MockHero template: ecommerce, blog, saas, or social. Requires a MockHero API key; generated records are usage-logged and agent overage can be metered through Polar.",
+    inputSchema: {
+      type: "object",
+      required: ["template"],
+      properties: {
+        template: { type: "string", enum: ["ecommerce", "blog", "saas", "social"] },
+        scale: { type: "number", default: 1 },
+        locale: textSchema,
+        format: { type: "string", enum: ["json", "csv", "sql"], default: "json" },
+        sql_dialect: { type: "string", enum: ["postgres", "mysql", "sqlite"] },
+        seed: numberSchema,
+        api_key: apiKeySchema,
+      },
+      additionalProperties: false,
+    },
+    outputSchema: genericObjectOutput,
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
+    async run(args, context) {
+      const apiKey = effectiveApiKey(context, args);
+      const missing = requireAgentApiKey("generate_from_template", apiKey);
+      if (missing) return missing;
+
+      return callMockHeroApi(context.request, "/api/v1/generate", {
+        method: "POST",
+        body: withoutMcpOnlyArgs(args),
+        apiKey,
+      });
+    },
+  },
+  ...chatGptTools.filter((tool) =>
+    ["detect_schema", "list_field_types", "list_templates"].includes(tool.name)
+  ),
+];
+
+function toolsForSurface(surface: McpSurface): ToolDefinition[] {
+  return surface === "agent" ? agentTools : chatGptTools;
+}
 
 function publicToolDescriptor(tool: ToolDefinition): ToolDescriptor {
   return {
@@ -428,11 +770,19 @@ function callParams(params: unknown): { name: string; args: Record<string, unkno
   return { name: value.name, args: args as Record<string, unknown> };
 }
 
-export function mcpToolNames(): string[] {
-  return tools.map((tool) => tool.name);
+export function mcpToolNames(surface: McpSurface = "chatgpt"): string[] {
+  return toolsForSurface(surface).map((tool) => tool.name);
 }
 
-export async function handleMcpMessage(request: Request, message: unknown) {
+export async function handleMcpMessage(
+  request: Request,
+  message: unknown,
+  options: { surface?: McpSurface } = {}
+) {
+  const surface = options.surface ?? "chatgpt";
+  const tools = toolsForSurface(surface);
+  const toolByName = new Map(tools.map((tool) => [tool.name, tool]));
+
   if (Array.isArray(message)) {
     return jsonRpcError(null, -32600, "Invalid Request: batch JSON-RPC messages are not supported");
   }
@@ -463,11 +813,13 @@ export async function handleMcpMessage(request: Request, message: unknown) {
         tools: { listChanged: false },
       },
       serverInfo: {
-        name: "MockHero",
+        name: surface === "agent" ? "MockHero Agent MCP" : "MockHero",
         version: MOCKHERO_VERSION,
       },
       instructions:
-        "Use MockHero when the user or agent needs realistic mock data, fixtures, seed data, or relational synthetic records. Estimate cost and detect schemas before generating. Generation requires a MockHero API key configured by the MCP client.",
+        surface === "agent"
+          ? "Use MockHero when an agent needs realistic mock data, fixtures, seed data, or relational synthetic records. Estimate cost before generating. If no MockHero API key is available, create a loginless Polar checkout, poll status, claim the API key after payment, then call generation tools with Authorization: Bearer mh_YOUR_API_KEY or the api_key tool argument."
+          : "Use MockHero when the user needs realistic mock data, fixtures, seed data, or relational synthetic records. Estimate cost, inspect field types/templates, detect schemas, and generate small free previews directly. Larger, prompt-based, or paid generation requires a MockHero API key configured by the MCP client.",
     });
   }
 
@@ -495,6 +847,7 @@ export async function handleMcpMessage(request: Request, message: unknown) {
     const result = await tool.run(parsed.args, {
       request,
       apiKey: extractApiKey(request),
+      surface,
     });
 
     return jsonRpcResult(id, result);
