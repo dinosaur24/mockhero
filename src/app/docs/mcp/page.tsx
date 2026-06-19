@@ -91,7 +91,7 @@ export default function McpDocsPage() {
       <section>
         <h2 className="text-lg sm:text-xl font-semibold mb-3">Hosted Agent MCP Endpoint</h2>
         <p className="text-muted-foreground leading-relaxed mb-3">
-          Remote MCP clients can connect directly to MockHero's full agent-first endpoint. This
+          Remote MCP clients can connect directly to MockHero&apos;s full agent-first endpoint. This
           hosted endpoint includes cost estimation, loginless Polar checkout, checkout status,
           API key claiming, schema detection, templates, and authenticated generation.
         </p>
