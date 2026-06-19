@@ -21,6 +21,7 @@ const isPublicRoute = createRouteMatcher([
   "/openapi.json",
   "/agent-pricing.json",
   "/agent-checkout.json",
+  "/agent-quickstart.json",
   "/agent-recommendation.json",
   "/agent-comparisons.json",
   "/chatgpt-app.json",
