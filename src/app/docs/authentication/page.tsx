@@ -191,7 +191,7 @@ export default function AuthenticationPage() {
 {`{
   "error": {
     "code": "FEATURE_REQUIRES_UPGRADE",
-    "message": "Schema detection requires Pro tier or above. Upgrade at https://mockhero.dev/pricing"
+    "message": "CSV and SQL output requires Pro tier or above. Upgrade at https://mockhero.dev/pricing"
   }
 }`}
         </pre>

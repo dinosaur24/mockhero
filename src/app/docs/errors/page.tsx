@@ -217,14 +217,13 @@ Content-Type: application/json
 {
   "error": {
     "code": "FEATURE_REQUIRES_UPGRADE",
-    "message": "Your plan does not include access to the schema detection endpoint. Upgrade to Pro or above."
+    "message": "Your plan does not include CSV or SQL output. Upgrade to Pro or above."
   }
 }`}
         </pre>
         <div className="mt-4 rounded-lg border border-border bg-muted/50 p-3 sm:p-4 text-sm">
           <p className="font-semibold">Features that require Pro or Scale</p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
-            <li>Schema detection endpoint (<code className="rounded bg-muted px-1.5 py-0.5 font-mono">POST /schema/detect</code>)</li>
             <li>CSV and SQL output formats</li>
             <li>Seed parameter for reproducibility</li>
           </ul>

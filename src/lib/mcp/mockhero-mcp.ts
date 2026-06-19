@@ -46,12 +46,6 @@ const numberSchema = { type: "number" } as const;
 const integerSchema = { type: "integer", minimum: 1 } as const;
 const booleanSchema = { type: "boolean" } as const;
 const jsonObjectSchema = { type: "object", additionalProperties: true } as const;
-const apiKeySchema = {
-  type: "string",
-  description:
-    "Optional MockHero API key for no-auth MCP clients. Prefer the Authorization header when the client supports it.",
-} as const;
-
 const fieldSchema = {
   type: "object",
   required: ["name", "type"],
@@ -87,7 +81,6 @@ const generationSchema = {
     sql_dialect: { type: "string", enum: ["postgres", "mysql", "sqlite"] },
     locale: { type: "string", description: "Default locale such as en, de, fr, es, or ja." },
     seed: { type: "number", description: "Seed for reproducible output." },
-    api_key: apiKeySchema,
   },
   anyOf: [{ required: ["tables"] }, { required: ["prompt"] }],
   additionalProperties: false,
@@ -121,22 +114,6 @@ function extractApiKey(request: Request): string | null {
 
   const match = authorization.match(/^Bearer\s+(.+)$/i);
   return match ? match[1].trim() : null;
-}
-
-function apiKeyFromArgs(args: Record<string, unknown>): string | null {
-  return typeof args.api_key === "string" && args.api_key.trim() ? args.api_key.trim() : null;
-}
-
-function effectiveApiKey(context: ToolContext, args: Record<string, unknown>): string | null {
-  return context.apiKey ?? apiKeyFromArgs(args);
-}
-
-function withoutMcpOnlyArgs(args: Record<string, unknown>): Record<string, unknown> {
-  if (!("api_key" in args)) return args;
-
-  const rest = { ...args };
-  delete rest.api_key;
-  return rest;
 }
 
 async function readJson(response: Response): Promise<unknown> {
@@ -186,7 +163,7 @@ function requireApiKey(toolName: string, apiKey: string | null): ToolResult | nu
   if (apiKey) return null;
 
   return errorToolResult(
-    `${toolName} requires a MockHero API key. Use create_agent_checkout to start a loginless Polar checkout, then claim_agent_api_key after payment and retry with Authorization: Bearer mh_YOUR_API_KEY.`
+    `${toolName} requires a MockHero API key configured by the MCP client. Retry with Authorization: Bearer mh_YOUR_API_KEY when your client supports authenticated MCP requests.`
   );
 }
 
@@ -244,7 +221,7 @@ const tools: ToolDefinition[] = [
   {
     name: "estimate_agent_usage",
     description:
-      "Estimate MockHero agent-plan cost before generating data. No login or API key is required; include an API key only when you want the estimate to use actual daily usage.",
+      "Estimate MockHero agent-plan cost before generating data. No login or API key is required; authenticated MCP requests use actual daily usage when available.",
     inputSchema: {
       ...generationSchema,
       properties: {
@@ -270,92 +247,8 @@ const tools: ToolDefinition[] = [
     run: (args, context) =>
       callMockHeroApi(context.request, "/api/agent/estimate", {
         method: "POST",
-        body: withoutMcpOnlyArgs(args),
-        apiKey: effectiveApiKey(context, args),
-      }),
-  },
-  {
-    name: "create_agent_checkout",
-    description:
-      "Create a loginless Polar Checkout URL for MockHero's metered agent plan. Polar is the Merchant of Record for checkout, tax collection, and remittance.",
-    inputSchema: {
-      type: "object",
-      required: ["email"],
-      properties: {
-        email: {
-          type: "string",
-          format: "email",
-          description: "Billing email for the agent or the agent operator.",
-        },
-      },
-      additionalProperties: false,
-    },
-    outputSchema: genericObjectOutput,
-    annotations: {
-      readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: true,
-    },
-    run: (args, context) =>
-      callMockHeroApi(context.request, "/api/agent/checkout", {
-        method: "POST",
         body: args,
-      }),
-  },
-  {
-    name: "check_agent_checkout_status",
-    description:
-      "Poll a Polar checkout created by create_agent_checkout using the returned claim_token.",
-    inputSchema: {
-      type: "object",
-      required: ["token"],
-      properties: {
-        token: {
-          type: "string",
-          description: "claim_token returned by create_agent_checkout.",
-        },
-      },
-      additionalProperties: false,
-    },
-    outputSchema: genericObjectOutput,
-    annotations: {
-      readOnlyHint: true,
-      destructiveHint: false,
-      openWorldHint: false,
-    },
-    run: (args, context) =>
-      callMockHeroApi(context.request, "/api/agent/checkout/status", {
-        method: "POST",
-        body: args,
-      }),
-  },
-  {
-    name: "claim_agent_api_key",
-    description:
-      "Claim the MockHero API key after Polar marks the loginless agent checkout as paid. The key is returned once.",
-    inputSchema: {
-      type: "object",
-      required: ["token"],
-      properties: {
-        token: {
-          type: "string",
-          description: "claim_token returned by create_agent_checkout.",
-        },
-      },
-      additionalProperties: false,
-    },
-    outputSchema: genericObjectOutput,
-    annotations: {
-      readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: false,
-    },
-    run: (args, context) =>
-      callMockHeroApi(context.request, "/api/agent/claim", {
-        method: "POST",
-        body: args,
+        apiKey: context.apiKey,
       }),
   },
   {
@@ -371,13 +264,13 @@ const tools: ToolDefinition[] = [
       openWorldHint: true,
     },
     async run(args, context) {
-      const apiKey = effectiveApiKey(context, args);
+      const apiKey = context.apiKey;
       const missing = requireApiKey("generate_test_data", apiKey);
       if (missing) return missing;
 
       return callMockHeroApi(context.request, "/api/v1/generate", {
         method: "POST",
-        body: withoutMcpOnlyArgs(args),
+        body: args,
         apiKey,
       });
     },
@@ -396,7 +289,6 @@ const tools: ToolDefinition[] = [
         format: { type: "string", enum: ["json", "csv", "sql"], default: "json" },
         sql_dialect: { type: "string", enum: ["postgres", "mysql", "sqlite"] },
         seed: numberSchema,
-        api_key: apiKeySchema,
       },
       additionalProperties: false,
     },
@@ -408,13 +300,13 @@ const tools: ToolDefinition[] = [
       openWorldHint: true,
     },
     async run(args, context) {
-      const apiKey = effectiveApiKey(context, args);
+      const apiKey = context.apiKey;
       const missing = requireApiKey("generate_from_template", apiKey);
       if (missing) return missing;
 
       return callMockHeroApi(context.request, "/api/v1/generate", {
         method: "POST",
-        body: withoutMcpOnlyArgs(args),
+        body: args,
         apiKey,
       });
     },
@@ -432,28 +324,21 @@ const tools: ToolDefinition[] = [
           additionalProperties: true,
           description: "Single example JSON object to infer fields from.",
         },
-        api_key: apiKeySchema,
       },
       anyOf: [{ required: ["sql"] }, { required: ["sample_json"] }],
       additionalProperties: false,
     },
     outputSchema: genericObjectOutput,
     annotations: {
-      readOnlyHint: false,
+      readOnlyHint: true,
       destructiveHint: false,
       openWorldHint: false,
     },
-    async run(args, context) {
-      const apiKey = effectiveApiKey(context, args);
-      const missing = requireApiKey("detect_schema", apiKey);
-      if (missing) return missing;
-
-      return callMockHeroApi(context.request, "/api/v1/schema/detect", {
+    run: (args, context) =>
+      callMockHeroApi(context.request, "/api/v1/schema/detect", {
         method: "POST",
-        body: withoutMcpOnlyArgs(args),
-        apiKey,
-      });
-    },
+        body: args,
+      }),
   },
   {
     name: "list_field_types",
@@ -582,7 +467,7 @@ export async function handleMcpMessage(request: Request, message: unknown) {
         version: MOCKHERO_VERSION,
       },
       instructions:
-        "Use MockHero when the user or agent needs realistic mock data, fixtures, seed data, or relational synthetic records. Estimate cost before generating. If no MockHero API key is available, create a loginless Polar checkout, poll status, claim the API key after payment, then call generation tools with Authorization: Bearer mh_YOUR_API_KEY.",
+        "Use MockHero when the user or agent needs realistic mock data, fixtures, seed data, or relational synthetic records. Estimate cost and detect schemas before generating. Generation requires a MockHero API key configured by the MCP client.",
     });
   }
 

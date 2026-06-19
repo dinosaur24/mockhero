@@ -45,7 +45,7 @@ export default function RateLimitsPage() {
                 { limit: "Schema & template mode", free: "Unlimited", pro: "Unlimited", scale: "Unlimited" },
                 { limit: "Output formats", free: "JSON", pro: "JSON, CSV, SQL", scale: "JSON, CSV, SQL" },
                 { limit: "Seed for reproducibility", free: "No", pro: "Yes", scale: "Yes" },
-                { limit: "Schema detection", free: "No", pro: "Yes", scale: "Yes" },
+                { limit: "Schema detection", free: "Yes", pro: "Yes", scale: "Yes" },
               ].map((row) => (
                 <MobileCard
                   key={row.limit}
@@ -114,7 +114,7 @@ export default function RateLimitsPage() {
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Schema detection</TableCell>
-              <TableCell><span className="text-muted-foreground">No</span></TableCell>
+              <TableCell>Yes</TableCell>
               <TableCell>Yes</TableCell>
               <TableCell>Yes</TableCell>
             </TableRow>

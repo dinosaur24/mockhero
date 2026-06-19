@@ -1,33 +1,15 @@
 /**
  * POST /api/v1/schema/detect
  * Converts SQL CREATE TABLE statements or sample JSON into MockHero schema format.
- * Pro+ tier only.
+ * Public endpoint for agent discovery and ChatGPT App review flows.
  */
 
 import { NextResponse } from "next/server";
-import { validateApiKey } from "@/lib/api/middleware";
-import {
-  unauthorizedError,
-  validationError,
-  forbiddenFeatureError,
-  internalError,
-} from "@/lib/api/errors";
+import { validationError, internalError } from "@/lib/api/errors";
 import { detectFromSql, detectFromJson } from "@/lib/engine/schema-detector";
 
 export async function POST(request: Request) {
   try {
-    // 1. Validate API key
-    const user = await validateApiKey(request);
-    if (!user) {
-      return unauthorizedError();
-    }
-
-    // 2. Feature gate — Pro+ only
-    if (user.tier === "free") {
-      return forbiddenFeatureError("Schema detection", "Pro");
-    }
-
-    // 3. Parse request body
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -41,7 +23,6 @@ export async function POST(request: Request) {
       return validationError("Provide either 'sql' (CREATE TABLE statement) or 'sample_json' (example JSON record)");
     }
 
-    // 4. Detect schema
     if (typeof sql === "string") {
       if (sql.length > 50_000) {
         return validationError("SQL input must be 50,000 characters or fewer");

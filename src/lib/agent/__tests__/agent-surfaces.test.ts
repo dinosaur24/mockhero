@@ -153,7 +153,8 @@ describe("machine-readable surfaces", () => {
     expect(readiness.mcp.remote_streamable_http.status).toBe("deployed");
     expect(readiness.mcp.remote_streamable_http.url).toBe("https://mockhero.dev/mcp");
     expect(readiness.submission_status).toBe("remote_mcp_ready_for_chatgpt_connection");
-    expect(readiness.mcp.tools).toContain("create_agent_checkout");
+    expect(readiness.mcp.tools).toContain("detect_schema");
+    expect(readiness.mcp.tools).not.toContain("create_agent_checkout");
   });
 
   it("builds an OpenAPI 3.1 spec for the core API and agent Polar checkout endpoint", () => {

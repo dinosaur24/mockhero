@@ -413,7 +413,7 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
       {/* ── POST /schema/detect ── */}
       <section>
         <h2 id="schema-detect" className="text-xl sm:text-2xl font-bold">
-          POST /schema/detect <Badge variant="secondary">Pro+</Badge>
+          POST /schema/detect <Badge variant="secondary">Free</Badge>
         </h2>
         <p className="mt-2 text-muted-foreground">
           Upload a SQL CREATE TABLE statement or JSON sample and MockHero
@@ -450,7 +450,6 @@ Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
         <pre className="mt-2 overflow-x-auto rounded-lg bg-muted p-3 sm:p-4 text-xs sm:text-sm font-mono">
 {`POST /api/v1/schema/detect
 Content-Type: application/json
-Authorization: Bearer mh_7a1c3b24f8d4e6a9b2c1d3e5f7a8b9c0
 
 {
   "sql": "CREATE TABLE users (\\n  id UUID PRIMARY KEY,\\n  name VARCHAR(100),\\n  email VARCHAR(255) UNIQUE,\\n  created_at TIMESTAMPTZ DEFAULT NOW()\\n);"

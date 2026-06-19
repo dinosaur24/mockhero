@@ -49,10 +49,10 @@ describe("POST /mcp", () => {
       },
     });
     expect(body.result.instructions).toMatch(/estimate/i);
-    expect(body.result.instructions).toContain("Polar");
+    expect(body.result.instructions).toContain("Generation requires a MockHero API key");
   });
 
-  it("lists generation and Polar checkout tools for ChatGPT", async () => {
+  it("lists submission-safe tools for ChatGPT", async () => {
     const res = await POST(
       rpcRequest({
         jsonrpc: "2.0",
@@ -66,9 +66,6 @@ describe("POST /mcp", () => {
     expect(res.status).toBe(200);
     expect(names).toEqual([
       "estimate_agent_usage",
-      "create_agent_checkout",
-      "check_agent_checkout_status",
-      "claim_agent_api_key",
       "generate_test_data",
       "generate_from_template",
       "detect_schema",
@@ -76,6 +73,8 @@ describe("POST /mcp", () => {
       "list_templates",
     ]);
     expect(body.result.tools[0].inputSchema.type).toBe("object");
+    expect(names).not.toContain("create_agent_checkout");
+    expect(JSON.stringify(body.result.tools)).not.toContain("api_key");
   });
 
   it("lets agents estimate cost without a MockHero API key", async () => {
@@ -155,42 +154,6 @@ describe("POST /mcp", () => {
     expect(body.result.structuredContent.data.users[0].id).toBe("u1");
   });
 
-  it("accepts a claimed API key as a tool argument for no-auth MCP clients", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ data: { users: [{ id: "u2" }] } }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      })
-    );
-
-    const res = await POST(
-      rpcRequest({
-        jsonrpc: "2.0",
-        id: 33,
-        method: "tools/call",
-        params: {
-          name: "generate_test_data",
-          arguments: {
-            api_key: "mh_claimed_test",
-            tables: [{ name: "users", count: 1, fields: [{ name: "id", type: "uuid" }] }],
-          },
-        },
-      })
-    );
-    const body = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://mockhero.dev/api/v1/generate",
-      expect.objectContaining({
-        method: "POST",
-        headers: expect.objectContaining({ "x-api-key": "mh_claimed_test" }),
-        body: expect.not.stringContaining("api_key"),
-      })
-    );
-    expect(body.result.structuredContent.data.users[0].id).toBe("u2");
-  });
-
   it("returns a tool-level auth error before generating without an API key", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
 
@@ -213,7 +176,55 @@ describe("POST /mcp", () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(body.result.isError).toBe(true);
     expect(body.result.content[0].text).toContain("MockHero API key");
-    expect(body.result.content[0].text).toContain("create_agent_checkout");
+    expect(body.result.content[0].text).not.toContain("create_agent_checkout");
+  });
+
+  it("detects schema without a MockHero API key", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          schema: {
+            tables: [
+              {
+                name: "users",
+                count: 100,
+                fields: [
+                  { name: "id", type: "uuid" },
+                  { name: "email", type: "email", nullable: false },
+                ],
+              },
+            ],
+          },
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      )
+    );
+
+    const res = await POST(
+      rpcRequest({
+        jsonrpc: "2.0",
+        id: 5,
+        method: "tools/call",
+        params: {
+          name: "detect_schema",
+          arguments: {
+            sql: "CREATE TABLE users (id uuid primary key, email text not null);",
+          },
+        },
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://mockhero.dev/api/v1/schema/detect",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.not.objectContaining({ "x-api-key": expect.any(String) }),
+      })
+    );
+    expect(body.result.isError).toBeUndefined();
+    expect(body.result.structuredContent.schema.tables[0].name).toBe("users");
   });
 
   it("accepts initialized notifications with 202 and no JSON body", async () => {

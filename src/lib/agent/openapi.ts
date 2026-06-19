@@ -357,10 +357,11 @@ export function buildOpenApiSpec(): OpenApiSpec {
       "/api/v1/schema/detect": {
         post: {
           summary: "Detect MockHero schema from SQL or JSON sample",
-          security: [{ MockHeroApiKey: [] }, { MockHeroBearer: [] }],
+          description:
+            "Public schema detection endpoint for converting SQL CREATE TABLE statements or one sample JSON object into a MockHero schema.",
           responses: {
             "200": { description: "Detected schema" },
-            "401": { description: "Missing or invalid API key" },
+            "400": { description: "Invalid SQL or JSON sample" },
           },
         },
       },
