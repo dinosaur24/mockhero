@@ -104,6 +104,23 @@ export default function McpDocsPage() {
         </p>
       </section>
 
+      {/* Agent quickstart */}
+      <section>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3">Agent Quickstart</h2>
+        <div className="rounded-lg border border-border bg-card p-4 text-sm leading-relaxed">
+          <ol className="list-decimal pl-5 space-y-2">
+            <li>Connect remote MCP clients to <code className="text-xs bg-muted px-1.5 py-0.5 rounded">https://mockhero.dev/mcp/agent</code>.</li>
+            <li>Call <code className="text-xs bg-muted px-1.5 py-0.5 rounded">estimate_agent_usage</code> before generating.</li>
+            <li>For proof-of-work, call <code className="text-xs bg-muted px-1.5 py-0.5 rounded">generate_test_data</code> with explicit tables up to 100 records.</li>
+            <li>For production generation, call <code className="text-xs bg-muted px-1.5 py-0.5 rounded">create_agent_checkout</code>, poll status, claim the API key, then retry generation.</li>
+          </ol>
+        </div>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-3">
+          Machine-readable quickstart: <code className="text-xs bg-muted px-1.5 py-0.5 rounded">https://mockhero.dev/agent-quickstart.json</code>.
+          Health check: <code className="text-xs bg-muted px-1.5 py-0.5 rounded">https://mockhero.dev/api/v1/health</code>.
+        </p>
+      </section>
+
       {/* Install */}
       <section>
         <h2 className="text-lg sm:text-xl font-semibold mb-3">Local Stdio Installation</h2>

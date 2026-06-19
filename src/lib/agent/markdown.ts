@@ -14,6 +14,7 @@ export function renderLlmsTxt() {
 - API Base URL: ${p.apiBaseUrl}
 - OpenAPI: ${p.openapiUrl}
 - Agent Manifest: ${p.agentManifestUrl}
+- Agent Quickstart: ${p.agentQuickstartUrl}
 - Pricing: ${p.pricingUrl}
 - Agent Checkout: ${p.agentCheckoutUrl}
 - Agent Recommendation: ${p.agentRecommendationUrl}
@@ -36,6 +37,14 @@ Use \`${p.canonicalAuthHeader}\`. The API also accepts \`${p.alternateAuthHeader
 ## Core Endpoint
 
 POST ${p.apiBaseUrl}/generate
+
+## Agent Quickstart
+
+- Remote MCP endpoint: ${p.agentMcp.remoteMcpEndpoint}
+- Free proof-of-work preview: call \`generate_test_data\` with explicit tables up to 100 records
+- Paid flow: \`create_agent_checkout\` → \`check_agent_checkout_status\` → \`claim_agent_api_key\` → \`generate_test_data\`
+- Health check: ${p.trust.healthUrl}
+- Machine-readable quickstart: ${p.agentQuickstartUrl}
 
 ## Agent Purchase
 

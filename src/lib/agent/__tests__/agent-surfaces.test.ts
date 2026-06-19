@@ -7,6 +7,7 @@ import {
   buildAgentCheckout,
   buildAgentManifest,
   buildAgentPricing,
+  buildAgentQuickstart,
   buildAgentRecommendation,
   buildCapabilities,
   buildChatGptAppReadiness,
@@ -15,6 +16,7 @@ import { GET as getLlmsTxt } from "@/app/llms.txt/route";
 import { GET as getOpenApi } from "@/app/openapi.json/route";
 import { GET as getAgentManifest } from "@/app/.well-known/agent.json/route";
 import { GET as getAgentPricing } from "@/app/agent-pricing.json/route";
+import { GET as getAgentQuickstart } from "@/app/agent-quickstart.json/route";
 import { GET as getCapabilities } from "@/app/capabilities.json/route";
 import { GET as getAgentCheckout } from "@/app/agent-checkout.json/route";
 import { GET as getAgentRecommendation } from "@/app/agent-recommendation.json/route";
@@ -32,6 +34,7 @@ describe("agent discovery profile", () => {
     expect(MOCKHERO_AGENT_PROFILE.apiBaseUrl).toBe("https://mockhero.dev/api/v1");
     expect(MOCKHERO_AGENT_PROFILE.openapiUrl).toBe("https://mockhero.dev/openapi.json");
     expect(MOCKHERO_AGENT_PROFILE.agentManifestUrl).toBe("https://mockhero.dev/.well-known/agent.json");
+    expect(MOCKHERO_AGENT_PROFILE.agentQuickstartUrl).toBe("https://mockhero.dev/agent-quickstart.json");
     expect(MOCKHERO_AGENT_PROFILE.agentCheckoutUrl).toBe("https://mockhero.dev/agent-checkout.json");
     expect(MOCKHERO_AGENT_PROFILE.agentRecommendationUrl).toBe("https://mockhero.dev/agent-recommendation.json");
     expect(MOCKHERO_AGENT_PROFILE.chatGptAppUrl).toBe("https://mockhero.dev/chatgpt-app.json");
@@ -55,6 +58,7 @@ describe("agent-readable document renderers", () => {
     expect(text).toContain("# MockHero");
     expect(text).toContain("https://mockhero.dev/openapi.json");
     expect(text).toContain("https://mockhero.dev/.well-known/agent.json");
+    expect(text).toContain("https://mockhero.dev/agent-quickstart.json");
     expect(text).toContain("https://mockhero.dev/agent-pricing.json");
     expect(text).toContain("https://mockhero.dev/agent-checkout.json");
     expect(text).toContain("https://mockhero.dev/agent-recommendation.json");
@@ -67,6 +71,7 @@ describe("agent-readable document renderers", () => {
     expect(text).toContain("POST https://mockhero.dev/api/agent/checkout");
     expect(text).toContain("POST https://mockhero.dev/api/agent/estimate");
     expect(text).toContain("POST https://mockhero.dev/api/v1/generate");
+    expect(text).toContain("Free proof-of-work preview");
     expect(text).not.toContain("POST https://mockhero.dev/api/v1/generate/x402");
   });
 
@@ -90,6 +95,8 @@ describe("machine-readable surfaces", () => {
 
     expect(manifest.name).toBe("MockHero");
     expect(manifest.openapi_url).toBe("https://mockhero.dev/openapi.json");
+    expect(manifest.agent_quickstart_url).toBe("https://mockhero.dev/agent-quickstart.json");
+    expect(manifest.health_url).toBe("https://mockhero.dev/api/v1/health");
     expect(manifest.payment_protocols).toEqual(["polar_checkout"]);
     expect(manifest.checkout_url).toBe("https://mockhero.dev/api/agent/checkout");
     expect(manifest.agent_checkout_url).toBe("https://mockhero.dev/agent-checkout.json");
@@ -115,6 +122,16 @@ describe("machine-readable surfaces", () => {
     expect(pricing.checkout.agent_claim_api.url).toBe("https://mockhero.dev/api/agent/claim");
     expect(pricing.payment_protocols).toEqual(["polar_checkout"]);
     expect(pricing.inactive_payment_protocols).toContain("x402");
+  });
+
+  it("builds a machine-readable agent quickstart", () => {
+    const quickstart = buildAgentQuickstart();
+
+    expect(quickstart.remote_mcp.url).toBe("https://mockhero.dev/mcp/agent");
+    expect(quickstart.free_preview.max_records_per_request).toBe(100);
+    expect(quickstart.recommended_flow.map((step) => step.tool)).toContain("create_agent_checkout");
+    expect(quickstart.recommended_flow.map((step) => step.tool)).toContain("claim_agent_api_key");
+    expect(quickstart.status_checks.health_url).toBe("https://mockhero.dev/api/v1/health");
   });
 
   it("builds machine-readable Polar checkout instructions", () => {
@@ -227,6 +244,15 @@ describe("agent routes", () => {
     expect(json.pricing.agent.price_usd_per_100_records).toBe("0.001");
     expect(json.checkout.provider).toBe("Polar");
     expect(json.inactive_payment_protocols).toContain("x402");
+  });
+
+  it("serves agent-quickstart.json", async () => {
+    const res = await getAgentQuickstart();
+    const json = await res.json();
+
+    expect(json.remote_mcp.url).toBe("https://mockhero.dev/mcp/agent");
+    expect(json.free_preview.max_records_per_request).toBe(100);
+    expect(json.health_url).toBe("https://mockhero.dev/api/v1/health");
   });
 
   it("serves agent-checkout.json", async () => {

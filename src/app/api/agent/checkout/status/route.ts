@@ -22,7 +22,17 @@ async function status(token: unknown) {
   } catch (err) {
     if (err instanceof AgentBillingError) {
       return NextResponse.json(
-        { error: { code: err.code, message: err.message } },
+        {
+          error: {
+            code: err.code,
+            message: err.message,
+            next_action:
+              err.code === "AGENT_CHECKOUT_NOT_FOUND"
+                ? "create_agent_checkout"
+                : "retry_status_poll",
+            checkout_tool: "create_agent_checkout",
+          },
+        },
         { status: err.status }
       );
     }

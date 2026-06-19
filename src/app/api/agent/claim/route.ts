@@ -8,7 +8,27 @@ import { claimAgentCheckout, AgentBillingError } from "@/lib/agent/billing";
 import { internalError, validationError } from "@/lib/api/errors";
 
 function claimError(status: number, code: string, message: string) {
-  return NextResponse.json({ error: { code, message } }, { status });
+  const nextAction =
+    code === "PAYMENT_REQUIRED"
+      ? "complete_checkout_then_retry_claim"
+      : code === "AGENT_CHECKOUT_ALREADY_CLAIMED"
+        ? "use_existing_api_key_or_create_new_checkout"
+        : code === "AGENT_CHECKOUT_NOT_FOUND"
+          ? "create_agent_checkout"
+          : "retry_or_contact_support";
+
+  return NextResponse.json(
+    {
+      error: {
+        code,
+        message,
+        next_action: nextAction,
+        checkout_status_tool: "check_agent_checkout_status",
+        checkout_tool: "create_agent_checkout",
+      },
+    },
+    { status }
+  );
 }
 
 async function claim(token: unknown) {

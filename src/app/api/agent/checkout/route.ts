@@ -33,7 +33,14 @@ export async function POST(request: Request) {
   } catch (err) {
     if (err instanceof AgentBillingError) {
       return NextResponse.json(
-        { error: { code: err.code, message: err.message } },
+        {
+          error: {
+            code: err.code,
+            message: err.message,
+            next_action: "retry_checkout_creation_or_contact_support",
+            provider: "Polar",
+          },
+        },
         { status: err.status }
       );
     }

@@ -11,6 +11,7 @@ export const MOCKHERO_AGENT_PROFILE = {
   openapiUrl: `${websiteUrl}/openapi.json`,
   agentManifestUrl: `${websiteUrl}/.well-known/agent.json`,
   pricingUrl: `${websiteUrl}/agent-pricing.json`,
+  agentQuickstartUrl: `${websiteUrl}/agent-quickstart.json`,
   agentCheckoutUrl: `${websiteUrl}/agent-checkout.json`,
   agentRecommendationUrl: `${websiteUrl}/agent-recommendation.json`,
   agentComparisonsUrl: `${websiteUrl}/agent-comparisons.json`,

@@ -71,7 +71,7 @@ describe("POST /mcp/agent", () => {
     expect(generateTool.inputSchema.properties.api_key.description).toContain("no-auth MCP clients");
   });
 
-  it("tells no-key agents how to start checkout before generation", async () => {
+  it("generates a small proof-of-work preview without an API key", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
 
     const res = await POST(
@@ -91,8 +91,59 @@ describe("POST /mcp/agent", () => {
 
     expect(res.status).toBe(200);
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(body.result.isError).toBeUndefined();
+    expect(body.result.structuredContent.data.users).toHaveLength(1);
+    expect(body.result.structuredContent.meta.total_records).toBe(1);
+  });
+
+  it("tells no-key agents how to start checkout for prompt generation", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const res = await POST(
+      rpcRequest({
+        jsonrpc: "2.0",
+        id: "prompt",
+        method: "tools/call",
+        params: {
+          name: "generate_test_data",
+          arguments: {
+            prompt: "Generate 25 realistic SaaS users.",
+          },
+        },
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(body.result.isError).toBe(true);
     expect(body.result.content[0].text).toContain("create_agent_checkout");
+    expect(body.result.structuredContent.details.checkout_tool).toBe("create_agent_checkout");
+  });
+
+  it("tells no-key agents how to start checkout for larger generation", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const res = await POST(
+      rpcRequest({
+        jsonrpc: "2.0",
+        id: "large",
+        method: "tools/call",
+        params: {
+          name: "generate_test_data",
+          arguments: {
+            tables: [{ name: "users", count: 101, fields: [{ name: "id", type: "uuid" }] }],
+          },
+        },
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(body.result.isError).toBe(true);
+    expect(body.result.content[0].text).toContain("create_agent_checkout");
+    expect(body.result.structuredContent.details.free_record_limit).toBe(100);
   });
 
   it("accepts api_key as a tool argument and strips it before proxying generation", async () => {

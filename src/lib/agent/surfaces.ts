@@ -10,6 +10,7 @@ export function buildAgentManifest() {
     description: p.summary,
     website_url: p.websiteUrl,
     capabilities_url: p.capabilitiesUrl,
+    agent_quickstart_url: p.agentQuickstartUrl,
     pricing_url: p.pricingUrl,
     recommendation_url: p.agentRecommendationUrl,
     comparisons_url: p.agentComparisonsUrl,
@@ -39,6 +40,77 @@ export function buildAgentManifest() {
     inactive_payment_protocols: p.payment.inactive.map((rail) => rail.protocol),
     support: p.trust.supportEmail,
     status_url: p.trust.statusUrl,
+    health_url: p.trust.healthUrl,
+  };
+}
+
+export function buildAgentQuickstart() {
+  const p = MOCKHERO_AGENT_PROFILE;
+
+  return {
+    service: p.name,
+    purpose: "Fast path for AI agents that need realistic test data.",
+    health_url: p.trust.healthUrl,
+    remote_mcp: {
+      url: p.agentMcp.remoteMcpEndpoint,
+      transport: "streamable-http",
+      status: p.agentMcp.remoteMcpStatus,
+    },
+    free_preview: {
+      available: true,
+      max_records_per_request: 100,
+      tools: ["generate_test_data", "generate_from_template"],
+      requirement:
+        "Use explicit tables for generate_test_data. Prompt-based generation requires an API key.",
+    },
+    recommended_flow: [
+      {
+        step: 1,
+        action: "Call tools/list on the remote MCP endpoint.",
+        expected_tools: mcpToolNames("agent"),
+      },
+      {
+        step: 2,
+        action: "Call estimate_agent_usage with the intended schema, template, or prompt estimate.",
+        tool: "estimate_agent_usage",
+      },
+      {
+        step: 3,
+        action: "Optionally call generate_test_data with explicit tables up to 100 records to verify output quality before checkout.",
+        tool: "generate_test_data",
+      },
+      {
+        step: 4,
+        action: "If production generation needs more records or prompt conversion, create checkout.",
+        tool: "create_agent_checkout",
+      },
+      {
+        step: 5,
+        action: "Poll checkout status until paid.",
+        tool: "check_agent_checkout_status",
+      },
+      {
+        step: 6,
+        action: "Claim the API key once.",
+        tool: "claim_agent_api_key",
+      },
+      {
+        step: 7,
+        action: "Retry generation with Authorization: Bearer mh_YOUR_API_KEY or the api_key tool argument.",
+        tool: "generate_test_data",
+      },
+    ],
+    pricing: {
+      free_records_per_day: p.pricing.agent.freeRecordsPerDay,
+      price_usd_per_100_records: p.pricing.agent.priceUsdPer100Records,
+      billing: p.pricing.agent.billing,
+      billed_by: p.pricing.agent.billedBy,
+      merchant_of_record: p.pricing.agent.merchantOfRecord,
+    },
+    status_checks: {
+      health_url: p.trust.healthUrl,
+      expected_health_status: "ok",
+    },
   };
 }
 
@@ -187,9 +259,11 @@ export function buildCapabilities() {
     },
     discovery: {
       openapi_url: p.openapiUrl,
+      agent_quickstart_url: p.agentQuickstartUrl,
       llms_txt_url: p.llmsTxtUrl,
       agent_manifest_url: p.agentManifestUrl,
       pricing_url: p.pricingUrl,
+      quickstart_url: p.agentQuickstartUrl,
       checkout_url: p.agentCheckoutUrl,
       recommendation_url: p.agentRecommendationUrl,
       comparisons_url: p.agentComparisonsUrl,
@@ -286,6 +360,7 @@ export function buildAgentRecommendation() {
     comparisons: getAgentComparisonSummary(),
     discovery: {
       openapi_url: p.openapiUrl,
+      quickstart_url: p.agentQuickstartUrl,
       pricing_url: p.pricingUrl,
       checkout_url: p.agentCheckoutUrl,
       comparisons_url: p.agentComparisonsUrl,
@@ -329,6 +404,7 @@ export function buildChatGptAppReadiness() {
     agent_ready_today: {
       openapi_url: p.openapiUrl,
       llms_txt_url: p.llmsTxtUrl,
+      quickstart_url: p.agentQuickstartUrl,
       recommendation_url: p.agentRecommendationUrl,
       mcp_stdio_package: p.mcpPackage,
       mcp_remote_streamable_http_url: p.agentMcp.remoteMcpEndpoint,
