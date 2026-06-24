@@ -16,6 +16,7 @@ const footerLinks = {
     { label: "API Reference", href: "/docs/api-reference" },
     { label: "Playground", href: "/#playground" },
     { label: "Blog", href: "/blog" },
+    { label: "Best Tools", href: "/best" },
     { label: "LLM Reference", href: "/llms.txt" },
   ],
   legal: [

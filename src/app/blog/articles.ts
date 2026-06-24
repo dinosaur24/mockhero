@@ -65,7 +65,7 @@ export const articles: Article[] = [
 <pre><code>npm install @supabase/supabase-js</code></pre>
 
 <h3>2. Get your MockHero API key</h3>
-<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key from the dashboard. The free tier gives you 1,000 rows per month.</p>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a> and copy your API key from the dashboard. The free tier gives you 500 records per day.</p>
 
 <h3>3. Write the seed script</h3>
 <p>Create a file called <code>seed.mjs</code> in your project root:</p>
@@ -145,7 +145,7 @@ console.log(
 </ul>
 
 <h2>Get Started</h2>
-<p>MockHero offers a free tier with 1,000 rows per month, no credit card required. <a href="https://mockhero.dev/sign-up">Sign up here</a> and start seeding your Supabase project in under a minute.</p>
+<p>MockHero offers a free tier with 500 records per day, no credit card required. <a href="https://mockhero.dev/sign-up">Sign up here</a> and start seeding your Supabase project in under a minute.</p>
 `,
   },
   {
@@ -280,7 +280,7 @@ console.log(
 </ul>
 
 <h2>Get Started</h2>
-<p>MockHero has a free tier with 1,000 rows/month. No credit card needed. <a href="https://mockhero.dev/sign-up">Sign up now</a> and seed your next Neon branch in seconds.</p>
+<p>MockHero has a free tier with 500 records/day. No credit card needed. <a href="https://mockhero.dev/sign-up">Sign up now</a> and seed your next Neon branch in seconds.</p>
 `,
   },
   {
@@ -419,7 +419,7 @@ main()
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and run <code>npx prisma db seed</code> with real data in minutes.</p>
+<p>Free tier, 500 records/day, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and run <code>npx prisma db seed</code> with real data in minutes.</p>
 `,
   },
   {
@@ -474,7 +474,7 @@ main()
 npm install -D drizzle-kit tsx</code></pre>
 
 <h3>2. Get your MockHero API key</h3>
-<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a>. The free tier includes 1,000 rows/month.</p>
+<p>Sign up at <a href="https://mockhero.dev/sign-up">mockhero.dev/sign-up</a>. The free tier includes 500 records/day.</p>
 
 <h3>3. Write the seed script</h3>
 <p>Create <code>src/db/seed.ts</code>:</p>
@@ -676,7 +676,7 @@ console.log("Seeded", data.users.length, "users and", data.messages.length, "mes
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and fill your Firestore in seconds.</p>
+<p>Free tier, 500 records/day, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and fill your Firestore in seconds.</p>
 `,
   },
   {
@@ -890,7 +890,7 @@ CREATE TABLE employees (
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and pipe realistic data into your PostgreSQL database today.</p>
+<p>Free tier, 500 records/day. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and pipe realistic data into your PostgreSQL database today.</p>
 `,
   },
   {
@@ -1066,7 +1066,7 @@ CREATE TABLE products (
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and fill your Next.js app with real data.</p>
+<p>Free tier, 500 records/day, no credit card. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and fill your Next.js app with real data.</p>
 `,
   },
   {
@@ -1242,7 +1242,7 @@ console.log("Generated", data.users.length, "mock users");</code></pre>
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and run <code>python manage.py seed</code> in minutes.</p>
+<p>Free tier, 500 records/day. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and run <code>python manage.py seed</code> in minutes.</p>
 `,
   },
   {
@@ -1396,7 +1396,7 @@ Post.first.user.name</code></pre>
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and run <code>rails db:seed</code> with production-quality data.</p>
+<p>Free tier, 500 records/day. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and run <code>rails db:seed</code> with production-quality data.</p>
 `,
   },
   {
@@ -1810,7 +1810,7 @@ Post.first.user.name</code></pre>
 </ul>
 
 <h2>Get Started</h2>
-<p>Free tier, 1,000 rows/month. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and end flaky tests with deterministic fixtures.</p>
+<p>Free tier, 500 records/day. <a href="https://mockhero.dev/sign-up">Sign up at mockhero.dev</a> and end flaky tests with deterministic fixtures.</p>
 `,
   },
   {
@@ -1956,7 +1956,7 @@ curl -X POST https://api.mockhero.dev/api/v1/generate \\
 <li><strong>Deterministic output</strong> &mdash; pass a <code>seed</code> parameter and get identical data every run, unlike raw LLM output which varies each time.</li>
 <li><strong>Referential integrity</strong> &mdash; <code>ref</code> fields guarantee valid foreign keys across all tables automatically.</li>
 <li><strong>Scale</strong> &mdash; generate thousands of rows instantly. LLMs struggle with more than a few dozen records and often hallucinate duplicates.</li>
-<li><strong>Cost</strong> &mdash; a single API call replaces thousands of LLM tokens. MockHero's free tier gives you 1,000 rows per month.</li>
+<li><strong>Cost</strong> &mdash; a single API call replaces thousands of LLM tokens. MockHero's free tier gives you 500 records per day.</li>
 </ul>
 
 <h2>Get Started</h2>
@@ -2355,7 +2355,7 @@ console.log("Seeded", data.authors.length, "authors and", data.articles.length, 
 </ul>
 
 <h2>Get Started</h2>
-<p>Seed your Turso database with realistic data in minutes. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month, no credit card required.</p>
+<p>Seed your Turso database with realistic data in minutes. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day, no credit card required.</p>
 `,
   },
   {
@@ -2488,7 +2488,7 @@ console.log("Seeded", data.teams.length, "teams and", data.members.length, "memb
 </ul>
 
 <h2>Get Started</h2>
-<p>Seed every PlanetScale branch with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+<p>Seed every PlanetScale branch with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day.</p>
 `,
   },
   {
@@ -2636,7 +2636,7 @@ console.log("Seeded", data.categories.length, "categories and", data.products.le
 </ul>
 
 <h2>Get Started</h2>
-<p>Seed your SQLite database in seconds. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month, no credit card required.</p>
+<p>Seed your SQLite database in seconds. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day, no credit card required.</p>
 `,
   },
   {
@@ -2780,7 +2780,7 @@ redis-cli HGETALL user:&lt;some-uuid&gt;</code></pre>
 </ul>
 
 <h2>Get Started</h2>
-<p>Seed your Redis instance with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+<p>Seed your Redis instance with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day.</p>
 `,
   },
   {
@@ -2941,7 +2941,7 @@ await client.end();</code></pre>
 </ul>
 
 <h2>Get Started</h2>
-<p>Seed your CockroachDB cluster with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month, no credit card required.</p>
+<p>Seed your CockroachDB cluster with production-realistic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day, no credit card required.</p>
 `,
   },
 
@@ -3059,7 +3059,7 @@ for (const p of data.patients) {
 </ul>
 
 <h2>Get Started</h2>
-<p>Generate HIPAA-safe healthcare test data today. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+<p>Generate HIPAA-safe healthcare test data today. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day.</p>
 `,
   },
   {
@@ -3166,7 +3166,7 @@ const { data } = await res.json();
 </ul>
 
 <h2>Get Started</h2>
-<p>Build your fintech test suite on realistic synthetic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and generate 1,000 rows per month.</p>
+<p>Build your fintech test suite on realistic synthetic data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and generate 500 records per day.</p>
 `,
   },
   {
@@ -3285,7 +3285,7 @@ const { data } = await res.json();
 </ul>
 
 <h2>Get Started</h2>
-<p>Test your SaaS app with realistic multi-tenant data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 1,000 rows per month.</p>
+<p>Test your SaaS app with realistic multi-tenant data. <a href="https://mockhero.dev/sign-up">Sign up free at mockhero.dev</a> and get 500 records per day.</p>
 `,
   },
   {
@@ -3635,7 +3635,7 @@ const posts = Array.from({ length: 100 }, () => ({
 <pre><code>npx @mockherodev/mcp-server</code></pre>
 
 <h2>Pricing Model</h2>
-<p>Both offer free tiers. MockHero's free tier includes 1,000 rows/month with no credit card. Paid plans scale by rows/month rather than schemas or seats.</p>
+<p>Both offer free tiers. MockHero's free tier includes 500 records/day with no credit card. Paid plans scale by records/day rather than schemas or seats.</p>
 
 <h2>When Mockaroo Still Wins</h2>
 <ul>
@@ -3925,7 +3925,7 @@ var data = await res.Content.ReadFromJsonAsync&lt;JsonDocument&gt;();</code></pr
 </ul>
 
 <h2>Get Started</h2>
-<p><a href="https://mockhero.dev/sign-up">Sign up for MockHero free</a> — 1,000 rows/month, no credit card.</p>
+<p><a href="https://mockhero.dev/sign-up">Sign up for MockHero free</a> — 500 records/day, no credit card.</p>
 `,
   },
 

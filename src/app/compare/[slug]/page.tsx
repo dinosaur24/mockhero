@@ -7,6 +7,8 @@ import {
   type CompetitorComparison,
 } from "@/lib/competitors/comparisons";
 
+const LAST_REVIEWED = "2026-06-24";
+
 export function generateStaticParams() {
   return getComparisonSlugs().map((slug) => ({ slug }));
 }
@@ -23,6 +25,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: comparison.metaDescription,
     alternates: {
       canonical: `/compare/${comparison.slug}`,
+    },
+    openGraph: {
+      title: `${comparison.title} | MockHero`,
+      description: comparison.metaDescription,
+      url: `https://mockhero.dev/compare/${comparison.slug}`,
+      type: "article",
+      publishedTime: LAST_REVIEWED,
+      modifiedTime: LAST_REVIEWED,
+      authors: ["Dino Sakoman"],
     },
   };
 }
@@ -54,7 +65,15 @@ function ComparisonJsonLd({ comparison }: { comparison: CompetitorComparison }) 
     "@type": "Article",
     headline: comparison.title,
     description: comparison.metaDescription,
+    datePublished: LAST_REVIEWED,
+    dateModified: LAST_REVIEWED,
     author: {
+      "@type": "Person",
+      name: "Dino Sakoman",
+      url: "https://mockhero.dev/about",
+      jobTitle: "Founder of MockHero",
+    },
+    publisher: {
       "@type": "Organization",
       name: "MockHero",
       url: "https://mockhero.dev",
@@ -88,7 +107,11 @@ export default async function ComparisonPage({ params }: PageProps) {
 
         <section className="mt-10 max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Agent-first comparison
+            Agent-first comparison · Last reviewed {new Date(LAST_REVIEWED).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
           <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
             {comparison.title}
@@ -151,6 +174,36 @@ export default async function ComparisonPage({ params }: PageProps) {
           )}
         </section>
       </div>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "MockHero",
+                item: "https://mockhero.dev",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Compare",
+                item: "https://mockhero.dev/compare",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: comparison.title,
+                item: `https://mockhero.dev/compare/${comparison.slug}`,
+              },
+            ],
+          }),
+        }}
+      />
     </main>
   );
 }

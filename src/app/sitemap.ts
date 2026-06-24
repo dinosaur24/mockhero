@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { articles } from "./blog/articles";
 import { getAllFieldTypeSlugs } from "@/lib/engine/field-type-seo";
 import { getComparisonSlugs } from "@/lib/competitors/comparisons";
+import { getTopListSlugs } from "@/lib/seo/top-lists";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://mockhero.dev";
@@ -33,6 +34,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/docs/api-reference`,
@@ -91,6 +98,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/agent-checkout.json`,
+      lastModified: new Date(),
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/agent-quickstart.json`,
       lastModified: new Date(),
       priority: 0.5,
     },
@@ -163,6 +175,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/best`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    ...getTopListSlugs().map((slug) => ({
+      url: `${baseUrl}/best/${slug}`,
+      lastModified: new Date("2026-06-24"),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
     ...getComparisonSlugs().map((slug) => ({
       url: `${baseUrl}/compare/${slug}`,
       lastModified: new Date(),

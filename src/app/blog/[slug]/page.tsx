@@ -7,6 +7,15 @@ import { Navbar } from "@/components/landing/navbar"
 import { Footer } from "@/components/landing/footer"
 import { articles, type Article, type ArticleCategory } from "../articles"
 
+const FOUNDER_AUTHOR = {
+  name: "Dino Sakoman",
+  title: "Founder of MockHero",
+  url: "https://mockhero.dev/about",
+  xHandle: "dino_s9",
+}
+
+const LAST_REVIEWED = "2026-06-24"
+
 /** Generate 3 FAQ items from article metadata for FAQPage JSON-LD. */
 function generateArticleFAQs(article: Article): { question: string; answer: string }[] {
   const title = article.title
@@ -122,7 +131,11 @@ export async function generateMetadata({
       url: `https://mockhero.dev/blog/${article.slug}`,
       type: "article",
       publishedTime: article.date,
-      authors: [article.author],
+      modifiedTime: LAST_REVIEWED,
+      authors: [FOUNDER_AUTHOR.name],
+    },
+    alternates: {
+      canonical: `/blog/${article.slug}`,
     },
   }
 }
@@ -176,6 +189,17 @@ export default async function BlogPostPage({
                   year: "numeric",
                 })}
               </time>
+              <span className="text-sm text-muted-foreground">Updated</span>
+              <time
+                dateTime={LAST_REVIEWED}
+                className="text-sm text-muted-foreground"
+              >
+                {new Date(LAST_REVIEWED).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </time>
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl mb-8">
@@ -201,13 +225,17 @@ export default async function BlogPostPage({
             {/* Author Card */}
             <div className="mt-12 rounded-lg border border-border p-5 flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
-                M
+                D
               </div>
               <div>
-                <p className="font-semibold text-sm">{article.author}</p>
+                <p className="font-semibold text-sm">
+                  <Link href="/about" className="hover:text-primary transition-colors">
+                    {FOUNDER_AUTHOR.name}
+                  </Link>
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  Guides and tutorials for generating realistic test data with
-                  the MockHero API.
+                  {FOUNDER_AUTHOR.title}. Writes about synthetic test data,
+                  agent workflows, and database seeding with MockHero.
                 </p>
               </div>
             </div>
@@ -218,7 +246,7 @@ export default async function BlogPostPage({
                 Start generating test data for free
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                1,000 rows/month on the free tier. No credit card required.
+                500 records/day on the free tier. No credit card required.
               </p>
               <Button className="mt-4" asChild>
                 <Link href="/sign-up">Get Your API Key</Link>
@@ -264,7 +292,7 @@ export default async function BlogPostPage({
                 <Link href="/sign-up">Get API Key — Free</Link>
               </Button>
               <div className="mt-4 space-y-2 text-xs text-muted-foreground">
-                <p>&#10003; 1,000 rows/month free</p>
+                <p>&#10003; 500 records/day free</p>
                 <p>&#10003; No credit card required</p>
                 <p>&#10003; Relational data with refs</p>
                 <p>&#10003; 156+ field types</p>
@@ -287,9 +315,13 @@ export default async function BlogPostPage({
             headline: article.title,
             description: article.description,
             datePublished: article.date,
+            dateModified: LAST_REVIEWED,
             author: {
-              "@type": "Organization",
-              name: article.author,
+              "@type": "Person",
+              name: FOUNDER_AUTHOR.name,
+              url: FOUNDER_AUTHOR.url,
+              jobTitle: FOUNDER_AUTHOR.title,
+              sameAs: [`https://x.com/${FOUNDER_AUTHOR.xHandle}`],
             },
             publisher: {
               "@type": "Organization",
@@ -305,6 +337,38 @@ export default async function BlogPostPage({
               "@type": "WebPage",
               "@id": `https://mockhero.dev/blog/${article.slug}`,
             },
+          }),
+        }}
+      />
+
+      {/* Breadcrumb JSON-LD */}
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "MockHero",
+                item: "https://mockhero.dev",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Blog",
+                item: "https://mockhero.dev/blog",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: article.title,
+                item: `https://mockhero.dev/blog/${article.slug}`,
+              },
+            ],
           }),
         }}
       />

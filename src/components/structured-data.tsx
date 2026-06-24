@@ -12,6 +12,20 @@ export function StructuredData() {
     description:
       "MockHero is a synthetic test data API that generates realistic, relational data with 156+ field types across 22 locales.",
     foundingDate: "2026",
+    founder: {
+      "@type": "Person",
+      name: "Dino Sakoman",
+      url: "https://mockhero.dev/about",
+      sameAs: ["https://x.com/dino_s9"],
+    },
+    knowsAbout: [
+      "synthetic test data",
+      "mock data",
+      "database seeding",
+      "AI coding agents",
+      "Model Context Protocol",
+      "relational fixtures",
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       email: "hello@mockhero.dev",
@@ -26,6 +40,12 @@ export function StructuredData() {
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Any",
     url: "https://mockhero.dev",
+    sameAs: [
+      "https://mockhero.dev/llms.txt",
+      "https://mockhero.dev/openapi.json",
+      "https://mockhero.dev/agent-quickstart.json",
+      "https://www.npmjs.com/package/@mockherodev/mcp-server",
+    ],
     description:
       "Synthetic test data API for developers. Generate realistic fake data with 156 field types, 22 locales, relational integrity, and multiple output formats (JSON, CSV, SQL). Supports schema-based generation, plain English prompts, and pre-built templates.",
     offers: [
