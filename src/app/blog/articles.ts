@@ -1,11 +1,14 @@
 export type ArticleCategory = "Database" | "Framework" | "Use Case" | "AI";
 
+export const BLOG_LAST_REVIEWED = "2026-06-24";
+
 export interface Article {
   slug: string;
   title: string;
   description: string;
   category: ArticleCategory;
   date: string;
+  updatedAt?: string;
   author: string;
   content: string;
 }

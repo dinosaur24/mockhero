@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { articles } from "./blog/articles";
+import { BLOG_LAST_REVIEWED, articles } from "./blog/articles";
 import { getAllFieldTypeSlugs } from "@/lib/engine/field-type-seo";
 import { getComparisonSlugs } from "@/lib/competitors/comparisons";
 import { getTopListSlugs } from "@/lib/seo/top-lists";
@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...articles.map((article) => ({
       url: `${baseUrl}/blog/${article.slug}`,
-      lastModified: new Date(article.date),
+      lastModified: new Date(article.updatedAt ?? BLOG_LAST_REVIEWED),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),

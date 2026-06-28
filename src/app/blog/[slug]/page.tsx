@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/landing/navbar"
 import { Footer } from "@/components/landing/footer"
-import { articles, type Article, type ArticleCategory } from "../articles"
+import { BLOG_LAST_REVIEWED, articles, type Article, type ArticleCategory } from "../articles"
 
 const FOUNDER_AUTHOR = {
   name: "Dino Sakoman",
@@ -14,7 +14,7 @@ const FOUNDER_AUTHOR = {
   xHandle: "dino_s9",
 }
 
-const LAST_REVIEWED = "2026-06-24"
+const LAST_REVIEWED = BLOG_LAST_REVIEWED
 
 /** Generate 3 FAQ items from article metadata for FAQPage JSON-LD. */
 function generateArticleFAQs(article: Article): { question: string; answer: string }[] {

@@ -1,6 +1,22 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+
+export const metadata: Metadata = {
+  title: "MCP Server for AI Test Data Agents",
+  description:
+    "Connect AI agents to MockHero's remote MCP endpoint for realistic synthetic test data, schema detection, free previews, and Polar-backed agent checkout.",
+  alternates: {
+    canonical: "/docs/mcp",
+  },
+  openGraph: {
+    title: "MCP Server for AI Test Data Agents | MockHero",
+    description:
+      "Connect AI agents to MockHero's remote MCP endpoint for realistic synthetic test data, schema detection, free previews, and Polar-backed agent checkout.",
+    url: "https://mockhero.dev/docs/mcp",
+  },
+}
 
 const tools = [
   {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/landing/navbar";
 import { Hero } from "@/components/landing/hero";
 import { WorksWith } from "@/components/landing/works-with";
@@ -11,6 +12,21 @@ import { CodeExamples } from "@/components/landing/code-examples";
 import { Comparison } from "@/components/landing/comparison";
 import { Pricing } from "@/components/landing/pricing";
 import { Footer } from "@/components/landing/footer";
+
+export const metadata: Metadata = {
+  title: "Synthetic Test Data API for AI Agents",
+  description:
+    "Generate realistic relational test data from schemas, prompts, templates, or MCP tools. MockHero gives AI agents free previews, estimates, and Polar-backed checkout.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Synthetic Test Data API for AI Agents | MockHero",
+    description:
+      "Generate realistic relational test data from schemas, prompts, templates, or MCP tools. MockHero gives AI agents free previews, estimates, and Polar-backed checkout.",
+    url: "https://mockhero.dev",
+  },
+};
 
 export default function LandingPage() {
   return (
